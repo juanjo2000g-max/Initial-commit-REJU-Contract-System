@@ -1,0 +1,342 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>YAKAFÉ anuncio</title>
+<style>
+@font-face{font-family:"Shrikhand";src:url(Shrikhand.woff2) format("woff2")}
+@font-face{font-family:"Figtree";font-weight:800;src:url(Figtree.woff2) format("woff2")}
+@font-face{font-family:"JBM";font-weight:700;src:url(JetBrainsMono.woff2) format("woff2")}
+html,body{margin:0;background:#000}
+canvas{display:block;width:540px;height:960px}
+</style>
+<canvas id="c" width="1080" height="1920"></canvas>
+<script>
+// Anuncio YAKAFÉ: 30 s, 1080x1920. render(t) dibuja el cuadro del segundo t (determinista).
+const W = 1080, H = 1920;
+const ctx = document.getElementById('c').getContext('2d');
+const C = {fu:'#E8196F', na:'#FF5B14', sol:'#FFC21A', tu:'#00A396', uva:'#6B35E0', ink:'#2B0F14', cream:'#FFF4F0', white:'#FFFFFF'};
+const S = [0, 3.75, 7.5, 11.25, 16.875, 20.625, 24.375, 30]; // cortes de escena (alineados a compases de 128 BPM)
+
+const clamp = (x,a=0,b=1) => Math.min(b, Math.max(a, x));
+const P = (t,a,b) => clamp((t-a)/(b-a));
+const eo = x => 1 - Math.pow(1-x, 3);
+const eio = x => x < .5 ? 4*x*x*x : 1 - Math.pow(-2*x+2, 3)/2;
+const eback = x => { const c1 = 1.9, c3 = c1+1; return 1 + c3*Math.pow(x-1,3) + c1*Math.pow(x-1,2); };
+const eel = x => x<=0 ? 0 : x>=1 ? 1 : Math.pow(2,-10*x)*Math.sin((x*10-.75)*(2*Math.PI)/3) + 1;
+const lerp = (a,b,k) => a + (b-a)*k;
+function rng(seed){ return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed>>>15, 1|seed); t = t + Math.imul(t ^ t>>>7, 61|t) ^ t; return ((t ^ t>>>14) >>> 0) / 4294967296; }; }
+
+// ---------- utilidades de dibujo ----------
+function text(str, x, y, size, o={}){
+  const font = o.font || 'Shrikhand', weight = o.weight || '';
+  ctx.save();
+  ctx.font = `${weight} ${size}px ${font}`.trim();
+  if (o.maxW){ const w = ctx.measureText(str).width; if (w > o.maxW){ size *= o.maxW / w; ctx.font = `${weight} ${size}px ${font}`.trim(); } }
+  ctx.textAlign = o.align || 'center'; ctx.textBaseline = 'middle';
+  ctx.translate(x, y); if (o.rot) ctx.rotate(o.rot); if (o.scale) ctx.scale(o.scale, o.scale);
+  ctx.globalAlpha *= (o.alpha ?? 1);
+  if (o.shadow !== false){ ctx.fillStyle = o.shadowColor || C.ink; ctx.fillText(str, size*.07, size*.08); }
+  if (o.stroke){ ctx.lineJoin = 'round'; ctx.lineWidth = size*.14; ctx.strokeStyle = o.stroke; ctx.strokeText(str, 0, 0); }
+  ctx.fillStyle = o.color || C.white; ctx.fillText(str, 0, 0);
+  ctx.restore();
+}
+// Texto que "cae" de grande a su tamaño
+function slam(str, x, y, size, t0, t, o={}){
+  const k = P(t, t0, t0+.22); if (k <= 0) return;
+  text(str, x, y, size, {...o, scale: 1 + 2.2*(1-eo(k)), alpha: clamp(k*3)});
+}
+function rays(cx, cy, n, rot, c1, c2){
+  ctx.fillStyle = c1; ctx.fillRect(0,0,W,H);
+  ctx.fillStyle = c2;
+  for (let i=0;i<n;i++){
+    const a = rot + i*2*Math.PI/n, b = a + Math.PI/n;
+    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx+3000*Math.cos(a), cy+3000*Math.sin(a)); ctx.lineTo(cx+3000*Math.cos(b), cy+3000*Math.sin(b)); ctx.fill();
+  }
+}
+function rr(x,y,w,h,r){ ctx.beginPath(); ctx.roundRect(x,y,w,h,r); }
+const PIN = new Path2D('M50 4C27 4 11 21 11 43c0 27 39 53 39 53s39-26 39-53C89 21 73 4 50 4Z');
+const SEAM = new Path2D('M43 22c14 9 0 26 14 40');
+function logo(cx, cy, s, lines=1){
+  ctx.save(); ctx.translate(cx, cy); ctx.scale(s, s); ctx.translate(-32, -50);
+  ctx.lineCap = 'round'; ctx.strokeStyle = C.na; ctx.lineWidth = 7; ctx.globalAlpha = lines;
+  [[-28,30,2],[-20,45,6],[-12,60,10]].forEach(([a,y,b]) => { ctx.beginPath(); ctx.moveTo(a,y); ctx.lineTo(b,y); ctx.stroke(); });
+  ctx.globalAlpha = 1;
+  ctx.fillStyle = C.ink; ctx.save(); ctx.translate(4,4); ctx.fill(PIN); ctx.restore();
+  ctx.fillStyle = C.fu; ctx.fill(PIN);
+  ctx.save(); ctx.translate(50,42); ctx.rotate(22*Math.PI/180); ctx.fillStyle = C.sol; ctx.beginPath(); ctx.ellipse(0,0,17,23,0,0,Math.PI*2); ctx.fill(); ctx.restore();
+  ctx.strokeStyle = C.fu; ctx.lineWidth = 5; ctx.stroke(SEAM);
+  ctx.restore();
+}
+function person(x, y, s, col, bob){
+  ctx.save(); ctx.translate(x, y + bob); ctx.scale(s, s);
+  ctx.fillStyle = col; rr(-32,-150,64,150,30); ctx.fill();
+  ctx.beginPath(); ctx.arc(0,-185,30,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle = 'rgba(0,0,0,.35)'; ctx.beginPath(); ctx.arc(-9,-190,4,0,7); ctx.arc(9,-190,4,0,7); ctx.fill();
+  ctx.strokeStyle = 'rgba(0,0,0,.35)'; ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(0,-168,10,Math.PI*1.15,Math.PI*1.85); ctx.stroke(); // boca triste
+  ctx.restore();
+}
+function cup(x, y, s, col=C.fu){
+  ctx.save(); ctx.translate(x,y); ctx.scale(s,s);
+  ctx.fillStyle = C.ink; ctx.beginPath(); ctx.moveTo(-40,-50); ctx.lineTo(40,-50); ctx.lineTo(30,50); ctx.lineTo(-30,50); ctx.closePath(); ctx.save(); ctx.translate(5,5); ctx.fill(); ctx.restore();
+  ctx.fillStyle = col; ctx.fill();
+  ctx.fillStyle = C.ink; rr(-46,-66,92,20,8); ctx.fill();
+  ctx.fillStyle = C.white; ctx.font = '34px Shrikhand'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('YA', 0, 6);
+  ctx.restore();
+}
+function steam(x, y, s, t, col='rgba(255,255,255,.8)'){
+  ctx.save(); ctx.strokeStyle = col; ctx.lineWidth = 8*s; ctx.lineCap = 'round';
+  for (let i=-1;i<=1;i++){
+    ctx.beginPath();
+    for (let k=0;k<=20;k++){ const yy = y - k*5*s, xx = x + i*28*s + Math.sin(k*.45 + t*8 + i)*9*s; k ? ctx.lineTo(xx,yy) : ctx.moveTo(xx,yy); }
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+function tumbler(x, y, s, rot, body=C.fu){
+  ctx.save(); ctx.translate(x,y); ctx.rotate(rot); ctx.scale(s,s); ctx.translate(-50,-90);
+  ctx.fillStyle = C.ink; ctx.save(); ctx.translate(5,6);
+  ctx.beginPath(); ctx.moveTo(16,30); ctx.lineTo(84,30); ctx.lineTo(77,170); ctx.lineTo(23,170); ctx.closePath(); ctx.fill(); ctx.restore();
+  rr(18,8,64,18,6); ctx.fill();
+  ctx.fillStyle = C.tu; rr(44,11,12,12,3); ctx.fill();
+  ctx.fillStyle = body; ctx.beginPath(); ctx.moveTo(16,30); ctx.lineTo(84,30); ctx.lineTo(77,170); ctx.lineTo(23,170); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,255,.25)'; ctx.fillRect(26,44,8,110);
+  ctx.fillStyle = C.sol; ctx.fillRect(19,96,62,26);
+  ctx.fillStyle = C.ink; ctx.font = '22px Shrikhand'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('YA', 50, 110);
+  ctx.restore();
+}
+
+// Confeti determinista
+function confetti(seed, t0, t, n, cx, cy, spread=1){
+  const r = rng(seed), dt = t - t0; if (dt < 0) return;
+  const cols = [C.fu, C.na, C.sol, C.tu, C.uva, C.white];
+  for (let i=0;i<n;i++){
+    const a = r()*Math.PI*2, v = (600 + r()*1400)*spread, col = cols[Math.floor(r()*6)], w = 14 + r()*18, spin = (r()-.5)*14;
+    const x = cx + Math.cos(a)*v*dt*.9, y = cy + Math.sin(a)*v*dt - 400*dt + .5*1800*dt*dt;
+    if (y > H + 60) continue;
+    ctx.save(); ctx.translate(x,y); ctx.rotate(spin*dt + a); ctx.fillStyle = col; ctx.fillRect(-w/2,-w/4,w,w/2); ctx.restore();
+  }
+}
+function rain(seed, t, n){
+  const r = rng(seed), cols = [C.sol, C.white, C.na, C.tu, C.uva];
+  for (let i=0;i<n;i++){
+    const x0 = r()*W, sp = 250 + r()*350, off = r()*H*1.4, col = cols[Math.floor(r()*5)], w = 16 + r()*16, sw = r()*6;
+    const y = ((t*sp + off) % (H*1.3)) - 150, x = x0 + Math.sin(t*2 + sw)*40;
+    ctx.save(); ctx.translate(x,y); ctx.rotate(t*sw); ctx.fillStyle = col; ctx.fillRect(-w/2,-w/4,w,w/2); ctx.restore();
+  }
+}
+
+// ---------- escenas ----------
+function scene1(t){ // La fila eterna
+  ctx.fillStyle = '#3B3350'; ctx.fillRect(0,0,W,H);
+  const z = lerp(1.7, .62, eio(P(t, .4, 3.4)));
+  const ground = 1760;
+  ctx.fillStyle = '#2A2440'; ctx.fillRect(0, ground, W, H-ground);
+  ctx.save(); ctx.translate(90, ground); ctx.scale(z, z);
+  // mostrador
+  ctx.fillStyle = '#6B5E7A'; ctx.fillRect(-90,-260,170,260);
+  ctx.fillStyle = '#8A7C99'; ctx.fillRect(-110,-290,210,40);
+  ctx.fillStyle = '#C9BFD6'; ctx.font = '38px JBM'; ctx.textAlign = 'center'; ctx.fillText('CAFÉ', -5, -330);
+  const cols = ['#7D7392','#8E86A1','#6F6685','#9A91AC'];
+  for (let i=0;i<70;i++) person(170 + i*120, 0, 1, cols[i%4], Math.sin(t*5 + i*1.3)*6);
+  ctx.restore();
+  text('7:' + String(40 + Math.floor(P(t,0,3.75)*20)).padStart(2,'0') + ' a. m.', W/2, 250, 120, {font:'JBM', weight:700, color:'#C9BFD6', shadow:false});
+  slam('LA FILA', W/2, 520, 250, .5, t, {color:C.white, rot:-.05});
+  const mins = Math.round(eo(P(t, 1.5, 2.6)) * 20);
+  if (t > 1.5) slam(`${mins} MINUTOS`, W/2, 780, 150, 1.5, t, {color:C.sol, rot:.04, maxW:980});
+  slam('...otra vez', W/2, 960, 80, 2.8, t, {font:'Figtree', weight:800, color:'#C9BFD6', shadow:false});
+}
+
+function scene2(t){ // Café de casa: frío, regado, sabe a lata
+  const lt = t - S[1];
+  ctx.fillStyle = '#2E4057'; ctx.fillRect(0,0,W,H);
+  ctx.fillStyle = '#23324A'; ctx.fillRect(0,1560,W,H-1560);
+  // charco
+  const sp = eo(P(lt, 1.1, 2.4));
+  if (sp > 0){ ctx.fillStyle = '#5A3A22'; ctx.beginPath(); ctx.ellipse(700, 1575, 60 + sp*330, 16 + sp*42, 0, 0, 7); ctx.fill();
+    const r = rng(7); for (let i=0;i<14;i++){ const a = -Math.PI*(.1 + r()*.8), d = sp*(120 + r()*260); ctx.beginPath(); ctx.arc(700 + Math.cos(a)*d*1.4, 1560 + Math.sin(a)*d*.6*(1-sp*.6), 10 + r()*14, 0, 7); ctx.fill(); } }
+  // termo casero que se voltea
+  const wob = lt < 1 ? Math.sin(lt*22)*.06*P(lt,.2,1) : 0;
+  const tip = eback(P(lt, .9, 1.4)) * 1.75;
+  ctx.save(); ctx.translate(420, 1560); ctx.rotate(wob + tip);
+  ctx.fillStyle = '#9AA5B4'; rr(-90,-420,180,420,24); ctx.fill();
+  ctx.fillStyle = '#7C8796'; rr(-100,-470,200,70,18); ctx.fill();
+  ctx.fillStyle = '#B7C0CC'; ctx.fillRect(-60,-380,20,320);
+  ctx.restore();
+  // termómetro
+  const temp = Math.round(lerp(70, 31, eio(P(lt, .3, 3.2))));
+  ctx.fillStyle = C.white; rr(930,1040,70,420,35); ctx.fill();
+  ctx.beginPath(); ctx.arc(965,1480,60,0,7); ctx.fill();
+  const fillH = (temp-20)/60*380;
+  ctx.fillStyle = temp > 55 ? C.na : '#4DA3FF'; rr(948,1440-fillH,34,fillH+40,17); ctx.fill(); ctx.beginPath(); ctx.arc(965,1480,44,0,7); ctx.fill();
+  text(`${temp}°C`, 965, 960, 70, {font:'JBM', weight:700, color: temp > 55 ? C.na : '#9FD0FF', shadow:false});
+  slam('¿Y SI LO TRAIGO', W/2, 200, 90, .05, lt, {font:'Figtree', weight:800, color:'#C8D3E0', shadow:false});
+  slam('DE CASA?', W/2, 300, 90, .05, lt, {font:'Figtree', weight:800, color:'#C8D3E0', shadow:false});
+  slam('FRÍO.', W/2, 500, 190, .6, lt, {color:'#9FD0FF', rot:-.06});
+  slam('REGADO.', W/2, 700, 180, 1.4, lt, {color:C.na, rot:.05});
+  slam('SABE A LATA.', W/2, 890, 140, 2.2, lt, {color:C.white, rot:-.03, maxW:1000});
+}
+
+function scene3(t){ // ¡BASTA! + llegada de la marca
+  const lt = t - S[2];
+  rays(W/2, 900, 18, lt*.6, C.sol, '#FFD95C');
+  if (lt < 1.3){
+    const out = eo(P(lt, 1.0, 1.3));
+    slam('¡BASTA!', W/2, 900 - out*1400, 260, 0, lt, {color:C.fu, stroke:C.white, rot:-.08, maxW:1000});
+  }
+  const d = P(lt, 1.1, 1.875);
+  if (d > 0){ logo(W/2 + 40, lerp(-300, 760, eel(d)), 6.2, P(lt, 1.8, 2.0)); }
+  confetti(11, S[2]+1.875, t, 160, W/2, 760);
+  const word = ['Y','A','K','A','F','É'], colsW = [C.fu,C.fu,C.na,C.na,C.na,C.na];
+  ctx.font = '210px Shrikhand';
+  const widths = word.map(ch => ctx.measureText(ch).width), total = widths.reduce((a,b)=>a+b,0);
+  let x = W/2 - total/2;
+  word.forEach((ch,i) => { const w = widths[i]; slam(ch, x + w/2, 1300, 210, 1.95 + i*.12, lt, {color:colsW[i], stroke:C.white}); x += w; });
+  slam('llegó para acabar con las filas', W/2, 1520, 64, 2.9, lt, {font:'Figtree', weight:800, color:C.ink, shadow:false, maxW:960});
+}
+
+function scene4(t){ // App + algoritmo JUSTO: carrera bus vs café
+  const lt = t - S[3];
+  ctx.fillStyle = C.sol; ctx.fillRect(0,0,W,H);
+  // ticker de la fórmula
+  ctx.save(); ctx.globalAlpha = .22; ctx.fillStyle = C.ink; ctx.font = '700 54px JBM'; ctx.textBaseline = 'middle';
+  const f = 't_inicio = ETA − (prep + cola + ruta) − 1,28·σ    ';
+  const fw = ctx.measureText(f).width;
+  for (let row=0; row<3; row++){ const off = ((lt*260*(row%2?-1:1)) % fw + fw) % fw; for (let k=-1;k<3;k++) ctx.fillText(f, -off + k*fw, 600 + row*80); }
+  ctx.restore();
+  slam('PIDES UNA VEZ.', W/2, 230, 120, .1, lt, {color:C.fu, stroke:C.white, maxW:1000});
+  slam('JUSTO CALCULA.', W/2, 390, 120, .6, lt, {color:C.uva, stroke:C.white, maxW:1000});
+  // pista
+  const x0 = 140, x1 = 880, yA = 960, yB = 1220;
+  ctx.strokeStyle = C.ink; ctx.lineWidth = 10; ctx.setLineDash([30,24]);
+  [yA, yB].forEach(y => { ctx.beginPath(); ctx.moveTo(x0-60, y+70); ctx.lineTo(x1+60, y+70); ctx.stroke(); });
+  ctx.setLineDash([]);
+  // meta YA BOX
+  for (let i=0;i<14;i++){ ctx.fillStyle = i%2 ? C.ink : C.white; ctx.fillRect(x1+80, 840 + i*36, 36, 36); }
+  ctx.fillStyle = C.tu; rr(x1+20, 1360, 170, 110, 18); ctx.fill();
+  text('YA BOX', x1+105, 1415, 40, {color:C.white, shadow:false});
+  // bus (tú)
+  const kb = eio(P(lt, .4, 5.1));
+  const bx = lerp(x0, x1, kb);
+  ctx.save(); ctx.translate(bx, yA);
+  ctx.fillStyle = C.ink; rr(-105,-65,210,130,22); ctx.save(); ctx.translate(6,6); ctx.fill(); ctx.restore();
+  ctx.fillStyle = C.uva; rr(-105,-65,210,130,22); ctx.fill();
+  ctx.fillStyle = '#D9CCFF'; for (let i=0;i<4;i++) { rr(-90 + i*48, -48, 38, 40, 6); ctx.fill(); }
+  ctx.fillStyle = C.ink; ctx.beginPath(); ctx.arc(-60,68,22,0,7); ctx.arc(60,68,22,0,7); ctx.fill();
+  ctx.restore();
+  text('TÚ', bx, yA - 110, 54, {font:'Figtree', weight:800, color:C.ink, shadow:false});
+  // café: espera y luego acelera
+  const kc = eo(P(lt, 2.0, 4.1));
+  const cx = lerp(x0, x1, kc);
+  if (kc > 0 && kc < 1){ ctx.strokeStyle = C.fu; ctx.lineWidth = 10; ctx.lineCap = 'round'; for (let i=0;i<3;i++){ ctx.beginPath(); ctx.moveTo(cx-90-i*10, yB-30+i*30); ctx.lineTo(cx-200-i*30, yB-30+i*30); ctx.stroke(); } }
+  cup(cx, yB, 1.35);
+  steam(cx, yB-100, 1, t);
+  text('TU CAFÉ', cx, yB + 140, 50, {font:'Figtree', weight:800, color:C.ink, shadow:false});
+  if (lt > .3 && lt < 2.0){ const dots = '.'.repeat(1 + Math.floor(lt*4)%3); text('JUSTO espera el minuto exacto' + dots, W/2, 1560, 46, {font:'JBM', weight:700, color:C.ink, shadow:false, align:'center'}); }
+  if (lt > 4.1){ slam('¡LISTO!', 520, (yA+yB)/2 + 20, 100, 4.1, lt, {color:C.tu, stroke:C.white, rot:.1}); }
+  slam('TU CAFÉ LLEGA', W/2, 1640, 110, 4.4, lt, {color:C.white, stroke:C.fu, maxW:1000});
+  slam('ANTES QUE TÚ', W/2, 1780, 130, 4.8, lt, {color:C.fu, stroke:C.white, maxW:1000});
+}
+
+function scene5(t){ // TermoYA: voltéalo
+  const lt = t - S[4];
+  rays(W/2, 1000, 24, -lt*.8, C.tu, '#13B5A8');
+  slam('¡VOLTÉALO!', W/2, 300, 170, .1, lt, {color:C.sol, stroke:C.ink, rot:-.05, maxW:1000});
+  const spin = eio(P(lt, .45, 2.2)) * Math.PI * 6;
+  const hop = Math.sin(P(lt, .45, 2.2)*Math.PI) * 180;
+  // arcos de movimiento
+  if (lt > .5 && lt < 2.2){ ctx.save(); ctx.strokeStyle = 'rgba(255,255,255,.6)'; ctx.lineWidth = 16; ctx.lineCap = 'round';
+    for (let i=0;i<3;i++){ ctx.beginPath(); ctx.arc(W/2, 1000 - hop, 420 + i*50, spin - .9 - i*.2, spin - .2 - i*.2); ctx.stroke(); } ctx.restore(); }
+  tumbler(W/2, 1000 - hop, 3.8, spin);
+  if (lt > 2.3){
+    const k = eback(P(lt, 2.3, 2.6));
+    ctx.save(); ctx.translate(W/2, 1590); ctx.rotate(-.08); ctx.scale(k, k);
+    ctx.fillStyle = C.ink; rr(-370,-100,760,210,26); ctx.fill();
+    ctx.fillStyle = C.white; rr(-380,-110,760,210,26); ctx.fill();
+    ctx.restore();
+    text('0 GOTAS', W/2, 1590, 170, {color:C.fu, shadow:false, rot:-.08, scale:k});
+  }
+  slam('cierre magnético · 65 °C todo el día', W/2, 1800, 50, 2.9, lt, {font:'Figtree', weight:800, color:C.white, shadow:false, maxW:1000});
+}
+
+function scene6(t){ // YA Box
+  const lt = t - S[5];
+  ctx.fillStyle = C.ink; ctx.fillRect(0,0,W,H);
+  slam('ABRES.', 90, 230, 130, .1, lt, {color:C.sol, align:'left', shadow:false});
+  slam('TOMAS.', 400, 360, 130, .45, lt, {color:C.na, align:'left', shadow:false, rot:.03});
+  slam('TE VAS.', 120, 490, 130, .8, lt, {color:C.fu, align:'left', shadow:false, rot:-.03});
+  const cw = 140, g = 16, gx = (W - (6*cw + 5*g))/2, gy = 640, mine = 15;
+  const open = P(lt, 2.6, 2.9);
+  for (let i=0;i<24;i++){
+    const r = Math.floor(i/6), c = i%6, x = gx + c*(cw+g), y = gy + r*(cw+g);
+    const busy = (i*7)%5 === 1;
+    let col = busy ? C.na : '#4A2A33';
+    if (i === mine){ const pulse = 1 + Math.sin(lt*10)*.06*(open<1?1:0); col = open > 0 ? C.white : C.fu;
+      ctx.save(); ctx.translate(x+cw/2, y+cw/2); ctx.scale(pulse,pulse); ctx.fillStyle = col; rr(-cw/2,-cw/2,cw,cw,16); ctx.fill();
+      if (open > 0){ ctx.globalAlpha = 1-open; ctx.fillStyle = C.fu; rr(-cw/2,-cw/2,cw*(1-open),cw,16); ctx.fill(); }
+      ctx.restore();
+      text(open > 0 ? '' : 'C4', x+cw/2, y+cw/2, 40, {font:'JBM', weight:700, color:C.white, shadow:false});
+      continue; }
+    ctx.fillStyle = col; rr(x,y,cw,cw,16); ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,.25)'; ctx.beginPath(); ctx.arc(x+cw-24, y+cw/2, 7, 0, 7); ctx.fill();
+  }
+  // código
+  ctx.fillStyle = '#4A2A33'; rr(160, 1310, 760, 170, 26); ctx.fill();
+  const digits = '8762';
+  for (let i=0;i<4;i++){ if (lt > 1.4 + i*.3) slam(digits[i], 280 + i*173, 1395, 120, 1.4 + i*.3, lt, {font:'JBM', weight:700, color:C.white, shadow:false}); }
+  // el café sale disparado del casillero
+  if (open > 0){
+    const r = Math.floor(mine/6), c = mine%6, sx = gx + c*(cw+g) + cw/2, sy = gy + r*(cw+g) + cw/2;
+    const k = eback(P(lt, 2.7, 3.2));
+    const x = lerp(sx, W/2, k), y = lerp(sy, 1680, k);
+    cup(x, y, lerp(.6, 1.7, k));
+    steam(x, y - 150, 1.3, t);
+    confetti(23, S[5]+2.75, t, 90, W/2, 1680, .8);
+    slam('68 °C · 0 min de fila', W/2, 1860, 54, 3.1, lt, {font:'JBM', weight:700, color:C.sol, shadow:false});
+  }
+}
+
+function scene7(t){ // cierre
+  const lt = t - S[6];
+  rays(W/2, 720, 20, lt*.35, C.fu, '#F2408A');
+  rain(41, lt, 70);
+  const pop = eback(P(lt, 0, .45));
+  logo(W/2 + 40, 700 + Math.sin(lt*3)*18, 5.4*pop);
+  ctx.font = '220px Shrikhand';
+  const wYA = ctx.measureText('YA').width, wK = ctx.measureText('KAFÉ').width, x0 = W/2 - (wYA+wK)/2;
+  if (lt > .3){ const k = eback(P(lt,.3,.7)); text('YA', x0 + wYA/2, 1100, 220, {color:C.sol, scale:k}); text('KAFÉ', x0 + wYA + wK/2, 1100, 220, {color:C.white, scale:k}); }
+  slam('Cero filas. Siempre caliente.', W/2, 1260, 64, 1.0, lt, {font:'Figtree', weight:800, color:C.white, shadow:false, maxW:980});
+  const pills = [['YA App', C.sol, C.ink], ['TermoYA', C.na, C.white], ['YA Box', C.tu, C.white]];
+  pills.forEach(([label, bg, fg], i) => {
+    const k = eback(P(lt, 1.7 + i*.18, 2.05 + i*.18)); if (k <= 0) return;
+    const x = 210 + i*330, y = 1420;
+    ctx.save(); ctx.translate(x,y); ctx.scale(k,k); ctx.fillStyle = C.ink; rr(-145,-50,300,108,54); ctx.fill(); ctx.fillStyle = bg; rr(-150,-56,300,108,54); ctx.fill(); ctx.restore();
+    text(label, x, y-2, 50, {font:'Figtree', weight:800, color:fg, shadow:false, scale:k});
+  });
+  if (lt > 2.8){
+    const k = eback(P(lt, 2.8, 3.2)) * (1 + Math.sin(lt*9)*.03);
+    ctx.save(); ctx.translate(W/2, 1640); ctx.scale(k,k);
+    ctx.fillStyle = C.ink; rr(-400,-78,812,168,84); ctx.fill(); ctx.fillStyle = C.white; rr(-406,-84,812,168,84); ctx.fill(); ctx.restore();
+    text('DESCARGA YA APP', W/2, 1640, 76, {color:C.fu, shadow:false, scale:k, maxW:720});
+  }
+  slam('Tu café llega antes que tú.', W/2, 1830, 48, 3.6, lt, {font:'Figtree', weight:800, color:C.white, shadow:false});
+}
+
+const SCENES = [scene1, scene2, scene3, scene4, scene5, scene6, scene7];
+const SHAKES = [[.5,.25,18],[1.5,.25,14],[4.35,.25,16],[5.15,.3,22],[5.95,.25,16],[7.5,.6,34],[9.375,.35,26],[16.875+2.3,.3,20],[20.625+2.6,.3,18],[24.375,.3,20]];
+
+function render(t){
+  ctx.setTransform(1,0,0,1,0,0);
+  let i = S.findIndex((s,k) => t >= s && t < S[k+1]); if (i < 0) i = SCENES.length - 1;
+  let sx = 0, sy = 0;
+  for (const [t0, d, amp] of SHAKES){ const k = P(t, t0, t0+d); if (k > 0 && k < 1){ const a = amp*(1-k); sx += Math.sin(t*93)*a; sy += Math.cos(t*71)*a; } }
+  ctx.save(); ctx.translate(sx, sy); ctx.fillStyle = '#000'; ctx.fillRect(-60,-60,W+120,H+120);
+  SCENES[i](t);
+  ctx.restore();
+  // destello en cada corte
+  for (let k=1;k<S.length-1;k++){ const f = 1 - P(t, S[k], S[k]+.16); if (t >= S[k] && f > 0){ ctx.fillStyle = `rgba(255,255,255,${f*.85})`; ctx.fillRect(0,0,W,H); } }
+  // fundido final
+  const fo = P(t, 29.5, 30); if (fo > 0){ ctx.fillStyle = `rgba(43,15,20,${fo})`; ctx.fillRect(0,0,W,H); }
+}
+window.render = render;
+window.ready = Promise.all([document.fonts.load('100px Shrikhand'), document.fonts.load('800 100px Figtree'), document.fonts.load('700 100px JBM')]).then(() => true);
+render(9.8);
+</script>
