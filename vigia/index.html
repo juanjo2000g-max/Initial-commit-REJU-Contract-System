@@ -1,0 +1,429 @@
+<title>Vigía Moto Systems</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;700;800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: una sola columna de lectura (~68ch) con bandas a ancho completo para marca y algoritmo; señalética de carretera como lenguaje visual. */
+:root {
+  --bg: #F2F3F5;
+  --surface: #FFFFFF;
+  --ink: #15171C;
+  --muted: #5A606B;
+  --line: #D9DCE2;
+  --signal: #E6480F;
+  --signal-soft: #FFE7DC;
+  --band: #15171C;
+  --band-ink: #F4F5F7;
+  --band-muted: #A3A9B4;
+  --ok: #1D7A46;
+  --warn: #A86500;
+  --crit: #C4221B;
+  --f-display: "Saira Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
+  --f-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1114; --surface: #181B20; --ink: #ECEEF2; --muted: #9AA1AD; --line: #2A2F37;
+    --signal: #FF6A2E; --signal-soft: #3A2016; --band: #07080A; --band-ink: #F4F5F7; --band-muted: #9AA1AD;
+    --ok: #4CC382; --warn: #E6A23C; --crit: #FF6B63; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1114; --surface: #181B20; --ink: #ECEEF2; --muted: #9AA1AD; --line: #2A2F37;
+  --signal: #FF6A2E; --signal-soft: #3A2016; --band: #07080A; --band-ink: #F4F5F7; --band-muted: #9AA1AD;
+  --ok: #4CC382; --warn: #E6A23C; --crit: #FF6B63; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 1rem; line-height: 1.6; }
+.wrap { max-width: 68rem; margin: 0 auto; padding-inline: max(16px, 4vw); }
+section { padding-block: 3.5rem; border-top: 1px solid var(--line); }
+h1, h2, h3 { font-family: var(--f-display); line-height: 1.05; text-wrap: balance; margin: 0; }
+h2 { font-size: clamp(2rem, 4.5vw, 2.9rem); font-weight: 800; text-transform: uppercase; letter-spacing: 0.01em; }
+h3 { font-size: 1.45rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; }
+p { margin: 0; max-width: 66ch; }
+.eyebrow { font-family: var(--f-mono); font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--signal); }
+.lead { font-size: 1.15rem; color: var(--muted); }
+.stack { display: flex; flex-direction: column; gap: 1rem; }
+.stack-lg { display: flex; flex-direction: column; gap: 2rem; }
+.mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+code { font-family: var(--f-mono); font-size: 0.92em; }
+
+/* Hero */
+.hero { background: var(--band); color: var(--band-ink); padding-block: 3.5rem 3rem; border: 0; }
+.hero-grid { display: grid; grid-template-columns: auto 1fr; gap: 2rem; align-items: center; }
+.hero svg { width: clamp(96px, 16vw, 150px); height: auto; display: block; }
+.brand { font-size: clamp(3.4rem, 11vw, 7rem); font-weight: 800; letter-spacing: 0.02em; line-height: 0.9; }
+.brand small { display: block; font-size: 0.24em; letter-spacing: 0.32em; color: var(--band-muted); font-weight: 500; margin-top: 0.5rem; }
+.tagline { font-family: var(--f-display); font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 700; color: var(--signal); text-transform: uppercase; margin-top: 2rem; }
+.hero .lead { color: var(--band-muted); margin-top: 0.75rem; }
+.stamp { display: inline-block; margin-top: 1.5rem; font-family: var(--f-mono); font-size: 0.75rem; letter-spacing: 0.1em; border: 1px solid var(--band-muted); color: var(--band-muted); padding: 0.3rem 0.6rem; }
+@media (max-width: 560px) { .hero-grid { grid-template-columns: 1fr; } }
+
+/* Grids */
+.grid { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); }
+.grid > * { min-width: 0; }
+.card { background: var(--surface); border: 1px solid var(--line); padding: 1.4rem; display: flex; flex-direction: column; gap: 0.6rem; }
+.card .price { font-family: var(--f-display); font-size: 2.4rem; font-weight: 800; line-height: 1; }
+.card .price span { font-size: 0.45em; color: var(--muted); font-weight: 500; }
+.card ul { margin: 0; padding-left: 1.1rem; color: var(--muted); }
+.card.hl { border-color: var(--signal); box-shadow: inset 0 3px 0 var(--signal); }
+
+.fact { display: flex; flex-direction: column; gap: 0.25rem; }
+.fact b { font-family: var(--f-display); font-size: 2.2rem; line-height: 1; color: var(--signal); }
+.fact span { color: var(--muted); font-size: 0.95rem; }
+
+/* Flujo de comunicación */
+.flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1.2fr auto 1fr; align-items: center; gap: 0.6rem; overflow-x: auto; padding-bottom: 0.5rem; }
+.node { background: var(--surface); border: 1.5px solid var(--ink); padding: 0.8rem; min-width: 8.5rem; }
+.node b { font-family: var(--f-display); text-transform: uppercase; font-size: 1.1rem; display: block; }
+.node span { font-size: 0.82rem; color: var(--muted); }
+.node.sig { border-color: var(--signal); }
+.arrow { font-family: var(--f-mono); color: var(--signal); font-size: 0.72rem; text-align: center; white-space: nowrap; }
+.arrow::after { content: "⟶"; display: block; font-size: 1.4rem; line-height: 1; }
+.chan { display: flex; flex-direction: column; gap: 0.4rem; }
+.chan .node { padding: 0.5rem 0.7rem; }
+@media (max-width: 760px) {
+  .flow { grid-template-columns: 1fr; }
+  .arrow::after { content: "↓"; }
+}
+
+/* Banda del algoritmo */
+.algo { background: var(--band); color: var(--band-ink); border: 0; }
+.algo .lead, .algo p { color: var(--band-muted); }
+.algo h3 { color: var(--band-ink); }
+.conf { font-family: var(--f-mono); font-size: 0.75rem; letter-spacing: 0.14em; color: var(--band); background: var(--signal); padding: 0.25rem 0.6rem; align-self: flex-start; }
+.phases { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 1px; background: #2E333C; border: 1px solid #2E333C; }
+.phase { background: var(--band); padding: 1.3rem; display: flex; flex-direction: column; gap: 0.5rem; min-width: 0; }
+.phase .big { font-family: var(--f-display); font-size: 3.2rem; font-weight: 800; color: var(--signal); line-height: 0.9; }
+.phase ul { margin: 0; padding-left: 1.1rem; color: var(--band-muted); font-size: 0.93rem; }
+.formula { font-family: var(--f-mono); font-size: 0.88rem; line-height: 1.9; background: #0B0C0F; color: #E9EBEF; border: 1px solid #2E333C; padding: 1.2rem; overflow-x: auto; white-space: pre; }
+.formula .k { color: #FF8A5C; }
+.formula .c { color: #7D8491; }
+
+/* Tablas */
+.tbl-wrap { overflow-x: auto; border: 1px solid var(--line); background: var(--surface); }
+.algo .tbl-wrap { border-color: #2E333C; background: #0B0C0F; }
+table { border-collapse: collapse; width: 100%; font-size: 0.92rem; }
+th, td { text-align: left; padding: 0.65rem 0.8rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+.algo th, .algo td { border-color: #2E333C; color: var(--band-ink); }
+th { font-family: var(--f-mono); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+.algo th { color: var(--band-muted); }
+td.num { font-family: var(--f-mono); font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+.lvl { display: inline-block; font-family: var(--f-mono); font-size: 0.72rem; padding: 0.15rem 0.45rem; border: 1px solid currentColor; white-space: nowrap; }
+.l0 { color: var(--band-muted); } .l1 { color: #6AA7FF; } .l2 { color: #E6C04C; } .l3 { color: #FF8A5C; } .l4 { color: #FF6B63; font-weight: 600; }
+
+/* Pasos de distribución (es una secuencia real) */
+.steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.steps li { display: grid; grid-template-columns: 5.5rem 1fr; gap: 1rem; padding-block: 1.1rem; border-top: 1px solid var(--line); }
+.steps li:first-child { border-top: 0; }
+.steps .when { font-family: var(--f-mono); font-size: 0.78rem; color: var(--signal); padding-top: 0.25rem; }
+.steps li > div { min-width: 0; display: flex; flex-direction: column; gap: 0.3rem; }
+.steps p { color: var(--muted); }
+@media (max-width: 480px) { .steps li { grid-template-columns: 1fr; gap: 0.3rem; } }
+
+/* Checklist legal */
+.legal { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.1rem; }
+.legal li { display: grid; grid-template-columns: 1.4rem 1fr; gap: 0.6rem; padding-block: 0.7rem; border-bottom: 1px dashed var(--line); }
+.legal li::before { content: ""; width: 0.9rem; height: 0.9rem; border: 2px solid var(--signal); margin-top: 0.3rem; }
+.legal b { font-weight: 600; }
+.legal span { color: var(--muted); }
+
+.swatches { display: flex; flex-wrap: wrap; gap: 0.8rem; }
+.sw { display: flex; align-items: center; gap: 0.6rem; font-family: var(--f-mono); font-size: 0.8rem; }
+.sw i { width: 2.4rem; height: 2.4rem; border: 1px solid var(--line); display: block; }
+.note { font-size: 0.85rem; color: var(--muted); border-left: 3px solid var(--signal); padding-left: 0.9rem; }
+footer { padding-block: 2.5rem; color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--line); }
+</style>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <svg viewBox="0 0 120 120" role="img" aria-label="Logotipo de Vigía">
+        <rect width="120" height="120" rx="26" fill="#15171C" stroke="#3A3F48" stroke-width="2"/>
+        <path d="M26 44 L60 100 L94 44" fill="none" stroke="#F4F5F7" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="60" cy="40" r="8" fill="#FF5A1F"/>
+        <path d="M46 30 A18 18 0 0 1 74 30" fill="none" stroke="#FF5A1F" stroke-width="5" stroke-linecap="round"/>
+        <path d="M38 22 A30 30 0 0 1 82 22" fill="none" stroke="#FF5A1F" stroke-width="5" stroke-linecap="round" opacity="0.55"/>
+      </svg>
+      <h1 class="brand">VIGÍA<small>MOTO SYSTEMS, S.L.</small></h1>
+    </div>
+    <p class="tagline">Si caes, alguien lo sabe.</p>
+    <p class="lead">Detector de accidentes para motoristas que funciona sin móvil y sin cobertura. Envía la alerta por satélite y por radio LoRa, y sabe distinguir entre una moto que se cae en el garaje y un piloto que necesita ayuda.</p>
+    <span class="stamp">PLAN DE EMPRESA · v1 · SEPTIEMBRE 2026 · CONFIDENCIAL</span>
+  </div>
+</header>
+
+<main>
+<section>
+  <div class="wrap stack-lg">
+    <div class="stack">
+      <span class="eyebrow">El hueco en el mercado</span>
+      <h2>El coche llama solo al 112. La moto, no.</h2>
+      <p class="lead">Desde 2018 todos los coches nuevos de la UE llevan eCall: si chocan, avisan solos a emergencias. Las motos quedaron fuera, aunque el motorista es quien más lo necesita, porque suele ir solo, por carreteras secundarias y a veces termina fuera de la vista, detrás de un guardarraíl.</p>
+    </div>
+    <div class="grid">
+      <div class="fact"><b>Sin cobertura</b><span>Las apps de detección de caídas dependen del móvil. En la montaña, justo donde están las mejores carreteras, no hay señal.</span></div>
+      <div class="fact"><b>Falsas alarmas</b><span>Si el sistema llama por cada susto, el usuario lo apaga. Un detector apagado no salva a nadie.</span></div>
+      <div class="fact"><b>El móvil vuela</b><span>En una caída el teléfono puede acabar roto o a 20 metros del piloto.</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap stack-lg">
+    <div class="stack">
+      <span class="eyebrow">El producto</span>
+      <h2>Dos piezas y tres caminos para pedir ayuda</h2>
+      <p class="lead">Vigía no depende de nada que el motorista pueda perder. La unidad va atornillada a la moto con batería propia, y el clip del casco sabe dónde está el piloto.</p>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <span class="eyebrow">Hardware 1</span>
+        <h3>Vigía Base</h3>
+        <p>Caja estanca IP67 bajo el asiento. Se conecta a 12 V y tiene batería interna para 48 h.</p>
+        <ul>
+          <li>IMU de 6 ejes a 100 Hz y GNSS multibanda</li>
+          <li>Módem satélite NB-IoT NTN (estándar 3GPP)</li>
+          <li>Radio LoRa 868 MHz y UWB para medir la distancia al casco</li>
+          <li>Instalación en 15 minutos</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="eyebrow">Hardware 2</span>
+        <h3>Vigía Pulso</h3>
+        <p>Clip de 18 g que se pega al casco. Tiene un botón para cancelar y vibra para avisar.</p>
+        <ul>
+          <li>Mide el golpe en la cabeza</li>
+          <li>Sabe si el piloto se mueve después de la caída</li>
+          <li>Mide la distancia a la moto por UWB</li>
+          <li>Batería de 3 meses, carga USB-C</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="eyebrow">Servicio</span>
+        <h3>Centro Vigía 24 h</h3>
+        <p>Una central receptora de alarmas concertada recibe la alerta, llama al piloto y, si no responde, avisa al 112 con la posición exacta y la ficha médica.</p>
+      </div>
+    </div>
+
+    <div class="stack">
+      <h3>Cómo viaja una alerta</h3>
+      <div class="flow" role="img" aria-label="Pulso envía datos a Base; Base alerta por LoRa, satélite o móvil al Centro Vigía, que avisa al 112 y a los contactos">
+        <div class="node"><b>Pulso</b><span>casco</span></div>
+        <div class="arrow">UWB</div>
+        <div class="node sig"><b>Base</b><span>moto · TRÍADA</span></div>
+        <div class="arrow">alerta</div>
+        <div class="chan">
+          <div class="node"><b>LoRa</b><span>motoristas Vigía cercanos, sin cobertura</span></div>
+          <div class="node sig"><b>Satélite</b><span>funciona en cualquier punto</span></div>
+          <div class="node"><b>4G</b><span>si hay cobertura, más rápido</span></div>
+        </div>
+        <div class="arrow">24 h</div>
+        <div class="node"><b>Centro Vigía</b><span>→ 112 · contactos</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="algo">
+  <div class="wrap stack-lg">
+    <div class="stack">
+      <span class="conf">SECRETO EMPRESARIAL · LEY 1/2019</span>
+      <span class="eyebrow">El algoritmo</span>
+      <h2>TRÍADA: antes, durante y después</h2>
+      <p class="lead">La competencia mira solo el golpe, y un golpe fuerte puede ser un bache. TRÍADA juzga el evento en tres momentos y exige que los tres cuenten la misma historia antes de llamar a nadie.</p>
+    </div>
+    <div class="phases">
+      <div class="phase">
+        <span class="big">A</span>
+        <h3>Antes · 10 s</h3>
+        <p>¿Se estaba circulando? ¿El piloto iba encima?</p>
+        <ul><li>Velocidad media de los 3 s previos</li><li>Distancia casco-moto por UWB. Sin casco cerca y a 0 km/h, es imposible que sea un accidente de tráfico.</li></ul>
+      </div>
+      <div class="phase">
+        <span class="big">B</span>
+        <h3>Durante · ±2 s</h3>
+        <p>¿Cómo cayó la moto?</p>
+        <ul><li>Pico de aceleración y de giro</li><li>Tiempo de vuelco: una moto aparcada se tumba despacio sobre la pata (~0,8 s)</li><li><b>Firma de deslizamiento</b>: vibración de 15-45 Hz del metal arrastrándose por el asfalto</li></ul>
+      </div>
+      <div class="phase">
+        <span class="big">C</span>
+        <h3>Después · 60 s</h3>
+        <p>¿Dónde está el piloto y cómo está?</p>
+        <ul><li>Separación piloto-moto (a más metros, más energía)</li><li>Golpe en el casco</li><li>Actividad: ¿camina, se mueve o está quieto?</li><li>¿La moto sigue tumbada?</li></ul>
+      </div>
+    </div>
+
+    <div class="stack">
+      <h3>El índice TRÍADA</h3>
+      <div class="formula"><span class="c">// Puerta A: sin piloto encima y parada → CAÍDA_APARCADA. Nunca llama al 112.</span>
+<span class="k">z</span> = β₀ + β₁·ln(1 + v/10) + β₂·a_pico/4 + β₃·ω_pico/250 + β₄·E_desliz
+    + β₅·d_sep/4 + β₆·g_casco/15 − β₇·actividad − β₈·[vuelco lento ∧ v &lt; 5]
+
+<span class="k">S</span> = 1 / (1 + e<sup>−z</sup>)          <span class="c">// probabilidad de accidente en marcha, de 0 a 1</span>
+
+<span class="c">// Los pesos β calibrados con caídas reales son el secreto. Nunca salen del firmware cifrado.</span></div>
+    </div>
+
+    <div class="stack">
+      <h3>Cinco niveles, cinco respuestas</h3>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Nivel</th><th>Qué ha pasado</th><th>Qué hace Vigía</th></tr></thead>
+          <tbody>
+            <tr><td><span class="lvl l0">0 · NADA</span></td><td>Bache, bordillo o un golpe al aparcar</td><td>Solo lo registra</td></tr>
+            <tr><td><span class="lvl l1">1 · APARCADA</span></td><td>La moto se cae sola sin el piloto</td><td>Avisa al dueño en la app: «Tu moto está en el suelo». También sirve de antirrobo.</td></tr>
+            <tr><td><span class="lvl l2">2 · LEVE</span></td><td>Caída parado o a paso de peatón</td><td>Vibra el casco: «¿Estás bien?». Se cancela solo al levantar la moto.</td></tr>
+            <tr><td><span class="lvl l3">3 · ACCIDENTE</span></td><td>Caída en marcha y el piloto se mueve</td><td>Cuenta atrás de 60 s. Después alerta al grupo por LoRa y a los contactos por satélite.</td></tr>
+            <tr><td><span class="lvl l4">4 · GRAVE</span></td><td>Caída en marcha y el piloto no se mueve</td><td>Cuenta atrás de 30 s. Después avisa al Centro Vigía y al 112 con GPS y ficha médica.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="stack">
+      <h3>Prototipo funcionando</h3>
+      <p>El prototipo del algoritmo está en Python dentro del repositorio (<code>vigia/algoritmo/</code>). Se ha probado con señales simuladas de cinco escenarios, 20 variaciones de ruido cada uno, y los 100 casos se clasificaron bien. Estos son los rasgos que midió:</p>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Escenario simulado</th><th>km/h</th><th>Golpe g</th><th>Giro º/s</th><th>Desliz.</th><th>Separ. m</th><th>Casco g</th><th>Índice S</th><th>Resultado</th></tr></thead>
+          <tbody>
+            <tr><td>Moto aparcada se cae</td><td class="num">0</td><td class="num">3,2</td><td class="num">124</td><td class="num">0,35</td><td class="num">sin casco</td><td class="num">1,0</td><td class="num">n/a</td><td><span class="lvl l1">APARCADA</span></td></tr>
+            <tr><td>Bache fuerte a 80 km/h</td><td class="num">80</td><td class="num">5,2</td><td class="num">63</td><td class="num">1,20</td><td class="num">0,5</td><td class="num">2,2</td><td class="num">n/a</td><td><span class="lvl l0">NADA</span></td></tr>
+            <tr><td>Se le va la moto en un semáforo</td><td class="num">2</td><td class="num">2,8</td><td class="num">114</td><td class="num">0,22</td><td class="num">1,2</td><td class="num">1,4</td><td class="num">0,00</td><td><span class="lvl l2">LEVE</span></td></tr>
+            <tr><td>Caída en curva, se levanta</td><td class="num">70</td><td class="num">7,3</td><td class="num">483</td><td class="num">3,78</td><td class="num">15</td><td class="num">25</td><td class="num">1,00</td><td><span class="lvl l3">ACCIDENTE</span></td></tr>
+            <tr><td>Choque con coche, inmóvil</td><td class="num">90</td><td class="num">14,2</td><td class="num">703</td><td class="num">14,96</td><td class="num">25</td><td class="num">80</td><td class="num">1,00</td><td><span class="lvl l4">GRAVE</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note" style="color:var(--band-muted)">Son datos sintéticos, no caídas reales. Sirven para demostrar la lógica. El siguiente paso es grabar caídas controladas en circuito con motos de desguace y dummies para calibrar los pesos.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap stack-lg">
+    <div class="stack">
+      <span class="eyebrow">Modelo de negocio</span>
+      <h2>Pagas el equipo una vez y el satélite si lo quieres</h2>
+      <p class="lead">El plan gratuito ya protege en grupo. El satélite es la suscripción que da ingresos recurrentes.</p>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <span class="eyebrow">Kit</span>
+        <h3>Base + Pulso</h3>
+        <div class="price">279 €<span> una vez</span></div>
+        <ul><li>Incluye el plan Grupo para siempre</li><li>Coste estimado de fabricación: unos 85 €</li></ul>
+      </div>
+      <div class="card">
+        <span class="eyebrow">Gratis</span>
+        <h3>Plan Grupo</h3>
+        <div class="price">0 €</div>
+        <ul><li>Alertas por LoRa a otros Vigía cercanos</li><li>Por 4G a tus contactos, si hay cobertura</li><li>Aviso de caída en aparcado</li></ul>
+      </div>
+      <div class="card hl">
+        <span class="eyebrow">Recomendado</span>
+        <h3>Plan Satélite</h3>
+        <div class="price">6,90 €<span> / mes</span></div>
+        <ul><li>Alerta por satélite en cualquier punto</li><li>Centro Vigía 24 h y aviso al 112</li><li>69 € al año si pagas anual</li></ul>
+      </div>
+      <div class="card">
+        <span class="eyebrow">Empresas</span>
+        <h3>Plan Flota</h3>
+        <div class="price">9 €<span> / moto / mes</span></div>
+        <ul><li>Alquiler de motos y reparto</li><li>Panel de flota y aviso de robo</li></ul>
+      </div>
+    </div>
+    <p class="note">Precios y costes estimados para arrancar. Hay que validarlos con presupuestos de fabricante y del operador satelital.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap stack-lg">
+    <div class="stack">
+      <span class="eyebrow">Distribución</span>
+      <h2>De la comunidad motera al fabricante</h2>
+      <p class="lead">Se empieza donde están los motoristas y se termina dentro de la moto de fábrica. Cada fase financia la siguiente.</p>
+    </div>
+    <ol class="steps">
+      <li><span class="when">MES 0-6</span><div><h3>Preventa y comunidad</h3><p>Campaña de micromecenazgo con vídeo de caídas reales en circuito. Embajadores en moteros de YouTube e Instagram, clubs y concentraciones invernales. Venta directa en vigia-moto.com.</p></div></li>
+      <li><span class="when">MES 6-18</span><div><h3>Talleres y concesionarios</h3><p>Red de instaladores con un 30 % de margen y formación de una hora. El taller lo ofrece al vender la moto o al pasar la revisión, con instalación incluida.</p></div></li>
+      <li><span class="when">MES 12-24</span><div><h3>Aseguradoras</h3><p>Acuerdos con aseguradoras de moto para descontar parte de la prima al cliente con Vigía. La aseguradora paga parte del kit porque le sale más barato que un siniestro con retraso en el rescate.</p></div></li>
+      <li><span class="when">MES 12-24</span><div><h3>Flotas</h3><p>Empresas de alquiler de motos para turismo (clientes que no conocen las carreteras) y empresas de reparto. Es una venta B2B con contrato anual.</p></div></li>
+      <li><span class="when">AÑO 3+</span><div><h3>Licencia TRÍADA</h3><p>Se licencia el algoritmo a fabricantes de motos y de cascos, que ya llevan IMU. Vigía cobra un royalty por unidad sin fabricar nada. Aquí es donde el secreto vale más.</p></div></li>
+    </ol>
+  </div>
+</section>
+
+<section>
+  <div class="wrap stack-lg">
+    <div class="stack">
+      <span class="eyebrow">Con todas de la ley</span>
+      <h2>Lo que hace falta para operar en España</h2>
+    </div>
+    <div class="grid">
+      <div class="stack">
+        <h3>Sociedad y marca</h3>
+        <ul class="legal">
+          <li><div><b>Certificación negativa de nombre</b> <span>en el Registro Mercantil Central para «Vigía Moto Systems, S.L.».</span></div></li>
+          <li><div><b>Sociedad Limitada</b> <span>desde 1 € de capital (Ley 18/2022). Se recomiendan 3.000 € para evitar las restricciones de reservas y la responsabilidad solidaria.</span></div></li>
+          <li><div><b>Marca en la OEPM y en la EUIPO</b> <span>en las clases 9 (aparatos), 38 (telecomunicaciones) y 45 (seguridad personal). Antes hay que comprobar que no existe una marca parecida.</span></div></li>
+          <li><div><b>Dominio y redes</b> <span>con el mismo nombre, reservados el mismo día.</span></div></li>
+        </ul>
+      </div>
+      <div class="stack">
+        <h3>Producto</h3>
+        <ul class="legal">
+          <li><div><b>Marcado CE</b> <span>por la Directiva de equipos radioeléctricos 2014/53/UE, que incluye seguridad y compatibilidad electromagnética.</span></div></li>
+          <li><div><b>LoRa en 868 MHz</b> <span>según ETSI EN 300 220, respetando el ciclo de trabajo del 1 %.</span></div></li>
+          <li><div><b>Homologación de accesorio para vehículo</b> <span>(Reglamento CEPE R10, compatibilidad electromagnética) para instalarlo sin problemas en la ITV.</span></div></li>
+          <li><div><b>Responsabilidad por producto</b> <span>con seguro de RC. La nueva Directiva UE 2024/2853 incluye el software como producto.</span></div></li>
+        </ul>
+      </div>
+      <div class="stack">
+        <h3>Datos y secreto</h3>
+        <ul class="legal">
+          <li><div><b>RGPD</b> <span>La ubicación y la ficha médica son datos sensibles. Hacen falta consentimiento explícito, cifrado y una evaluación de impacto.</span></div></li>
+          <li><div><b>Contrato con central de alarmas</b> <span>habilitada. Vigía no sustituye al 112, así que debe decirse claramente en las condiciones.</span></div></li>
+          <li><div><b>TRÍADA como secreto, no como patente</b> <span>Una patente se publica y caduca en 20 años. El secreto dura mientras se proteja con NDA, acceso restringido y firmware cifrado con arranque seguro.</span></div></li>
+          <li><div><b>Patente solo del hardware</b> <span>por ejemplo, el método de medir la separación piloto-moto con UWB, si un abogado de patentes lo ve novedoso.</span></div></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap stack-lg">
+    <div class="stack">
+      <span class="eyebrow">Identidad</span>
+      <h2>La marca</h2>
+      <p class="lead">Un vigía es quien vigila desde lo alto para dar la alarma. La V del logo son dos carriles que convergen, el punto es el piloto y los arcos son la señal que sale cuando algo pasa.</p>
+    </div>
+    <div class="swatches">
+      <div class="sw"><i style="background:#FF5A1F"></i>Naranja señal · #FF5A1F</div>
+      <div class="sw"><i style="background:#15171C"></i>Asfalto · #15171C</div>
+      <div class="sw"><i style="background:#F4F5F7"></i>Línea blanca · #F4F5F7</div>
+    </div>
+    <p>Tipografía: <b style="font-family:var(--f-display);font-size:1.2rem;text-transform:uppercase">Saira Condensed</b> para titulares, con aire de dorsal de carreras, e IBM Plex para el texto.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap stack">
+    <span class="eyebrow">Próximos pasos</span>
+    <h2>Los primeros 90 días</h2>
+    <ol class="steps">
+      <li><span class="when">SEMANA 1-2</span><div><h3>Validar</h3><p>Entrevistar a 30 motoristas y 3 talleres. ¿Pagarían 279 € más 6,90 € al mes?</p></div></li>
+      <li><span class="when">SEMANA 3-4</span><div><h3>Blindar</h3><p>Comprobar la marca, registrar la S.L. y firmar NDA con cualquier colaborador técnico.</p></div></li>
+      <li><span class="when">MES 2-3</span><div><h3>Prototipo físico</h3><p>Placa de desarrollo con IMU, GNSS, LoRa y un módem NTN. Grabar caídas controladas para calibrar TRÍADA.</p></div></li>
+    </ol>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">Vigía Moto Systems, S.L. (en constitución) · Documento interno. Contiene la descripción de un secreto empresarial: no compartir sin NDA.</div>
+</footer>
