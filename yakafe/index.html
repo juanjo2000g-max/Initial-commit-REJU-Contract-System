@@ -1,0 +1,613 @@
+<title>YAKAFÉ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shrikhand&family=Figtree:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap">
+<style>
+/* Layout: marca arriba, luego el prototipo (teléfono + termo) lado a lado, luego ciencia, fórmula secreta y negocio en una columna de lectura */
+:root{
+  --bg:#FFF4F0; --surface:#FFFFFF; --ink:#2B0F14; --muted:#7A5560; --line:#F2D6DD;
+  --fucsia:#E8196F; --naranja:#FF5B14; --sol:#FFC21A; --turquesa:#00A396; --uva:#6B35E0;
+  --on-accent:#FFFFFF; --on-sol:#2B0F14; --phone:#2B0F14; --screen:#FFFFFF;
+  --f-display:"Shrikhand","Cooper Black",Georgia,serif;
+  --f-body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#1A0A10; --surface:#27121B; --ink:#FFEEF3; --muted:#CFA1AE; --line:#44222F;
+  --fucsia:#FF4592; --naranja:#FF7A3D; --sol:#FFD24D; --turquesa:#2FD3C4; --uva:#9B72FF;
+  --phone:#0C0407; --screen:#210F16; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#1A0A10; --surface:#27121B; --ink:#FFEEF3; --muted:#CFA1AE; --line:#44222F;
+  --fucsia:#FF4592; --naranja:#FF7A3D; --sol:#FFD24D; --turquesa:#2FD3C4; --uva:#9B72FF;
+  --phone:#0C0407; --screen:#210F16; color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;padding-inline:16px;padding-block:0 64px}
+.wrap{max-width:1100px;margin:0 auto}
+h1,h2,h3{text-wrap:balance;margin:0;line-height:1.1}
+h2{font-family:var(--f-display);font-weight:400;font-size:clamp(28px,4.4vw,42px)}
+h3{font-size:19px;font-weight:800}
+p{margin:0}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--fucsia);font-weight:700}
+.muted{color:var(--muted)}
+section{padding-block:56px 0;display:grid;gap:24px}
+.lede{max-width:62ch;font-size:18px}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--uva);outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+
+/* ---------- HERO ---------- */
+.hero{display:grid;grid-template-columns:auto 1fr;gap:28px;align-items:center;padding-block:40px 8px}
+.logo{width:clamp(96px,16vw,150px);height:auto}
+.word{font-family:var(--f-display);font-size:clamp(52px,11vw,112px);line-height:.95;letter-spacing:-.01em}
+.word .ya{color:var(--fucsia)} .word .ka{color:var(--naranja)}
+.tag{font-size:clamp(19px,2.6vw,26px);font-weight:800;margin-top:10px}
+.tag mark{background:var(--sol);color:var(--on-sol);padding:0 .25em;border-radius:4px}
+.pillars{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:24px}
+.pillar{padding:18px;border-radius:18px;color:var(--on-accent);display:grid;gap:6px;align-content:start}
+.pillar b{font-family:var(--f-display);font-weight:400;font-size:24px}
+.pillar span{font-size:14px;opacity:.95}
+.p1{background:var(--fucsia)} .p2{background:var(--naranja)} .p3{background:var(--turquesa)}
+@media (max-width:720px){.hero{grid-template-columns:1fr}.pillars{grid-template-columns:1fr}}
+
+/* ---------- PROTOTIPO ---------- */
+.proto{display:grid;grid-template-columns:minmax(0,380px) minmax(0,1fr);gap:28px;align-items:start}
+@media (max-width:860px){.proto{grid-template-columns:1fr}.phone{margin:0 auto}}
+.phone{background:var(--phone);border-radius:42px;padding:12px;width:100%;max-width:380px;box-shadow:0 24px 60px -24px rgba(232,25,111,.45)}
+.screen{background:var(--screen);border-radius:32px;overflow:hidden;min-height:640px;display:flex;flex-direction:column}
+.bar{display:flex;justify-content:space-between;align-items:center;padding:14px 18px 10px;background:var(--fucsia);color:var(--on-accent)}
+.bar .mini{display:flex;gap:8px;align-items:center;font-family:var(--f-display);font-size:22px}
+.bar .mini svg{width:28px;height:28px}
+.clock{font-family:var(--f-mono);font-size:13px;background:rgba(255,255,255,.18);padding:3px 8px;border-radius:99px}
+.view{padding:16px 18px 20px;display:grid;gap:14px;flex:1;align-content:start}
+.label{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:2px solid var(--line);background:transparent;color:var(--ink);border-radius:99px;padding:6px 12px;font-weight:600;font-size:14px}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--screen)}
+select,input[type=range]{width:100%}
+select{font:inherit;padding:10px 12px;border-radius:12px;border:2px solid var(--line);background:var(--screen);color:var(--ink)}
+input[type=range]{accent-color:var(--fucsia)}
+.routine{background:var(--sol);color:var(--on-sol);border-radius:16px;padding:12px 14px;font-size:14px;display:grid;gap:2px}
+.routine b{font-size:15px}
+.plan{border:2px dashed var(--line);border-radius:16px;padding:12px 14px;display:grid;gap:4px;font-size:14px}
+.plan .row{display:flex;justify-content:space-between;gap:12px}
+.plan .row span:last-child{font-family:var(--f-mono);font-weight:700}
+.plan .big{color:var(--fucsia)}
+.cta{background:var(--fucsia);color:var(--on-accent);border:0;border-radius:16px;padding:14px;font-weight:800;font-size:17px}
+.cta.alt{background:var(--turquesa)}
+.cta:disabled{opacity:.5;cursor:default}
+.track{display:grid;gap:10px}
+.lane{display:grid;gap:4px}
+.lane .lt{display:flex;justify-content:space-between;font-size:13px;font-weight:600}
+.meter{height:12px;border-radius:99px;background:var(--line);overflow:hidden}
+.meter i{display:block;height:100%;width:0;border-radius:99px;transition:width .2s linear}
+.m-you i{background:var(--uva)} .m-cafe i{background:var(--naranja)}
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.steps li{display:flex;gap:10px;align-items:center;font-size:14px;color:var(--muted)}
+.steps li::before{content:"";width:14px;height:14px;border-radius:50%;border:2px solid var(--line);flex:none}
+.steps li.on{color:var(--ink);font-weight:700}
+.steps li.on::before{background:var(--naranja);border-color:var(--naranja)}
+.steps li.done{color:var(--ink)}
+.steps li.done::before{background:var(--turquesa);border-color:var(--turquesa)}
+.log{font-family:var(--f-mono);font-size:12px;background:var(--bg);border-radius:12px;padding:10px;max-height:118px;overflow:auto;display:grid;gap:3px}
+.log .ev{color:var(--fucsia)}
+.stat3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
+.stat3 div{background:var(--bg);border-radius:12px;padding:8px 4px}
+.stat3 b{display:block;font-family:var(--f-mono);font-size:20px}
+.stat3 small{font-size:11px;color:var(--muted)}
+.code{font-family:var(--f-mono);font-size:34px;font-weight:700;letter-spacing:.2em;text-align:center;background:var(--ink);color:var(--screen);border-radius:14px;padding:10px}
+.speed{display:flex;gap:6px;align-items:center;font-size:13px}
+
+/* termo */
+.side{display:grid;gap:20px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:20px;display:grid;gap:14px}
+.termo{display:grid;grid-template-columns:120px 1fr;gap:20px;align-items:center}
+@media (max-width:460px){.termo{grid-template-columns:1fr;justify-items:center}}
+.tumbler{width:110px;height:auto;transition:transform .7s cubic-bezier(.5,-.3,.4,1.4)}
+.tumbler.flip{transform:rotate(180deg)}
+.readout{font-family:var(--f-mono);font-size:44px;font-weight:700;line-height:1}
+.ctrls{display:grid;gap:10px}
+.toggle{display:flex;align-items:center;gap:10px;font-weight:600}
+.toggle input{width:20px;height:20px;accent-color:var(--turquesa)}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+.btn{border:2px solid var(--ink);background:transparent;color:var(--ink);border-radius:12px;padding:8px 14px;font-weight:700}
+.btn.solid{background:var(--naranja);border-color:var(--naranja);color:var(--on-accent)}
+.alert{font-weight:700;min-height:1.5em}
+.box-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;max-width:340px}
+.cell{aspect-ratio:1;max-width:100%;border-radius:8px;background:var(--bg);border:2px solid var(--line);display:grid;place-items:center;font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+.cell.busy{background:var(--naranja);border-color:var(--naranja);color:var(--on-accent)}
+.cell.mine{background:var(--fucsia);border-color:var(--fucsia);color:var(--on-accent);animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.08)}}
+@media (prefers-reduced-motion:reduce){.cell.mine{animation:none}.tumbler{transition:none}.meter i{transition:none}}
+
+/* chart */
+.chart-wrap{overflow-x:auto}
+.chart{width:100%;min-width:520px;height:auto;display:block}
+.chart text{fill:var(--muted);font-family:var(--f-mono);font-size:11px}
+.chart .grid{stroke:var(--line);stroke-width:1}
+.chart .zone{fill:var(--sol);opacity:.22}
+.legend{display:flex;flex-wrap:wrap;gap:16px;font-size:14px;font-weight:600}
+.legend i{display:inline-block;width:18px;height:4px;border-radius:2px;vertical-align:middle;margin-right:6px}
+
+/* secreto */
+.vault{background:var(--ink);color:var(--bg);border-radius:26px;padding:28px;display:grid;gap:22px;position:relative;overflow:hidden}
+.vault .eyebrow{color:var(--sol)}
+.vault h2{color:var(--bg)}
+.stamp{position:absolute;right:-14px;top:22px;transform:rotate(12deg);border:3px solid var(--fucsia);color:var(--fucsia);font-family:var(--f-mono);font-weight:700;padding:4px 14px;letter-spacing:.15em;font-size:13px}
+.secrets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+@media (max-width:760px){.secrets{grid-template-columns:1fr}}
+.secret{border:1px solid rgba(255,255,255,.18);border-radius:18px;padding:18px;display:grid;gap:10px;align-content:start;min-width:0}
+.secret h3{color:var(--sol)}
+.formula{font-family:var(--f-mono);font-size:14px;background:rgba(255,255,255,.07);border-radius:10px;padding:12px;overflow-x:auto;white-space:pre;line-height:1.7}
+.redact{filter:blur(7px);transition:filter .4s;user-select:none}
+.vault.open .redact{filter:none;user-select:auto}
+.reveal{justify-self:start;background:var(--sol);color:var(--on-sol);border:0;border-radius:12px;padding:10px 18px;font-weight:800}
+.secret ul{margin:0;padding-left:18px;display:grid;gap:4px;font-size:15px}
+
+/* negocio */
+.plans{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+@media (max-width:760px){.plans{grid-template-columns:1fr}}
+.planc{border-radius:22px;padding:20px;display:grid;gap:8px;align-content:start;border:2px solid var(--line);background:var(--surface)}
+.planc.hot{border-color:var(--fucsia)}
+.price{font-family:var(--f-display);font-size:32px}
+.planc ul{margin:0;padding-left:18px;font-size:15px;display:grid;gap:4px}
+.econ{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:460px;font-size:15px}
+td,th{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left}
+td:last-child,th:last-child{text-align:right;font-family:var(--f-mono)}
+tr.total td{font-weight:800;color:var(--turquesa);border-bottom:0}
+footer{margin-top:56px;font-size:14px;color:var(--muted)}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="logo" viewBox="-34 0 132 100">
+    <g stroke="var(--naranja)" stroke-width="7" stroke-linecap="round">
+      <line x1="-28" y1="30" x2="2" y2="30"/><line x1="-20" y1="45" x2="6" y2="45"/><line x1="-12" y1="60" x2="10" y2="60"/>
+    </g>
+    <path d="M50 4C27 4 11 21 11 43c0 27 39 53 39 53s39-26 39-53C89 21 73 4 50 4Z" fill="var(--fucsia)"/>
+    <ellipse cx="50" cy="42" rx="17" ry="23" transform="rotate(22 50 42)" fill="var(--sol)"/>
+    <path d="M43 22c14 9 0 26 14 40" fill="none" stroke="var(--fucsia)" stroke-width="5" stroke-linecap="round"/>
+  </symbol>
+</svg>
+
+<div class="wrap">
+
+<!-- ================= MARCA ================= -->
+<header class="hero">
+  <svg class="logo" viewBox="-34 0 132 100" role="img" aria-label="Logo de YAKAFÉ: un pin de ubicación con un grano de café y líneas de velocidad"><use href="#logo"/></svg>
+  <div>
+    <div class="word"><span class="ya">YA</span><span class="ka">KAFÉ</span></div>
+    <p class="tag">Tu café llega <mark>antes que tú</mark>. Cero filas, siempre caliente.</p>
+  </div>
+</header>
+<div class="pillars">
+  <div class="pillar p1"><b>YA App</b><span>Aprende tu rutina y pide solo. El algoritmo JUSTO decide el minuto exacto en que el barista empieza.</span></div>
+  <div class="pillar p2"><b>TermoYA</b><span>Tu vaso inteligente: interior cerámico, cierre magnético antiderrame y temperatura activa a 65 °C.</span></div>
+  <div class="pillar p3"><b>YA Box</b><span>Casilleros calefactados en metro, oficinas y universidades. Abres con un código de 4 dígitos.</span></div>
+</div>
+
+<!-- ================= PROTOTIPO ================= -->
+<section id="prototipo">
+  <div class="eyebrow">Prototipo interactivo</div>
+  <h2>Pide, camina, recoge</h2>
+  <p class="lede muted">Configura tu pedido y pulsa <b>Pedir con JUSTO</b>. La simulación corre acelerada (1 minuto = 1 segundo) e incluye trancones y cambios de ruta reales para que veas cómo el algoritmo se reprograma.</p>
+
+  <div class="proto">
+    <div class="phone">
+      <div class="screen">
+        <div class="bar">
+          <div class="mini"><svg viewBox="-34 0 132 100" aria-hidden="true"><use href="#logo"/></svg>YA</div>
+          <div class="clock num" id="clock">7:22 a. m.</div>
+        </div>
+
+        <!-- Vista 1: pedido -->
+        <div class="view" id="v-order">
+          <div class="routine"><b>Rutina detectada: lunes a viernes, 7:40 a. m.</b><span>Latte grande en YA Box Calle 72. Lo has pedido 18 de los últimos 20 días hábiles.</span></div>
+          <div>
+            <div class="label">Bebida</div>
+            <div class="chips" id="drinks"></div>
+          </div>
+          <div>
+            <label class="label" for="box">YA Box de recogida</label>
+            <select id="box"></select>
+          </div>
+          <div>
+            <div class="label">Cómo vas</div>
+            <div class="chips" id="modes"></div>
+          </div>
+          <div>
+            <label class="label" for="eta">Llego en <span id="etaV" class="num">18</span> min</label>
+            <input type="range" id="eta" min="6" max="45" value="18">
+          </div>
+          <div class="plan" id="plan"></div>
+          <button class="cta" id="go">Pedir con JUSTO</button>
+        </div>
+
+        <!-- Vista 2: seguimiento -->
+        <div class="view" id="v-track" hidden>
+          <div class="track">
+            <div class="lane m-you"><div class="lt"><span>Tú</span><span class="num" id="youT"></span></div><div class="meter"><i id="youBar"></i></div></div>
+            <div class="lane m-cafe"><div class="lt"><span>Tu café</span><span class="num" id="cafeT"></span></div><div class="meter"><i id="cafeBar"></i></div></div>
+          </div>
+          <ol class="steps" id="steps">
+            <li data-p="espera">JUSTO esperando el minuto exacto</li>
+            <li data-p="prep">Barista preparando</li>
+            <li data-p="ruta">En camino al YA Box</li>
+            <li data-p="box">Guardado en tu casillero a 68 °C</li>
+            <li data-p="llego">Llegaste: abre tu casillero</li>
+          </ol>
+          <div class="stat3">
+            <div><b class="num" id="sTemp">--</b><small>°C del café</small></div>
+            <div><b class="num" id="sFresh">100</b><small>% frescura</small></div>
+            <div><b class="num" id="sQueue">0</b><small>min de fila</small></div>
+          </div>
+          <div class="code" id="code" hidden>----</div>
+          <button class="cta alt" id="open" hidden>Abrir casillero</button>
+          <div class="log" id="log" aria-live="polite"></div>
+          <div class="speed"><span class="muted">Velocidad</span>
+            <button class="chip" data-s="1" aria-pressed="true">×1</button>
+            <button class="chip" data-s="3" aria-pressed="false">×3</button>
+            <button class="chip" id="reset" aria-pressed="false">Nuevo pedido</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="card">
+        <div class="eyebrow">Hardware · TermoYA</div>
+        <div class="termo">
+          <svg class="tumbler" id="tumbler" viewBox="0 0 100 180" aria-label="Ilustración del TermoYA">
+            <rect x="18" y="8" width="64" height="18" rx="6" fill="var(--ink)"/>
+            <rect x="44" y="11" width="12" height="12" rx="3" id="lockDot" fill="var(--turquesa)"/>
+            <path d="M16 30h68l-7 140H23Z" fill="var(--fucsia)"/>
+            <path d="M26 40h48l-5 118H31Z" fill="var(--surface)" opacity=".25"/>
+            <rect x="30" y="72" width="40" height="80" fill="var(--naranja)" id="liquid" opacity=".9"/>
+            <text x="50" y="128" text-anchor="middle" font-family="Shrikhand, Georgia, serif" font-size="18" fill="var(--on-accent)">YA</text>
+          </svg>
+          <div class="ctrls">
+            <div><span class="readout num" id="tTemp">64.0</span><span class="readout" style="font-size:22px"> °C</span></div>
+            <div class="muted num" id="tInfo">Objetivo 65 °C · batería 92 % · 6 h 10 min de calor</div>
+            <label class="label" for="tTarget">Temperatura objetivo: <span id="tTargetV" class="num">65</span> °C</label>
+            <input type="range" id="tTarget" min="55" max="70" value="65">
+            <label class="toggle"><input type="checkbox" id="lock" checked> Cierre magnético activado</label>
+            <div class="btns">
+              <button class="btn solid" id="flip">Voltear el termo</button>
+              <button class="btn" id="brew">Preparar en ruta</button>
+            </div>
+            <div class="alert" id="tAlert" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="eyebrow">Red · YA Box <span id="boxName"></span></div>
+        <div class="box-grid" id="cells"></div>
+        <p class="muted" style="font-size:14px">Cada módulo tiene 24 casilleros con resistencia a 68 °C y sensor de puerta. En rosa, el tuyo cuando llega tu café.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CIENCIA ================= -->
+<section id="ciencia">
+  <div class="eyebrow">Por qué funciona</div>
+  <h2>La curva del café frío</h2>
+  <p class="lede">El café pierde calor siguiendo la ley de enfriamiento de Newton: <span style="font-family:var(--f-mono)">T(t) = T<sub>amb</sub> + (T<sub>0</sub> − T<sub>amb</sub>)·e<sup>−kt</sup></span>. Un vaso de cartón tiene una <i>k</i> alta y pierde la zona ideal (55–70 °C) en unos 15 minutos. El TermoYA no depende de <i>k</i>: calienta de forma activa hasta que se agota la batería.</p>
+  <div class="card">
+    <div class="legend">
+      <span><i style="background:var(--naranja)"></i>Vaso de cartón</span>
+      <span><i style="background:var(--uva)"></i>Termo casero</span>
+      <span><i style="background:var(--fucsia)"></i>YA Box y TermoYA</span>
+    </div>
+    <div class="chart-wrap"><svg class="chart" id="chart" viewBox="0 0 640 300" role="img" aria-label="Temperatura del café en el tiempo para tres recipientes"></svg></div>
+    <p class="muted" style="font-size:14px">Temperatura ambiente de 18 °C. La franja amarilla es la zona ideal para tomar café.</p>
+  </div>
+</section>
+
+<!-- ================= SECRETO ================= -->
+<section id="secreto">
+  <div class="vault" id="vault">
+    <div class="stamp">CONFIDENCIAL</div>
+    <div class="eyebrow">Solo para socios</div>
+    <h2>La fórmula secreta YA</h2>
+    <div class="secrets">
+      <div class="secret">
+        <h3>1. Algoritmo JUSTO</h3>
+        <p>Decide en qué minuto empieza el barista, para que el café esté listo antes de que llegues el 90 % de las veces sin quedarse esperando.</p>
+        <div class="formula redact">t_inicio = ETA − (t_prep + t_cola + t_ruta) − z·σ
+
+t_cola   = pedidos_en_fila × 0,8 min ÷ baristas
+σ        = ETA × volatilidad_del_modo
+           (a pie 0,08 · bici 0,12
+            carro 0,22 · bus 0,28)
+z        = 1,28   → 90 % listo al llegar
+
+Frescura = 100 · e^(−espera / τ)
+           τ = 25 min en YA Box
+           τ = 8 min en mostrador</div>
+        <p class="redact muted" style="color:inherit;opacity:.8">Cada vez que cambia tu ETA (trancón, cambio de ruta), JUSTO vuelve a calcular. Si el barista ya empezó, el YA Box absorbe la diferencia.</p>
+      </div>
+      <div class="secret">
+        <h3>2. Ingrediente secreto: Cristal Panela-Sal</h3>
+        <p>Un cristal de 0,4 g que va en el fondo de cada TermoYA y de cada vaso de YA Box.</p>
+        <ul class="redact">
+          <li><b>0,10 g de sal marina</b> por cada 250 ml: la sal bloquea la percepción de amargor sin que se note salado.</li>
+          <li><b>0,30 g de panela orgánica</b>: redondea la acidez que aparece cuando el café lleva más de 20 minutos caliente.</li>
+          <li><b>Café 100 % arábica, tueste medio</b>, molido 90 segundos antes de extraer.</li>
+          <li><b>Interior cerámico</b>: el acero libera iones que dan el sabor metálico.</li>
+          <li><b>Descanso con nitrógeno</b> en el casillero para que no se oxide el aroma.</li>
+        </ul>
+      </div>
+    </div>
+    <button class="reveal" id="reveal">Revelar la fórmula</button>
+  </div>
+</section>
+
+<!-- ================= NEGOCIO ================= -->
+<section id="negocio">
+  <div class="eyebrow">Modelo de negocio</div>
+  <h2>Cómo gana dinero YAKAFÉ</h2>
+  <div class="plans">
+    <div class="planc">
+      <h3>Plan Tinto</h3>
+      <div class="price">$79.000<small class="muted" style="font-family:var(--f-body);font-size:14px"> COP/mes</small></div>
+      <ul><li>20 tintos o americanos</li><li>Pedido automático por rutina</li><li>Cualquier YA Box de la red</li></ul>
+    </div>
+    <div class="planc hot">
+      <h3>Plan Latte + TermoYA</h3>
+      <div class="price">$139.000<small class="muted" style="font-family:var(--f-body);font-size:14px"> COP/mes</small></div>
+      <ul><li>20 bebidas de la carta completa</li><li>TermoYA incluido en comodato</li><li>Cristal Panela-Sal en cada café</li></ul>
+    </div>
+    <div class="planc">
+      <h3>YA Empresa</h3>
+      <div class="price">$1,9 M<small class="muted" style="font-family:var(--f-body);font-size:14px"> COP/mes</small></div>
+      <ul><li>Módulo de 24 casilleros instalado</li><li>Café para el equipo como beneficio</li><li>Panel de consumo y facturación</li></ul>
+    </div>
+  </div>
+  <div class="card econ">
+    <h3>Números por café (Plan Latte)</h3>
+    <table>
+      <thead><tr><th>Concepto</th><th>COP</th></tr></thead>
+      <tbody>
+        <tr><td>Ingreso por bebida ($139.000 ÷ 20)</td><td>6.950</td></tr>
+        <tr><td>Café, leche y Cristal Panela-Sal</td><td>−1.650</td></tr>
+        <tr><td>Barista y cocina central (pedidos agrupados)</td><td>−1.300</td></tr>
+        <tr><td>Reparto a YA Box y energía</td><td>−700</td></tr>
+        <tr><td>Amortización del TermoYA (24 meses)</td><td>−450</td></tr>
+        <tr class="total"><td>Margen de contribución</td><td>2.850 (41 %)</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <h3>Piloto de 30 días</h3>
+    <p>Un edificio de oficinas, una cafetería aliada como cocina, un módulo de 24 casilleros y 60 usuarios. La meta es que el 40 % repita en la segunda semana. Si se cumple, se construye la app completa y se fabrica el primer lote de 1.000 TermoYA.</p>
+  </div>
+</section>
+
+<footer>YAKAFÉ es un concepto de producto. Los precios, costos y la fórmula son supuestos de diseño para validar en el piloto.</footer>
+</div>
+
+<script>
+(() => {
+const $ = s => document.querySelector(s);
+const DRINKS = {
+  tinto:{n:'Tinto', prep:1.2}, latte:{n:'Latte', prep:3}, capu:{n:'Capuchino', prep:3.5}, cold:{n:'Cold brew', prep:0.8}
+};
+const BOXES = {
+  c72:{n:'Estación Calle 72', ruta:3, fila:6, baristas:2},
+  torre:{n:'Torre Andes · Lobby', ruta:2, fila:9, baristas:3},
+  uni:{n:'Universidad · Bloque C', ruta:5, fila:12, baristas:2}
+};
+const MODES = {
+  pie:{n:'A pie', v:0.08}, bici:{n:'Bici', v:0.12}, carro:{n:'Carro', v:0.22}, bus:{n:'Bus', v:0.28}
+};
+const Z = 1.28, TAU_BOX = 25;
+const st = {drink:'latte', box:'c72', mode:'bus', eta:18};
+
+// ---------- Algoritmo JUSTO ----------
+function justo(eta, d, b, m){
+  const tCola = b.fila * 0.8 / b.baristas;
+  const tProc = d.prep + tCola + b.ruta;
+  const sigma = eta * m.v;
+  const buffer = Z * sigma;
+  const inicio = Math.max(0, eta - tProc - buffer);
+  const listo = inicio + tProc;
+  const espera = Math.max(0, eta - listo);
+  return {tCola, tProc, sigma, buffer, inicio, listo, espera, fresh: 100*Math.exp(-espera/TAU_BOX)};
+}
+
+const fmt = n => n.toFixed(1).replace('.', ',');
+const BASE_MIN = 7*60 + 22;
+const hora = m => { const t = Math.round(BASE_MIN + m); const h = Math.floor(t/60), mm = t%60; return `${h}:${String(mm).padStart(2,'0')} a. m.`; };
+
+function chips(el, obj, key){
+  el.innerHTML = '';
+  for (const k in obj){
+    const b = document.createElement('button');
+    b.className = 'chip'; b.textContent = obj[k].n; b.setAttribute('aria-pressed', st[key]===k);
+    b.onclick = () => { st[key]=k; [...el.children].forEach(c=>c.setAttribute('aria-pressed', c===b)); renderPlan(); };
+    el.appendChild(b);
+  }
+}
+chips($('#drinks'), DRINKS, 'drink');
+chips($('#modes'), MODES, 'mode');
+for (const k in BOXES){ const o = document.createElement('option'); o.value=k; o.textContent=BOXES[k].n; $('#box').appendChild(o); }
+$('#box').onchange = e => { st.box = e.target.value; renderPlan(); renderCells(); };
+$('#eta').oninput = e => { st.eta = +e.target.value; $('#etaV').textContent = st.eta; renderPlan(); };
+
+function renderPlan(){
+  const p = justo(st.eta, DRINKS[st.drink], BOXES[st.box], MODES[st.mode]);
+  $('#plan').innerHTML = `
+    <div class="row"><span>Fila en la cocina</span><span>${fmt(p.tCola)} min</span></div>
+    <div class="row"><span>Preparación + reparto</span><span>${fmt(DRINKS[st.drink].prep + BOXES[st.box].ruta)} min</span></div>
+    <div class="row"><span>Colchón por ${MODES[st.mode].n.toLowerCase()} (z·σ)</span><span>${fmt(p.buffer)} min</span></div>
+    <div class="row big"><span><b>El barista empieza</b></span><span>${hora(p.inicio)}</span></div>
+    <div class="row"><span>Frescura estimada al llegar</span><span>${Math.round(p.fresh)} %</span></div>`;
+}
+
+// ---------- Casilleros ----------
+let mine = -1;
+function renderCells(){
+  const c = $('#cells'); c.innerHTML = '';
+  $('#boxName').textContent = '· ' + BOXES[st.box].n;
+  const seed = st.box.length * 7;
+  for (let i=0;i<24;i++){
+    const d = document.createElement('div');
+    d.className = 'cell' + ((i*seed)%5===1 ? ' busy' : '') + (i===mine ? ' mine' : '');
+    d.textContent = String.fromCharCode(65 + Math.floor(i/6)) + (i%6+1);
+    c.appendChild(d);
+  }
+}
+
+// ---------- Simulación ----------
+let sim = null, timer = null, speed = 1;
+const PHASES = ['espera','prep','ruta','box','llego'];
+function log(msg, ev){ const d = document.createElement('div'); if(ev) d.className='ev'; d.textContent = `${hora(sim.t)}  ${msg}`; $('#log').prepend(d); }
+
+function start(){
+  const d = DRINKS[st.drink], b = BOXES[st.box], m = MODES[st.mode];
+  const p = justo(st.eta, d, b, m);
+  sim = {t:0, eta:st.eta, d, b, m, p, phase:'espera', inicio:p.inicio, temp:null, fresh:100, events:[], started:false, code:String(1000+Math.floor(Math.random()*9000))};
+  // Eventos de ruta: trancón, atajo
+  const e1 = st.eta*0.3, e2 = st.eta*0.6;
+  const delta1 = m.v > 0.2 ? Math.round(2 + Math.random()*3) : Math.round(1 + Math.random()*2);
+  sim.events = [
+    {at:e1, dt: m.v > 0.1 ? delta1 : -1, msg: m.v > 0.1 ? `Trancón en la ruta: +${delta1} min` : 'Semáforos en verde: −1 min'},
+    {at:e2, dt:-1, msg:'Tomaste un atajo: −1 min'}
+  ];
+  mine = 8 + Math.floor(Math.random()*10); renderCells();
+  document.querySelectorAll('#cells .cell').forEach((c,i)=>{ if(i===mine) c.classList.remove('mine'); });
+  $('#v-order').hidden = true; $('#v-track').hidden = false;
+  $('#log').innerHTML = ''; $('#code').hidden = true; $('#open').hidden = true;
+  log(`Pedido: ${d.n} en ${b.n}. JUSTO programa el inicio para las ${hora(p.inicio)}`);
+  clearInterval(timer); timer = setInterval(tick, 100);
+  paint();
+}
+
+function replan(){
+  const remaining = sim.eta - sim.t;
+  const p = justo(remaining, sim.d, sim.b, sim.m);
+  sim.inicio = sim.t + p.inicio;
+  log(`JUSTO recalcula: el barista empieza a las ${hora(sim.inicio)}.`);
+}
+
+function tick(){
+  const dt = 0.1 * speed;
+  sim.t += dt;
+  for (const e of sim.events){
+    if (!e.done && sim.t >= e.at){
+      e.done = true; sim.eta = Math.max(sim.t + 1, sim.eta + e.dt); log(e.msg, true);
+      if (!sim.started) replan(); else log('El café ya está en marcha; el YA Box lo mantiene caliente.');
+    }
+  }
+  const d = sim.d, b = sim.b, p = sim.p;
+  const tCola = b.fila*0.8/b.baristas;
+  const tPrepEnd = sim.inicio + tCola + d.prep, tRutaEnd = tPrepEnd + b.ruta;
+  let ph;
+  if (sim.t >= sim.eta) ph = 'llego';
+  else if (sim.t < sim.inicio) ph = 'espera';
+  else if (sim.t < tPrepEnd) ph = 'prep';
+  else if (sim.t < tRutaEnd) ph = 'ruta';
+  else ph = 'box';
+  // si llegas antes que el café, se espera a que termine
+  if (ph === 'llego' && sim.t < tRutaEnd) ph = sim.t < tPrepEnd ? 'prep' : 'ruta';
+  if (ph !== sim.phase){
+    sim.phase = ph;
+    const msgs = {prep:'El barista empezó tu bebida.', ruta:'Café sellado y en camino al casillero.', box:`Guardado en el casillero ${cellName(mine)} a 68 °C.`, llego:'Llegaste al YA Box. Tu código está listo.'};
+    if (msgs[ph]) log(msgs[ph]);
+    if (ph !== 'espera') sim.started = true;
+    if (ph === 'box') renderCellsMine();
+    if (ph === 'llego'){ $('#code').textContent = sim.code; $('#code').hidden = false; $('#open').hidden = false; }
+  }
+  // temperatura y frescura
+  if (ph === 'prep') sim.temp = 92;
+  else if (ph === 'ruta') sim.temp = Math.max(72, sim.temp - dt*5);
+  else if (ph === 'box' || ph === 'llego') { sim.temp = sim.temp > 68 ? Math.max(68, sim.temp - dt*2) : 68; if (!sim.boxAt) sim.boxAt = sim.t; sim.fresh = 100*Math.exp(-(sim.t - sim.boxAt)/TAU_BOX); }
+  if (ph === 'llego' && !sim.stopped){ sim.stopped = true; clearInterval(timer); }
+  paint();
+}
+function cellName(i){ return String.fromCharCode(65 + Math.floor(i/6)) + (i%6+1); }
+function renderCellsMine(){ const c = $('#cells').children[mine]; if (c){ c.className = 'cell mine'; } }
+
+function paint(){
+  const b = sim.b, d = sim.d;
+  $('#clock').textContent = hora(sim.t);
+  const youPct = Math.min(100, sim.t / sim.eta * 100);
+  $('#youBar').style.width = youPct + '%';
+  $('#youT').textContent = sim.phase === 'llego' ? 'llegaste' : `faltan ${Math.max(0, Math.ceil(sim.eta - sim.t))} min`;
+  const tCola = b.fila*0.8/b.baristas;
+  const total = tCola + d.prep + b.ruta;
+  const cafePct = sim.t < sim.inicio ? 0 : Math.min(100, (sim.t - sim.inicio)/total*100);
+  $('#cafeBar').style.width = cafePct + '%';
+  $('#cafeT').textContent = sim.t < sim.inicio ? `empieza ${hora(sim.inicio)}` : (cafePct >= 100 ? 'en tu casillero' : `${Math.round(cafePct)} %`);
+  const idx = PHASES.indexOf(sim.phase);
+  document.querySelectorAll('#steps li').forEach((li,i)=>{ li.className = i < idx ? 'done' : (i === idx ? 'on' : ''); });
+  $('#sTemp').textContent = sim.temp ? Math.round(sim.temp) : '--';
+  $('#sFresh').textContent = Math.round(sim.fresh);
+}
+
+$('#go').onclick = start;
+$('#open').onclick = () => {
+  log(`Casillero ${cellName(mine)} abierto. ${sim.d.n} a ${Math.round(sim.temp)} °C, ${Math.round(sim.fresh)} % de frescura, 0 min de fila.`, true);
+  $('#open').hidden = true;
+  const c = $('#cells').children[mine]; if (c) c.className = 'cell';
+  $('#code').textContent = '¡A tomar!';
+};
+$('#reset').onclick = () => { clearInterval(timer); $('#v-track').hidden = true; $('#v-order').hidden = false; $('#clock').textContent = hora(0); mine = -1; renderCells(); };
+document.querySelectorAll('.speed [data-s]').forEach(b => b.onclick = () => {
+  speed = +b.dataset.s; document.querySelectorAll('.speed [data-s]').forEach(x => x.setAttribute('aria-pressed', x===b));
+});
+
+// ---------- TermoYA ----------
+const T = {temp:64, target:65, bat:92, brewing:0};
+const tumbler = $('#tumbler');
+function paintTermo(){
+  $('#tTemp').textContent = T.temp.toFixed(1);
+  const horas = T.bat/100 * 6.7, h = Math.floor(horas), m = Math.round((horas-h)*60);
+  $('#tInfo').textContent = T.brewing > 0 ? `Extrayendo café en ruta · ${Math.ceil(T.brewing)} s` : `Objetivo ${T.target} °C · batería ${Math.round(T.bat)} % · ${h} h ${m} min de calor`;
+  $('#liquid').setAttribute('fill', T.temp >= 55 ? 'var(--naranja)' : 'var(--uva)');
+}
+setInterval(() => {
+  if (T.brewing > 0){ T.brewing -= 0.5; T.temp = Math.min(92, T.temp + 3); if (T.brewing <= 0) $('#tAlert').textContent = 'Café listo. Bajando a tu temperatura objetivo.'; }
+  else T.temp += (T.target - T.temp) * 0.15;
+  T.bat = Math.max(0, T.bat - 0.02);
+  paintTermo();
+}, 500);
+$('#tTarget').oninput = e => { T.target = +e.target.value; $('#tTargetV').textContent = T.target; };
+$('#lock').onchange = e => { $('#lockDot').setAttribute('fill', e.target.checked ? 'var(--turquesa)' : 'var(--naranja)'); $('#tAlert').textContent = e.target.checked ? 'Sellado magnético activo.' : 'Tapa abierta: listo para tomar.'; };
+$('#flip').onclick = () => {
+  tumbler.classList.add('flip');
+  $('#tAlert').textContent = $('#lock').checked ? 'Boca abajo y 0 gotas derramadas.' : 'Se regó el café. Activa el cierre magnético.';
+  setTimeout(() => tumbler.classList.remove('flip'), 1400);
+};
+$('#brew').onclick = () => { T.brewing = 12; $('#tAlert').textContent = 'Molienda y extracción en marcha…'; };
+paintTermo();
+
+// ---------- Gráfica ----------
+(function chart(){
+  const svg = $('#chart'), W=640, H=300, L=44, R=16, Tp=14, B=36;
+  const x = t => L + t/90*(W-L-R), y = c => Tp + (95-c)/(95-15)*(H-Tp-B);
+  let s = `<rect class="zone" x="${L}" y="${y(70)}" width="${W-L-R}" height="${y(55)-y(70)}"/>`;
+  for (let c=20;c<=90;c+=10) s += `<line class="grid" x1="${L}" x2="${W-R}" y1="${y(c)}" y2="${y(c)}"/><text x="${L-8}" y="${y(c)+4}" text-anchor="end">${c}°</text>`;
+  for (let t=0;t<=90;t+=15) s += `<text x="${x(t)}" y="${H-12}" text-anchor="middle">${t} min</text>`;
+  const newton = k => t => 18 + (85-18)*Math.exp(-k*t);
+  const series = [
+    {f:newton(0.055), c:'var(--naranja)'},
+    {f:newton(0.012), c:'var(--uva)'},
+    {f:t => t < 4 ? 85 - (85-68)*t/4 : 68, c:'var(--fucsia)'}
+  ];
+  for (const se of series){
+    let dpath = ''; for (let t=0;t<=90;t+=1) dpath += (t?'L':'M') + x(t).toFixed(1) + ' ' + y(se.f(t)).toFixed(1);
+    s += `<path d="${dpath}" fill="none" stroke="${se.c}" stroke-width="3.5" stroke-linecap="round"/>`;
+    s += `<circle cx="${x(90)}" cy="${y(se.f(90))}" r="5" fill="${se.c}"/>`;
+  }
+  svg.innerHTML = s;
+})();
+
+$('#reveal').onclick = e => { const v = $('#vault'); v.classList.toggle('open'); e.target.textContent = v.classList.contains('open') ? 'Ocultar la fórmula' : 'Revelar la fórmula'; };
+
+renderPlan(); renderCells();
+})();
+</script>
