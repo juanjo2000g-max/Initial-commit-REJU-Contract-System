@@ -1,8 +1,8 @@
 // Ambientes 3D en tiempo real (WebGL) con los productos de SICHAR.
 // El piso brillante refleja la escena: así se ve un porcelanato 60x130 de verdad.
-import { ContactShadows, Environment, Lightformer, MeshReflectorMaterial, OrbitControls, RoundedBox } from '@react-three/drei'
+import { ContactShadows, Environment, Lightformer, MeshReflectorMaterial, OrbitControls, PerformanceMonitor, RoundedBox } from '@react-three/drei'
 import { Canvas, useFrame, useThree, type ThreeElements } from '@react-three/fiber'
-import { Suspense, useMemo, useRef, type ReactNode } from 'react'
+import { Suspense, useEffect, useMemo, useState, type ReactNode } from 'react'
 import * as THREE from 'three'
 import type { Producto } from '../../data/types'
 import { esBrillante, texturaSuperficie } from './texturas'
@@ -21,6 +21,19 @@ export interface PropsEscena {
   /** Cámara automática (hero) o controlable con el mouse. */
   modo?: 'interactivo' | 'cine'
   className?: string
+  /** Si es falso, la escena deja de dibujarse (por ejemplo, cuando no está en pantalla). */
+  activo?: boolean
+}
+
+/** Calidad gráfica: "baja" quita el reflejo en tiempo real y las sombras dinámicas. */
+export type Calidad = 'alta' | 'baja'
+
+function calidadInicial(): Calidad {
+  const nav = navigator as Navigator & { deviceMemory?: number }
+  const pocosNucleos = (nav.hardwareConcurrency ?? 8) <= 4
+  const pocaMemoria = (nav.deviceMemory ?? 8) <= 4
+  const movil = /Android|iPhone|iPad/i.test(nav.userAgent)
+  return pocosNucleos || pocaMemoria || movil ? 'baja' : 'alta'
 }
 
 const W = 5.2 // ancho
@@ -39,16 +52,23 @@ function Metal({ g }: { g: Griferia }) {
 
 // --- Superficies ------------------------------------------------------------
 
-function Piso({ p }: { p: Producto }) {
+function Piso({ p, calidad }: { p: Producto; calidad: Calidad }) {
   const tex = useMemo(() => texturaSuperficie(p, W, D), [p])
   const brillo = esBrillante(p)
+  if (calidad === 'baja')
+    return (
+      <mesh rotation-x={-Math.PI / 2} receiveShadow>
+        <planeGeometry args={[W, D]} />
+        <meshPhysicalMaterial map={tex} roughness={brillo ? 0.08 : 0.7} clearcoat={brillo ? 1 : 0} clearcoatRoughness={0.04} envMapIntensity={brillo ? 1.4 : 0.6} />
+      </mesh>
+    )
   return (
     <mesh rotation-x={-Math.PI / 2} position={[0, 0, 0]} receiveShadow>
       <planeGeometry args={[W, D]} />
       <MeshReflectorMaterial
         map={tex}
         blur={brillo ? [120, 40] : [400, 200]}
-        resolution={1024}
+        resolution={512}
         mixBlur={brillo ? 0.6 : 1}
         mixStrength={brillo ? 3.2 : 0.6}
         mirror={brillo ? 0.75 : 0.15}
@@ -73,12 +93,12 @@ function Pared({ p, ancho, alto, brilloExtra = 0, ...props }: { p: Producto; anc
   )
 }
 
-function Cuarto({ piso, pared, acento, children, acentoFondo }: { piso: Producto; pared: Producto; acento: Producto; children?: ReactNode; acentoFondo: [number, number, number, number] }) {
+function Cuarto({ piso, pared, acento, children, acentoFondo, calidad }: { piso: Producto; pared: Producto; acento: Producto; children?: ReactNode; acentoFondo: [number, number, number, number]; calidad: Calidad }) {
   // acentoFondo: [x, y, ancho, alto] de la franja de acento en la pared del fondo
   const [ax, ay, aw, ah] = acentoFondo
   return (
     <group>
-      <Piso p={piso} />
+      <Piso p={piso} calidad={calidad} />
       <Pared p={pared} ancho={W} alto={H} position={[0, H / 2, -D / 2]} />
       <Pared p={acento} ancho={aw} alto={ah} position={[ax, ay, -D / 2 + 0.004]} />
       <Pared p={pared} ancho={D} alto={H} position={[-W / 2, H / 2, 0]} rotation-y={Math.PI / 2} />
@@ -410,13 +430,13 @@ function CamaraCine() {
   return null
 }
 
-function Iluminacion({ luz }: { luz: Luz }) {
+function Iluminacion({ luz, calidad }: { luz: Luz; calidad: Calidad }) {
   const sol = luz === 'dia' ? 2.6 : luz === 'calida' ? 0.9 : 0.12
   const amb = luz === 'dia' ? 0.5 : luz === 'calida' ? 0.22 : 0.06
   return (
     <>
       <ambientLight intensity={amb} />
-      <directionalLight position={[4, 6, 3]} intensity={sol} color={luz === 'calida' ? '#ffd6a3' : '#fff8ee'} castShadow shadow-mapSize={[2048, 2048]} shadow-bias={-0.0004}>
+      <directionalLight position={[4, 6, 3]} intensity={sol} color={luz === 'calida' ? '#ffd6a3' : '#fff8ee'} castShadow={calidad === 'alta'} shadow-mapSize={[1024, 1024]} shadow-bias={-0.0004}>
         <orthographicCamera attach="shadow-camera" args={[-5, 5, 5, -5, 0.5, 20]} />
       </directionalLight>
       <Environment resolution={256} frames={1}>
@@ -433,7 +453,7 @@ function Iluminacion({ luz }: { luz: Luz }) {
   )
 }
 
-function Contenido({ ambiente, piso, pared, acento, griferia, luz }: PropsEscena) {
+function Contenido({ ambiente, piso, pared, acento, griferia, luz, calidad }: PropsEscena & { calidad: Calidad }) {
   const acentoFondo: Record<TipoAmbiente, [number, number, number, number]> = {
     bano: [0.35, H / 2, 1.9, H],
     cocina: [0.2, 1.25, 4, 0.66],
@@ -441,32 +461,44 @@ function Contenido({ ambiente, piso, pared, acento, griferia, luz }: PropsEscena
   }
   return (
     <>
-      <Iluminacion luz={luz} />
-      <Cuarto piso={piso} pared={pared} acento={acento} acentoFondo={acentoFondo[ambiente]}>
+      <Iluminacion luz={luz} calidad={calidad} />
+      <Cuarto piso={piso} pared={pared} acento={acento} acentoFondo={acentoFondo[ambiente]} calidad={calidad}>
         {ambiente === 'bano' && <Bano g={griferia} luz={luz} />}
         {ambiente === 'cocina' && <Cocina g={griferia} luz={luz} />}
         {ambiente === 'sala' && <Sala luz={luz} />}
       </Cuarto>
-      <ContactShadows position={[0, 0.002, 0]} opacity={0.45} scale={10} blur={2.4} far={3} resolution={1024} />
+      {/* Los muebles no se mueven: la sombra se calcula una vez por ambiente. */}
+      <ContactShadows key={ambiente} frames={1} position={[0, 0.002, 0]} opacity={0.45} scale={10} blur={2.4} far={3} resolution={512} />
     </>
   )
 }
 
 export function Escena3D(props: PropsEscena) {
-  const ref = useRef<HTMLCanvasElement>(null)
+  const [calidad, setCalidad] = useState<Calidad>(calidadInicial)
+  const [listo, setListo] = useState(false)
+  const activo = props.activo ?? true
+  useEffect(() => {
+    const t = setTimeout(() => setListo(true), 1500)
+    return () => clearTimeout(t)
+  }, [])
+  const fondo = props.luz === 'noche' ? '#09090b' : props.luz === 'calida' ? '#1b140f' : '#e7e3dc'
   return (
     <Canvas
-      ref={ref}
-      shadows
-      dpr={[1, 2]}
+      shadows={calidad === 'alta'}
+      dpr={calidad === 'alta' ? [1, 1.75] : 1}
+      frameloop={activo ? 'always' : 'never'}
       className={props.className}
-      gl={{ antialias: true, preserveDrawingBuffer: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: props.luz === 'noche' ? 1.1 : 1 }}
-      camera={{ position: props.modo === "cine" ? [3.3, 1.65, 3.5] : [4.6, 1.9, 4.4], fov: 42 }}
+      style={{ opacity: listo ? 1 : 0, transition: 'opacity 1.2s ease', background: fondo }}
+      onCreated={() => setTimeout(() => setListo(true), 250)}
+      gl={{ antialias: calidad === 'alta', powerPreference: 'high-performance', preserveDrawingBuffer: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: props.luz === 'noche' ? 1.1 : 1 }}
+      camera={{ position: props.modo === 'cine' ? [3.3, 1.65, 3.5] : [4.6, 1.9, 4.4], fov: 42 }}
     >
-      <color attach="background" args={[props.luz === 'noche' ? '#09090b' : props.luz === 'calida' ? '#1b140f' : '#e7e3dc']} />
-      <fog attach="fog" args={[props.luz === 'noche' ? '#09090b' : props.luz === 'calida' ? '#1b140f' : '#e7e3dc', 9, 18]} />
+      {/* Si el equipo no sostiene la fluidez, baja la calidad sola. */}
+      <PerformanceMonitor onDecline={() => setCalidad('baja')} flipflops={1} />
+      <color attach="background" args={[fondo]} />
+      <fog attach="fog" args={[fondo, 9, 18]} />
       <Suspense fallback={null}>
-        <Contenido {...props} />
+        <Contenido {...props} calidad={calidad} />
       </Suspense>
       {props.modo === 'cine' ? (
         <CamaraCine />

@@ -1,6 +1,6 @@
 // Texturas procedurales en SVG para representar cada producto sin fotos.
 // Cuando SICHAR entregue fotografías reales, basta con cambiar <Muestra> por <img>.
-import { useId } from 'react'
+import { renderToStaticMarkup } from 'react-dom/server'
 import type { Producto } from '../data/types'
 import { rng } from '../lib/util'
 
@@ -176,15 +176,28 @@ export function DefsTextura({ p, id, escala = 1 }: { p: Prod; id: string; escala
   }
 }
 
-/** Muestra cuadrada de un producto. */
+/** SVG de la textura, rasterizado una sola vez por (producto, escala) y reutilizado como imagen. */
+const cacheMuestras = new Map<string, string>()
+function urlMuestra(p: Prod, escala: number) {
+  const clave = `${p.id}|${p.color}|${p.color2}|${p.textura}|${escala}`
+  let url = cacheMuestras.get(clave)
+  if (!url) {
+    const id = `m${p.id}`
+    const svg = renderToStaticMarkup(
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="480" height="480" preserveAspectRatio="xMidYMid slice">
+        <defs>
+          <DefsTextura p={p} id={id} escala={escala} />
+        </defs>
+        <rect width="160" height="160" fill={`url(#${id})`} />
+      </svg>,
+    )
+    url = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`
+    cacheMuestras.set(clave, url)
+  }
+  return url
+}
+
+/** Muestra cuadrada de un producto (se recorta como `object-cover` en cualquier proporción). */
 export function Muestra({ p, className = '', escala = 1.6 }: { p: Prod; className?: string; escala?: number }) {
-  const id = `tx-${p.id}-${useId().replace(/[^a-zA-Z0-9]/g, '')}`
-  return (
-    <svg viewBox="0 0 160 160" preserveAspectRatio="xMidYMid slice" className={className} aria-hidden>
-      <defs>
-        <DefsTextura p={p} id={id} escala={escala} />
-      </defs>
-      <rect width="160" height="160" fill={`url(#${id})`} />
-    </svg>
-  )
+  return <img src={urlMuestra(p, escala)} alt="" aria-hidden draggable={false} decoding="async" className={`object-cover ${className}`} />
 }

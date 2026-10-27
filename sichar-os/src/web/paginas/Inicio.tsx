@@ -1,5 +1,5 @@
 import { ArrowDown, ArrowUpRight, Building2, Compass, MapPin, Store } from 'lucide-react'
-import { motion, useScroll, useTransform } from 'motion/react'
+import { motion, useInView, useScroll, useTransform } from 'motion/react'
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Muestra } from '../../components/Textura'
@@ -43,6 +43,8 @@ function Hero() {
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
   const escala = useTransform(scrollYProgress, [0, 1], [1, 1.15])
   const opacidad = useTransform(scrollYProgress, [0, 0.8], [1, 0])
+  // El 3D solo se dibuja mientras el inicio está en pantalla.
+  const visible = useInView(ref)
   useEffect(() => {
     const t = setInterval(() => setI((x) => (x + 1) % insignias.length), 7000)
     return () => clearInterval(t)
@@ -54,7 +56,7 @@ function Hero() {
     <section ref={ref} className="relative h-[100svh] min-h-[640px] overflow-hidden">
       <motion.div className="absolute inset-0" style={{ scale: escala }}>
         <Suspense fallback={<div className="h-full w-full bg-[#1b140f]" />}>
-          <Escena3D ambiente="bano" piso={piso} pared={P('p7')} acento={i === 1 ? P('p1') : P('p2')} griferia={i === 2 ? 'dorado' : 'negro'} luz="calida" modo="cine" className="!h-full !w-full" />
+          <Escena3D ambiente="bano" piso={piso} pared={P('p7')} acento={i === 1 ? P('p1') : P('p2')} griferia={i === 2 ? 'dorado' : 'negro'} luz="calida" modo="cine" activo={visible} className="!h-full !w-full" />
         </Suspense>
       </motion.div>
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-black/85 via-black/45 to-transparent" />
