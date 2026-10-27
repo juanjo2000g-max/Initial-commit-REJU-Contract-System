@@ -1,0 +1,28 @@
+\usepackage{newunicodechar}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\usepackage[scaled=0.95]{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage{xcolor}
+\definecolor{naranja}{HTML}{F47920}
+\definecolor{tinta}{HTML}{1E1E1E}
+\usepackage{titlesec}
+\titleformat{\section}{\Large\bfseries\color{tinta}}{}{0pt}{}[\vspace{-0.3em}{\color{naranja}\titlerule[1.2pt]}]
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.6em}
+\usepackage{etoolbox}
+\AtBeginEnvironment{longtable}{\small}
+\AtBeginEnvironment{quote}{\color{tinta!80}\small}
+\renewcommand{\arraystretch}{1.3}
+\usepackage{fancyhdr}
+\pagestyle{fancy}\fancyhf{}
+\fancyhead[L]{\small\color{gray}\textbf{Pragmos} · Propuesta SICHAR OS}
+\fancyfoot[R]{\small\color{gray}\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\makeatletter
+\renewcommand{\maketitle}{%
+  {\color{naranja}\small\bfseries PRAGMOS · PROPUESTA COMERCIAL}\par\vspace{0.6em}
+  {\fontsize{26}{30}\selectfont\bfseries\color{tinta}\@title\par}\vspace{0.4em}
+  {\large\color{gray}Transformación digital de SICHAR, de la consultoría a la operación\par}\vspace{0.4em}
+  {\small\color{gray}\@date\par}\vspace{1.2em}}
+\makeatother
