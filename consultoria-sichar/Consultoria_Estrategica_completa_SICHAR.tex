@@ -1,0 +1,2875 @@
+\documentclass[11pt,a4paper]{article}
+
+% --- Idioma y tipografía -------------------------------------------------
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish,es-noindentfirst,es-nodecimaldot,es-tabla]{babel}
+\usepackage{lmodern}
+\usepackage[scaled=0.95]{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage{microtype}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{newunicodechar}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+
+% --- Página --------------------------------------------------------------
+\usepackage[a4paper,top=2.6cm,bottom=2.4cm,left=2.3cm,right=2.3cm,headheight=26pt]{geometry}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.55em}
+\linespread{1.08}
+\setlength{\emergencystretch}{3em}
+
+% --- Colores de marca ----------------------------------------------------
+\usepackage[table]{xcolor}
+\definecolor{sicharnaranja}{HTML}{F47920}
+\definecolor{sicharnegro}{HTML}{1E1E1E}
+\definecolor{sichargris}{HTML}{5A5A5A}
+\definecolor{fondogris}{HTML}{F4F4F4}
+\definecolor{rojo}{HTML}{C0392B}
+\definecolor{ambar}{HTML}{D68910}
+\definecolor{azul}{HTML}{2E5E8C}
+\definecolor{verde}{HTML}{2E8B57}
+
+% --- Paquetes generales --------------------------------------------------
+\usepackage{graphicx}
+\usepackage{longtable,booktabs,array,calc}
+\usepackage{multirow}
+\usepackage{enumitem}
+\setlist{itemsep=0.15em,topsep=0.3em}
+\setlist[itemize]{label=\textcolor{sicharnaranja}{\textbullet}}
+\usepackage{etoolbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{needspace}
+\usepackage[most]{tcolorbox}
+\usepackage[hidelinks,pdfusetitle]{hyperref}
+\usepackage{bookmark}
+
+% Soporte para las tablas que genera Pandoc
+\providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\newlength{\cslhangindent}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+\renewcommand{\arraystretch}{1.25}
+\setlength{\LTpre}{0.6em}
+\setlength{\LTpost}{0.8em}
+\AtBeginEnvironment{longtable}{\small}
+\arrayrulecolor{sichargris}
+\setlength{\heavyrulewidth}{1pt}
+\setlength{\lightrulewidth}{0.5pt}
+
+% --- Títulos -------------------------------------------------------------
+\setcounter{secnumdepth}{-\maxdimen}
+\setcounter{tocdepth}{2}
+\titleformat{\section}
+  {\Large\bfseries\color{sicharnegro}}
+  {}{0pt}
+  {}[\vspace{-0.4em}{\color{sicharnaranja}\titlerule[1.2pt]}]
+\titleformat{\subsection}{\large\bfseries\color{sicharnaranja}}{}{0pt}{}
+\titleformat{\subsubsection}{\normalsize\bfseries\color{sicharnegro}}{}{0pt}{}
+\titlespacing*{\section}{0pt}{1.6em}{0.9em}
+\titlespacing*{\subsection}{0pt}{1.3em}{0.5em}
+\titlespacing*{\subsubsection}{0pt}{1.1em}{0.3em}
+\newcommand{\sectionbreak}{\clearpage}
+
+
+% --- Encabezado y pie ----------------------------------------------------
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\color{sichargris}\textbf{SICHAR} · Consultoría estratégica completa}
+\fancyhead[R]{\includegraphics[height=11pt]{logo-sichar.png}}
+\fancyfoot[L]{\small\color{sichargris}Proyecto EA · Octubre de 2026}
+\fancyfoot[R]{\small\color{sichargris}\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{sicharnaranja}\leaders\hrule height \headrulewidth\hfill}}
+
+% --- Cajas destacadas ----------------------------------------------------
+\tcbset{
+  cajabase/.style={enhanced, sharp corners, boxrule=0pt,
+    leftrule=4pt, left=10pt, right=10pt, top=8pt, bottom=8pt,
+    before skip=0.9em, after skip=0.9em,
+    fonttitle=\bfseries, coltitle=sicharnegro,
+    attach title to upper={\par\smallskip}},
+}
+\newtcolorbox{cajainfo}[1]{cajabase, colback=azul!6, colframe=azul, title={#1}}
+\newtcolorbox{cajaaviso}[1]{cajabase, colback=ambar!9, colframe=ambar, title={#1}}
+\newtcolorbox{cajaalerta}[1]{cajabase, colback=rojo!6, colframe=rojo, title={#1}}
+\newtcolorbox{cajamarca}[1]{cajabase, colback=sicharnaranja!8, colframe=sicharnaranja, title={#1}}
+
+% --- FODA ---------------------------------------------------------------
+\tcbset{
+  fodabase/.style={enhanced, sharp corners, boxrule=0.6pt, fonttitle=\bfseries\small,
+    coltitle=white, left=6pt, right=6pt, top=4pt, bottom=4pt, fontupper=\small},
+}
+\newtcolorbox{fodaF}[1]{fodabase, colframe=verde, colback=verde!5, title={#1}}
+\newtcolorbox{fodaD}[1]{fodabase, colframe=ambar, colback=ambar!6, title={#1}}
+\newtcolorbox{fodaO}[1]{fodabase, colframe=azul, colback=azul!5, title={#1}}
+\newtcolorbox{fodaA}[1]{fodabase, colframe=rojo, colback=rojo!5, title={#1}}
+
+% --- Ficha de hallazgo ---------------------------------------------------
+% #1 número, #2 nombre, #3 nombre sin formato (índice), #4 urgencia,
+% #5 cuándo actuar, #6 responsable sugerido
+\newcommand{\hallazgo}[6]{%
+  \clearpage
+  \phantomsection
+  \addcontentsline{toc}{subsection}{Prioridad #1 · #3}%
+  \begin{tcolorbox}[enhanced, sharp corners, boxrule=0pt, colback=sicharnegro,
+      left=0pt, right=0pt, top=0pt, bottom=0pt, after skip=1em]
+    \begin{tabular}{@{}>{\centering\arraybackslash}m{2.6cm}@{\hspace{10pt}}m{\linewidth-3.4cm}@{}}
+      \cellcolor{sicharnaranja}\rule{0pt}{2.4cm}%
+      \color{white}\begin{tabular}{@{}c@{}}\footnotesize\bfseries PRIORIDAD\\[2pt]
+        \fontsize{38}{38}\selectfont\bfseries #1\end{tabular} &
+      \color{white}{\small\itshape Hallazgo #1}\par\vspace{2pt}
+      {\LARGE\bfseries #2}
+    \end{tabular}
+  \end{tcolorbox}
+  \vspace{-0.6em}
+  \noindent
+  \begin{tcbraster}[raster columns=3, raster equal height, raster column skip=2mm]
+    \begin{tcolorbox}[enhanced, sharp corners, boxrule=0pt, colback=rojo!10, fontupper=\small]
+      {\scriptsize\bfseries\color{sichargris} URGENCIA}\par
+      {\large\bfseries\color{rojo} #4}
+    \end{tcolorbox}
+    \begin{tcolorbox}[enhanced, sharp corners, boxrule=0pt, colback=fondogris, fontupper=\small]
+      {\scriptsize\bfseries\color{sichargris} CUÁNDO ACTUAR}\par
+      \textbf{#5}
+    \end{tcolorbox}
+    \begin{tcolorbox}[enhanced, sharp corners, boxrule=0pt, colback=fondogris, fontupper=\small]
+      {\scriptsize\bfseries\color{sichargris} RESPONSABLE SUGERIDO}\par
+      \textbf{#6}
+    \end{tcolorbox}
+  \end{tcbraster}
+}
+
+% --- Portada -------------------------------------------------------------
+\newcommand{\portada}{%
+  \begin{titlepage}
+    \thispagestyle{empty}
+    \begin{tikzpicture}[remember picture, overlay]
+      \fill[sicharnegro] (current page.north west) rectangle ([yshift=-12cm]current page.north east);
+      \fill[sicharnaranja] ([yshift=-12cm]current page.north west) rectangle ([yshift=-12.5cm]current page.north east);
+    \end{tikzpicture}
+    \vspace*{-1.2cm}
+    \begin{tcolorbox}[enhanced, colback=white, boxrule=0pt, arc=3pt, width=5.2cm,
+        left=6pt, right=6pt, top=6pt, bottom=6pt, halign=center]
+      \includegraphics[height=1.4cm]{logo-sichar.png}\hspace{6pt}%
+      \raisebox{0.45cm}{\Huge\bfseries\color{sicharnegro}SICHAR}
+    \end{tcolorbox}
+    \vspace{0.5cm}
+    {\color{sicharnaranja}\small\bfseries PROYECTO EA · CONSULTORÍA ESTRATÉGICA}\par
+    \vspace{0.3cm}
+    {\color{white}\fontsize{30}{34}\selectfont\bfseries CONSULTORÍA\\ESTRATÉGICA\\COMPLETA\par}
+    \vspace{2.6cm}
+    {\fontsize{46}{50}\selectfont\bfseries\color{sicharnaranja} SICHAR\par}
+    \vspace{0.6cm}
+    {\Large\itshape\color{sichargris} Diagnóstico, priorización de hallazgos y hoja de ruta de
+      soluciones para crecer sin perder la confianza del canal\par}
+    \vfill
+    \begin{tcolorbox}[enhanced, sharp corners, boxrule=0pt, leftrule=4pt,
+        colframe=sicharnaranja, colback=fondogris, left=12pt, top=10pt, bottom=10pt]
+      {\scriptsize\bfseries\color{sichargris} PREPARADO PARA}\par
+      \textbf{Gerencia y socios de SICHAR} · Cali, Colombia\par
+      \medskip
+      {\scriptsize\bfseries\color{sichargris} PREPARADO POR}\par
+      \textbf{Isabella Ruiz, Juan José Giraldo, Martin Osorio, David Arias, Mariana Restrepo y
+        Karen Carvajal}\par
+      \medskip
+      \textit{Octubre de 2026}
+    \end{tcolorbox}
+  \end{titlepage}
+  \renewcommand{\contentsname}{Contenido}
+}
+
+\hypersetup{
+  pdftitle={Consultoría Estratégica Completa · SICHAR},
+  pdfauthor={Isabella Ruiz, Juan José Giraldo, Martin Osorio, David Arias, Mariana Restrepo, Karen Carvajal},
+  pdfsubject={Diagnóstico, priorización de hallazgos y hoja de ruta},
+  pdflang={es-CO},
+}
+
+\begin{document}
+\portada
+\tableofcontents
+\clearpage
+
+\hypertarget{introducciuxf3n}{%
+\section{1. Introducción}\label{introducciuxf3n}}
+
+SICHAR es una empresa colombiana con más de 20 años de trayectoria en la importación y distribución
+de acabados para la construcción. Actualmente, enfrenta desafíos como \textbf{el aumento del 30 \%
+en los costos de importación desde India, el riesgo de conflictos con sus distribuidores, la falta
+de segmentación de clientes, la baja madurez digital, la ausencia de asesoría especializada y la
+poca presencia en redes sociales.}
+
+Esta consultoría \textbf{busca diagnosticar y priorizar estas problemáticas, proponiendo soluciones
+enfocadas en optimizar costos, fortalecer la relación con los distribuidores, definir perfiles de
+clientes, mejorar los procesos comerciales mediante herramientas digitales, ofrecer asesoría
+especializada y aumentar la visibilidad de la marca.}
+
+Con la implementación de estas recomendaciones, SICHAR \textbf{podrá mejorar su eficiencia y
+competitividad, fortalecer sus relaciones comerciales, aprovechar nuevas oportunidades de negocio y
+aumentar su presencia en el mercado.} Para evaluar los avances, se plantean indicadores y metas a
+doce meses que deberán validarse con los datos reales de la empresa.
+
+\needspace{6\baselineskip}
+
+\hypertarget{quuxe9-debe-esperar-usted-de-este-documento}{%
+\subsection{1.1 Qué debe esperar usted de este
+documento}\label{quuxe9-debe-esperar-usted-de-este-documento}}
+
+Este documento está escrito para quien toma las decisiones, no para especialistas. Está pensado para
+que usted pueda leerlo, decidir y actuar. Encontrará:
+
+\begin{itemize}
+\item
+  \textbf{Un diagnóstico claro y honesto:} seis hallazgos, ordenados del más urgente al menos
+  urgente, cada uno con su descripción, su impacto actual y su impacto potencial.
+\item
+  \textbf{Ejemplos reales de empresas que ya resolvieron problemas parecidos} (nacionales e
+  internacionales) y qué podría tomar SICHAR de cada una.
+\item
+  \textbf{Soluciones tangibles:} acciones concretas, responsables sugeridos, plazos, entregables e
+  indicadores para cada hallazgo.
+\item
+  \textbf{Una hoja de ruta integrada} a 30 días, 90 días, 6 y 12 meses, y la lista de decisiones que
+  se necesitan de la gerencia.
+\end{itemize}
+
+\emph{Lo que este documento no es:} no es un plan financiero detallado ni una auditoría contable.
+Las metas que se proponen son \textbf{sugeridas y deben validarse con la línea base real} de SICHAR
+durante el primer mes de ejecución.
+
+\needspace{12\baselineskip}
+
+\hypertarget{alcance-del-proyecto}{%
+\subsection{1.2 Alcance del proyecto}\label{alcance-del-proyecto}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Incluye}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{No incluye}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\bottomrule\noalign{}
+\endlastfoot
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Diagnóstico estratégico de SICHAR: fortalezas, oportunidades, debilidades y amenazas.
+\item
+  Identificación y priorización de seis hallazgos negativos.
+\item
+  Benchmarking con empresas de referencia para cada hallazgo.
+\item
+  Propuesta de soluciones accionables y de indicadores de seguimiento.
+\item
+  Hoja de ruta de 12 meses.
+\end{itemize}
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Estados financieros, proyecciones de ventas o valoración de la empresa.
+\item
+  Implementación operativa de las soluciones (salvo acuerdo posterior).
+\item
+  Selección o compra de software específico.
+\item
+  Asesoría legal o tributaria sobre importaciones.
+\end{itemize}
+\end{minipage} \\
+\end{longtable}
+
+\textbf{Cobertura:} las cuatro líneas de producto de SICHAR (accesorios de baño, cerámicas y
+acabados, elementos decorativos y remodelación/adecuación con referencias importadas), sus cinco
+sedes (Cali, Medellín, Bogotá, Barranquilla y Bucaramanga) su red de proveedores en cinco países
+(China, India, Brasil, España y Perú) y su canal de distribuidores y ferreterías. Los segmentos
+nuevos analizados son \textbf{constructoras, arquitectos y empresas de proyectos}.
+
+\needspace{6\baselineskip}
+
+\hypertarget{lo-que-sichar-ya-tiene-a-su-favor}{%
+\subsection{1.3 Lo que SICHAR ya tiene a su favor}\label{lo-que-sichar-ya-tiene-a-su-favor}}
+
+Antes de hablar de problemas, conviene reconocer los cimientos sobre los que se construirán las
+soluciones:
+
+\begin{itemize}
+\item
+  Trayectoria de \textbf{más de 20 años} y un modelo B2B probado con distribuidores y ferreterías en
+  todo el país.
+\item
+  Red de proveedores \textbf{directa en 5 países}, sin intermediarios de importación.
+\item
+  \textbf{Cobertura nacional} con 5 sedes estratégicas y equipo comercial propio en cada una.
+\item
+  Un \textbf{producto insignia bien posicionado}: el porcelanato brillante 60x130.
+\item
+  Reconocimiento de marca sostenido con voz a voz, \textbf{sin inversión en publicidad}.
+\item
+  \textbf{Identificación proactiva} de nuevos segmentos: constructoras, arquitectos y empresas de
+  proyectos.
+\end{itemize}
+
+\hypertarget{lo-muxe1s-grave-que-encontramos}{%
+\section{2. Lo más grave que encontramos}\label{lo-muxe1s-grave-que-encontramos}}
+
+\begin{cajaalerta}{El hallazgo más grave: el riesgo de conflicto de canal}
+
+La idea de \textbf{vender directo al consumidor final} para aumentar márgenes pone en riesgo a los
+clientes que \textbf{hoy sostienen la operación}: ferreterías y distribuidores. Si ellos perciben
+que SICHAR su proveedor les quita clientela, pueden reducir pedidos, priorizar a la competencia y
+propagar su inconformidad por voz a voz, el único motor de reputación que SICHAR ha tenido durante
+20 años. \textbf{Vender a constructoras y arquitectos también es conflicto de canal.} Si SICHAR les
+factura directo, compite con los distribuidores que quizá hoy atienden esas obras. Falta una regla:
+a partir de qué tamaño de proyecto la cuenta es directa, cómo se registra el proyecto y qué comisión
+recibe el distribuidor de la zona.
+
+\end{cajaalerta}
+
+\textbf{¿Por qué es el más grave?} Porque es el único problema que, mal manejado, puede destruir el
+\textbf{activo principal} de la empresa (la confianza del canal) y porque es una decisión que
+\textbf{todavía está a tiempo de tomarse bien}. Los otros cinco hallazgos son debilidades que se
+corrigen con trabajo; este es un riesgo que, si se comete el error, puede ser irreversible.
+
+\textbf{En segundo lugar} está la exposición a los costos de importación: el alza del \textbf{30 \%
+en los productos de India} ya presiona el margen y, si no se actúa, hace inviable financiar el resto
+de las mejoras. Estos dos hallazgos juntos ---uno sobre el canal, otro sobre el margen son el eje
+del plan.
+
+\needspace{6\baselineskip}
+
+\subsection{2.1 Cómo priorizamos}
+
+Calificamos cada hallazgo de 1 a 5 en cuatro criterios: impacto en ventas o margen (35 \%), urgencia
+(30 \%), cuántas otras soluciones dependen de él (20 \%) y facilidad para empezar con bajo costo (15
+\%).
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.2458}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1421}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1545}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1628}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1587}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1360}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Hallazgo}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Impacto}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Urgencia}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Habilita a otros}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Facilidad}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Puntaje}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\bottomrule\noalign{}
+\endlastfoot
+1. Conflicto de canal & 5 & 5 & 5 & 4 & \textbf{4,85} \\
+2. Costos de importación & 5 & 5 & 3 & 3 & \textbf{4,30} \\
+3. Buyer persona & 3 & 3 & 5 & 5 & \textbf{3,70} \\
+4. Madurez digital & 4 & 3 & 4 & 2 & \textbf{3,40} \\
+5. Atención especializada & 4 & 2 & 2 & 3 & \textbf{2,85} \\
+6. Redes sociales & 3 & 2 & 1 & 4 & \textbf{2,45} \\
+\end{longtable}
+
+\needspace{12\baselineskip}
+
+\hypertarget{mapa-de-prioridades}{%
+\subsubsection{Mapa de prioridades}\label{mapa-de-prioridades}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.1091}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.3175}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.1290}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.4444}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Prioridad}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Hallazgo}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Urgencia}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Por qué en este orden}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{1} & Riesgo de conflicto de canal & \textbf{Crítica} & Amenaza al canal que sostiene el
+negocio; condiciona la forma de ejecutar casi todo lo demás. \\
+\textbf{2} & Exposición a alzas en costos de importación & \textbf{Crítica} & Efecto ya en marcha
+sobre el margen y la caja; financia las demás mejoras. \\
+\textbf{3} & Buyer persona no definido & \textbf{Alta} & Cimiento de las acciones comerciales y de
+marketing; barato y rápido. \\
+\textbf{4} & Baja madurez tecnológica y digital & \textbf{Alta} & Infraestructura para la Vitrina,
+el catálogo y las redes. \\
+\textbf{5} & Falta de atención especializada & \textbf{Media-alta} & Diferenciador para arquitectos
+y constructoras; requiere los perfiles y el catálogo. \\
+\textbf{6} & Baja presencia en redes sociales & \textbf{Media} & Alta visibilidad, pero depende de
+tener definidos canal, clientes y catálogo. \\
+\end{longtable}
+
+\hypertarget{quuxe9-hay-que-modificar}{%
+\section{3. Qué hay que modificar}\label{quuxe9-hay-que-modificar}}
+
+Resumen en una página de \textbf{los cambios concretos} que proponemos, uno por hallazgo. El detalle
+de cada uno está en la sección 6.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.0496}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2282}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.4345}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2877}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{\#}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Hoy}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Qué hay que modificar}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Primer paso (próximos 30 días)}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{1} & Se quiere abrir el B2C sin reglas con el canal. & Adoptar el modelo \textbf{``Vitrina
+SICHAR + Distribuidor Aliado''}: la venta al consumidor final pasa por los distribuidores; la venta
+directa solo con productos y proyectos que no compiten con ellos. & Mapear el canal y entrevistar a
+8--10 distribuidores clave. \\
+\textbf{2} & Costos de India +30 \% sin análisis por referencia. & Calcular el \textbf{costo total
+puesto en bodega por referencia}, diversificar origen y fijar una \textbf{política de precios por
+escalones}. & Construir la hoja de costos de las 20 referencias top. \\
+\textbf{3} & Clientes conocidos ``de memoria''. & Definir \textbf{3--4 buyer personas} validadas con
+entrevistas y registrar cada visita en un formulario único. & Agendar 15--20 entrevistas de clientes
+y prospectos. \\
+\textbf{4} & Procesos manuales; sin estrategia digital. & Ejecutar la \textbf{Ruta Digital} en 3
+etapas: ordenar datos, abrir la puerta (web y catálogo), autoservicio. & Designar un líder digital y
+mapear cuellos de botella. \\
+\textbf{5} & Se vende producto sin asesoría. & Crear la \textbf{Mesa de Asesoría SICHAR} y el
+programa ``Arquitecto Aliado'', con piloto en Cali. & Definir el perfil del asesor y diseñar la guía
+de acabados. \\
+\textbf{6} & Presencia mínima en redes. & Activar un \textbf{plan de contenido de 90 días} (3
+publicaciones por semana) centrado en proyectos reales. & Auditar la cuenta actual y la de Cerámica
+Italia. \\
+\end{longtable}
+
+\hypertarget{quuxe9-pasaruxe1-despuuxe9s-de-aplicar-las-recomendaciones}{%
+\section{4. Qué pasará después de aplicar las
+recomendaciones}\label{quuxe9-pasaruxe1-despuuxe9s-de-aplicar-las-recomendaciones}}
+
+Si SICHAR ejecuta la hoja de ruta, la empresa pasa de ser \textbf{un proveedor tradicional que crece
+por voz a voz} a ser \textbf{el proveedor aliado, visible y asesor} de ferreterías, distribuidores,
+constructoras y arquitectos. Así se vería el cambio:
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2183}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2877}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.4940}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Dimensión}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Hoy}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Después de aplicar las recomendaciones}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{Relación con el canal} & Riesgo de ruptura si se abre el B2C sin reglas. & Distribuidores
+que \textbf{ganan} con la estrategia digital: reciben referidos, muestrarios, capacitación y
+protección de proyectos. El B2C se convierte en una fuente de ventas \textbf{para el canal}, no
+contra él. \\
+\textbf{Margen} & Presionado por el alza en India. & Costo total conocido por referencia, menos
+dependencia de un solo origen y precios ajustados con método y por escalones. \\
+\textbf{Conocimiento del cliente} & Disperso en la memoria de los vendedores. & 3--4 buyer personas
+validadas y una \textbf{base de datos viva} de clientes y prospectos. \\
+\textbf{Operación digital} & Procesos manuales. & Catálogo digital, cotizaciones en menos de 48
+horas, CRM en uso en las 5 sedes y pedidos de distribuidores por canal digital. \\
+\textbf{Diferenciación} & Se compite por producto y precio. & SICHAR ofrece \textbf{asesoría de
+diseño y muestras} a arquitectos y constructoras: compite con acompañamiento. \\
+\textbf{Visibilidad} & Reconocimiento solo por voz a voz. & Presencia constante en Instagram,
+Pinterest, LinkedIn y WhatsApp, con proyectos reales y un ``Dónde comprar'' que alimenta al
+canal. \\
+\textbf{Nuevos segmentos} & Identificados pero sin estrategia. & Primeras cuentas de
+\textbf{constructoras, arquitectos y firmas de proyectos} con ofertas propias para cada perfil. \\
+\end{longtable}
+
+\needspace{12\baselineskip}
+
+\hypertarget{resultados-esperados-a-12-meses-metas-sugeridas-por-validar-con-la-luxednea-base}{%
+\subsubsection{Resultados esperados a 12 meses (metas sugeridas, por validar con la línea
+base)}\label{resultados-esperados-a-12-meses-metas-sugeridas-por-validar-con-la-luxednea-base}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.6448}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.3552}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Resultado}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Meta sugerida}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\bottomrule\noalign{}
+\endlastfoot
+Retención de los 20 distribuidores principales & ≥ 95 \% \\
+Quejas críticas por conflicto de canal & 0 \\
+Referencias críticas con 2 o más proveedores validados & 100 \% \\
+Tiempo de respuesta a cotizaciones & \textless{} 48 horas (\textless{} 24 horas en referencias
+top) \\
+Visitas de ventas registradas en el CRM & ≥ 80 \% \\
+Proyectos asesorados por la Mesa de Asesoría (piloto de 90 días) & 10--15 \\
+Publicaciones en redes & 3 por semana, de forma sostenida \\
+\end{longtable}
+
+\begin{cajaaviso}{Importante}
+
+Estas metas son \textbf{propuestas de partida}, no promesas. SICHAR debe medir en el primer mes su
+situación real (ventas por cliente, margen por línea, tiempos de cotización, etc.) y ajustar cada
+meta con esa línea base.
+
+\end{cajaaviso}
+
+\hypertarget{anuxe1lisis-foda}{%
+\section{5. Análisis FODA}\label{anuxe1lisis-foda}}
+
+El FODA resume la situación de SICHAR hoy: lo que tiene a favor (\textbf{Fortalezas} y
+\textbf{Oportunidades}) y lo que debe corregir o vigilar (\textbf{Debilidades} y \textbf{Amenazas}).
+
+\begin{tcbraster}[raster columns=2, raster equal height=rows, raster column skip=3mm, raster row skip=3mm]
+\begin{fodaF}{FORTALEZAS (internas, a favor)}
+\begin{itemize}
+\item
+  Más de \textbf{20 años} de trayectoria y experiencia en el sector
+  construcción.
+\item
+  Relación \textbf{directa con proveedores internacionales} en 5 países,
+  sin intermediarios.
+\item
+  \textbf{Cobertura nacional} consolidada: 5 sedes estratégicas con
+  equipo propio.
+\item
+  \textbf{Producto insignia} reconocido: porcelanato brillante 60x130.
+\end{itemize}
+\end{fodaF}
+\begin{fodaD}{DEBILIDADES (internas, a corregir)}
+\begin{itemize}
+\item
+  Ausencia de un \textbf{buyer persona} y de segmentación clara.
+\item
+  \textbf{Baja madurez digital:} sin estrategia de marketing ni
+  presencia relevante en redes.
+\item
+  Falta de \textbf{atención especializada} (diseño) para nuevos
+  segmentos.
+\item
+  Fuerza comercial basada en un \textbf{modelo tradicional de
+  correrías}, con potencial limitado de escalar.
+\end{itemize}
+\end{fodaD}
+\begin{fodaO}{OPORTUNIDADES (externas, a aprovechar)}
+\begin{itemize}
+\item
+  \textbf{Segmentos sin explotar:} constructoras, arquitectos y empresas
+  de proyectos.
+\item
+  \textbf{Canales digitales y comercio electrónico} para llegar al
+  consumidor final.
+\item
+  Posibilidad de ofrecer \textbf{asesoría especializada en diseño} como
+  diferenciador frente a la competencia.
+\end{itemize}
+\end{fodaO}
+\begin{fodaA}{AMENAZAS (externas, a vigilar)}
+\begin{itemize}
+\item
+  \textbf{Aumento de costos de importación} (India +30 \%) que presiona
+  márgenes.
+\item
+  Riesgo de que los \textbf{proveedores no mantengan} las condiciones de
+  negociación originales.
+\item
+  \textbf{Conflicto de canal} con los distribuidores actuales al avanzar
+  hacia B2C.
+\item
+  Competencia directa y establecida de \textbf{Cerámica Italia}.
+\end{itemize}
+\end{fodaA}
+\end{tcbraster}
+
+\needspace{6\baselineskip}
+
+\hypertarget{estrategias-cruzadas-cuxf3mo-usar-el-foda-para-decidir}{%
+\subsection{5.1 Estrategias cruzadas: cómo usar el FODA para
+decidir}\label{estrategias-cruzadas-cuxf3mo-usar-el-foda-para-decidir}}
+
+Cruzando los cuatro cuadrantes obtenemos las estrategias que sustentan las soluciones de este
+documento:
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.1885}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.5060}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3056}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Cruce}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Estrategia}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Se concreta en\ldots{}}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{FO}
+
+Fortalezas + Oportunidades & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Usar la red de 5 sedes y el producto insignia para llegar a arquitectos y constructoras.
+\item
+  Aprovechar los proveedores directos para ofrecer colecciones de proyecto.
+\end{itemize}
+\end{minipage} & Hallazgos 3 y 5: buyer personas, Mesa de Asesoría y programa ``Arquitecto
+Aliado'' \\
+\textbf{DO}
+
+Debilidades + Oportunidades & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Cerrar la brecha digital para aprovechar el comercio electrónico y las redes.
+\item
+  Convertir la falta de asesoría en un servicio diferenciador.
+\end{itemize}
+\end{minipage} & Hallazgos 4, 5 y 6: Ruta Digital, Mesa de Asesoría y plan de contenido \\
+\textbf{FA}
+
+Fortalezas + Amenazas & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Usar los 5 países de proveedores para diversificar el origen frente al alza de India.
+\item
+  Usar la confianza de 20 años con los distribuidores para pactar reglas de canal antes del B2C.
+\end{itemize}
+\end{minipage} & Hallazgos 1 y 2: política de canal y diversificación de proveedores \\
+\textbf{DA}
+
+Debilidades + Amenazas & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Convertir el conocimiento disperso de los clientes en datos para anticipar cambios de precio y de
+  mercado.
+\item
+  Fortalecer la presencia digital para no perder terreno frente a Cerámica Italia.
+\end{itemize}
+\end{minipage} & Hallazgos 2, 3 y 6: costos por referencia, CRM y redes \\
+\end{longtable}
+
+\hypertarget{hallazgos-en-orden-de-prioridad}{%
+\section{6. Hallazgos en orden de prioridad}\label{hallazgos-en-orden-de-prioridad}}
+
+A continuación, cada hallazgo se presenta con la misma estructura, de modo que pueda comparar y
+decidir con facilidad:
+
+\begin{itemize}
+\item
+  \textbf{1. Descripción detallada} del hallazgo.
+\item
+  \textbf{2. Impacto} que tiene hoy y que podría tener.
+\item
+  \textbf{3. Modelos inspiracionales:} empresas que ya resolvieron un problema similar.
+\item
+  \textbf{4. Solución tangible} para SICHAR: acciones, responsables, plazos y entregables.
+\item
+  \textbf{5. Indicadores} para medir si funciona.
+\end{itemize}
+
+\begin{cajainfo}{Cómo leer los responsables y plazos}
+
+Los \textbf{responsables} son \textbf{sugeridos} según los cargos típicos de una empresa como
+SICHAR; la gerencia puede reasignarlos. Los \textbf{plazos} se cuentan desde el inicio del proyecto
+de implementación (semana 1).
+
+\end{cajainfo}
+
+\hallazgo{1}{\textbf{Riesgo de conflicto de canal}}{Riesgo de conflicto de canal}{CRÍTICA}{\textbf{Antes de lanzar cualquier venta directa (0--30 días)}}{\textbf{Gerencia general + Dirección comercial}}
+
+\needspace{6\baselineskip}
+
+\hypertarget{descripciuxf3n-detallada-del-hallazgo}{%
+\subsection*{1. Descripción detallada del hallazgo}\label{descripciuxf3n-detallada-del-hallazgo}}
+
+SICHAR ha crecido más de 20 años con una cadena simple y probada: \textbf{SICHAR → distribuidores y
+ferreterías → consumidor final}. Su propósito de marca lo resume así: \emph{``Somos su proveedor, no
+su competidor''}. Hoy esos distribuidores y ferreterías son \textbf{los clientes que sostienen la
+operación}.
+
+El empresario quiere incorporar un modelo \textbf{B2C} (venta directa al consumidor final) para
+capturar un mayor margen. El problema es que, si SICHAR vende al mismo consumidor que hoy atienden
+sus clientes, \textbf{pasa de ser su proveedor a ser su competidor}: los distribuidores verían cómo
+la empresa que les surte les quita clientela, y con razón lo interpretarían como un conflicto de
+intereses.
+
+Este es un riesgo de \textbf{doble filo}: el B2C promete más margen, pero el canal que se podría
+perder es el que genera hoy la mayor parte de los ingresos. Además, como la reputación de SICHAR se
+ha construido casi exclusivamente por \textbf{voz a voz}, una molestia del canal se propagaría
+rápido entre ferreterías y distribuidores de las cinco sedes.
+
+\needspace{12\baselineskip}
+
+\hypertarget{impacto-que-tiene-y-que-podruxeda-tener}{%
+\subsection*{2. Impacto que tiene y que podría
+tener}\label{impacto-que-tiene-y-que-podruxeda-tener}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Impacto actual (lo que ya está pasando)}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Impacto potencial (si no se actúa)}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\bottomrule\noalign{}
+\endlastfoot
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Hay una decisión estratégica pendiente (abrir o no el B2C) y ninguna regla escrita sobre cómo
+  convivirían ambos canales.
+\item
+  La incertidumbre ya condiciona la planeación comercial y la comunicación con los distribuidores.
+\end{itemize}
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  \textbf{Pérdida de ventas} del canal que sostiene el negocio: menos pedidos, menor prioridad a las
+  referencias SICHAR o cambio hacia proveedores competidores como Cerámica Italia.
+\item
+  \textbf{Ruptura de la promesa de marca} (``proveedor, no competidor'') y daño reputacional que se
+  propaga por voz a voz.
+\item
+  Guerra de precios entre SICHAR y sus propios clientes, con erosión del margen de todos.
+\end{itemize}
+\end{minipage} \\
+\end{longtable}
+
+\begin{cajaaviso}{Por qué ocupa el puesto 1 de prioridad}
+
+Es el único hallazgo que, mal manejado, puede \textbf{destruir el activo principal de la empresa}:
+la confianza de los distribuidores. Además, la decisión de abrir o no el B2C condiciona el diseño
+del resto de las soluciones (digital, redes, asesoría), por eso debe resolverse primero.
+
+\end{cajaaviso}
+
+\needspace{6\baselineskip}
+
+\hypertarget{modelos-inspiracionales-quiuxe9n-ya-lo-resolviuxf3}{%
+\subsection*{3. Modelos inspiracionales: quién ya lo
+resolvió}\label{modelos-inspiracionales-quiuxe9n-ya-lo-resolviuxf3}}
+
+Seis empresas de sectores afines resolvieron este dilema con una misma idea: \textbf{el canal
+directo complementa al distribuidor, no lo reemplaza}.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.1984}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.4008}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.4008}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Empresa / país}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Qué hace diferente}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Qué puede adaptar SICHAR}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{Coarte SAS}
+
+\textbf{Colombia}
+
+\emph{\textbf{coartesas.com}} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Trabaja con constructoras durante la obra y aprovecha su posventa para vender pequeños contratos a
+  los propietarios (remodelaciones, modificaciones).
+\item
+  Los grandes contratos sostienen el negocio; la posventa suma ventas \textbf{sin quitarle clientes
+  a la constructora}.
+\end{itemize}
+\end{minipage} & Acompañar a los distribuidores en la \textbf{posventa de sus proyectos} y generar
+ventas complementarias con el cliente final, \textbf{en alianza con ellos y no en competencia}. \\
+\textbf{LISTO Distribución}
+
+\textbf{Colombia}
+
+\emph{\textbf{listo.co}} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Portafolio amplio de porcelanatos, grifería, sanitarios y accesorios para que el distribuidor
+  ofrezca varias categorías.
+\item
+  Plataforma en línea para clientes corporativos, inventario de entrega inmediata y asesoría
+  especializada.
+\end{itemize}
+\end{minipage} & Crear un \textbf{canal digital que promocione y genere contactos}, pero que
+\textbf{dirija la compra del consumidor final hacia el distribuidor autorizado}. Más alcance sin
+quitar ventas a los aliados. \\
+\textbf{Roca Group}
+
+\textbf{Internacional}
+
+\emph{\textbf{rocagroup.com}} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Portal B2B donde los distribuidores consultan pedidos, devoluciones, servicios y documentos en
+  tiempo real.
+\item
+  Usa la tecnología para \textbf{fortalecer el canal tradicional}, no para reemplazarlo.
+\end{itemize}
+\end{minipage} & Empezar con \textbf{catálogo digital y portal o formulario para distribuidores}. Si
+luego abre B2C: dirigir la compra al distribuidor más cercano o diferenciar el canal directo con
+asesoría y servicios, sin los mismos productos y precios. \\
+\textbf{Caterpillar}
+
+\textbf{Internacional}
+
+\emph{\textbf{cat.com}} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Red global de distribuidores con repuestos rápidos y asistencia técnica continua.
+\item
+  Tecnología de monitoreo remoto y alto valor de reventa.
+\end{itemize}
+\end{minipage} & Fortalecer a la red con \textbf{soporte posventa, disponibilidad de producto y
+asesoría técnica} para que el valor de la marca llegue al cliente final a través del
+distribuidor. \\
+\textbf{Porcelanosa}
+
+\textbf{España}
+
+\emph{\textbf{porcelanosa.com}} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Combina más de 200 tiendas propias con más de 1.000 puntos de venta autorizados.
+\item
+  Programa «Porcelanosa Associates»: tiendas asociadas con la gama, la imagen y el respaldo de la
+  marca.
+\end{itemize}
+\end{minipage} & \textbf{Definir qué se vende directo y qué vende la red}, y crear un programa de
+\textbf{distribuidores asociados} con imagen y respaldo de la marca SICHAR. \\
+\textbf{Aqualisa}
+
+\textbf{Reino Unido}
+
+\emph{\textbf{aqualisa.co.uk}} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Referente en la relación entre fabricante, distribuidores e instaladores.
+\item
+  Se acerca al consumidor final sin perder el valor de los intermediarios.
+\end{itemize}
+\end{minipage} & Estrategia \textbf{omnicanal}: vender directo manteniendo a los distribuidores como
+aliados mediante \textbf{comisiones, referidos, garantías, instalación o beneficios por
+proyecto}. \\
+\end{longtable}
+
+\emph{Nota: los precios y cifras de terceros son referenciales, provienen de fuentes públicas de
+cada empresa y deben verificarse antes de usarse en decisiones comerciales.}
+
+\needspace{6\baselineskip}
+
+\hypertarget{soluciuxf3n-tangible-para-sichar}{%
+\subsection*{4. Solución tangible para SICHAR}\label{soluciuxf3n-tangible-para-sichar}}
+
+La solución no es ``B2C sí o no'', sino \textbf{definir las reglas del juego antes de abrir la
+puerta}. Proponemos el modelo \textbf{``Vitrina SICHAR + Distribuidor Aliado''}, que se construye en
+cuatro piezas:
+
+\needspace{12\baselineskip}
+
+\hypertarget{pieza-1-la-poluxedtica-de-canal-un-documento-de-una-puxe1gina}{%
+\subsubsection*{Pieza 1 · La política de canal (un documento de una
+página)}\label{pieza-1-la-poluxedtica-de-canal-un-documento-de-una-puxe1gina}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.2480}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.7520}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Regla}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Qué dice exactamente}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{Quién vende qué} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  \textbf{Línea Distribuidor:} el portafolio actual (incluido el porcelanato brillante 60x130) se
+  vende solo a través de ferreterías y distribuidores.
+\item
+  \textbf{Línea Directa:} referencias, formatos o colecciones de proyecto exclusivos para venta
+  directa (por ejemplo, kits de muestras, colecciones para arquitectos, paquetes de proyecto).
+\end{itemize}
+\end{minipage} \\
+\textbf{Precios} & SICHAR publica un \textbf{precio sugerido de venta al público} y \textbf{no vende
+directo por debajo de él}. Así el distribuidor nunca es subcotizado por su propio proveedor. \\
+\textbf{Quién atiende al consumidor final} & El sitio y las redes de SICHAR \textbf{inspiran y
+captan interesados}; el botón principal es \textbf{``Dónde comprar''}, que lleva al distribuidor
+autorizado más cercano. El contacto se le entrega al distribuidor como \textbf{referido}. \\
+\textbf{Zonas y proyectos} & Si un distribuidor ya trabaja con una constructora o proyecto, SICHAR
+\textbf{no ofrece directo} a ese cliente y se registra el proyecto a nombre del distribuidor. \\
+\end{longtable}
+
+\needspace{6\baselineskip}
+
+\hypertarget{pieza-2-el-programa-distribuidor-aliado-sichar}{%
+\subsubsection*{Pieza 2 · El programa ``Distribuidor Aliado
+SICHAR''}\label{pieza-2-el-programa-distribuidor-aliado-sichar}}
+
+Un paquete de beneficios que haga que el canal \textbf{gane más} con la nueva estrategia, no menos:
+
+\begin{itemize}
+\item
+  \textbf{Referidos garantizados:} los interesados captados en digital se canalizan al aliado de su
+  zona.
+\item
+  \textbf{Muestrarios y material de punto de venta} con la imagen SICHAR (inspirado en Porcelanosa
+  Associates).
+\item
+  \textbf{Capacitación técnica} mensual al equipo del distribuidor sobre producto y acabados.
+\item
+  \textbf{Protección de proyectos} registrados y condiciones preferenciales por volumen.
+\item
+  \textbf{Apoyo en posventa/remodelación} a clientes finales de sus proyectos (modelo Coarte).
+\end{itemize}
+
+\needspace{12\baselineskip}
+
+\hypertarget{pieza-3-plan-de-implementaciuxf3n-por-fases}{%
+\subsubsection*{Pieza 3 · Plan de implementación por
+fases}\label{pieza-3-plan-de-implementaciuxf3n-por-fases}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.0437}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.4405}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.1637}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.1042}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2480}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{\#}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Acción concreta}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Responsable}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Plazo}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Entregable}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\bottomrule\noalign{}
+\endlastfoot
+1 & Mapear el canal: lista de distribuidores y ferreterías por sede, ventas por cliente y peso de
+los 20 mayores en la facturación. & Dirección comercial & Semanas 1--2 & Mapa del canal y ranking de
+clientes \\
+2 & Entrevistar a 8--10 distribuidores clave (mínimo 2 por sede): ¿qué temen?, ¿qué les ayudaría?,
+¿qué esperan de SICHAR si se abre un canal digital? & Gerencia + coordinadores de sede & Semanas
+2--4 & Informe de percepción del canal \\
+3 & Redactar y validar la \textbf{política de canal} y el esquema del programa ``Distribuidor
+Aliado''. & Gerencia general & Semanas 3--5 & Política de canal firmada \\
+4 & Comunicar la política a \textbf{todos} los distribuidores (reunión por sede + carta),
+\textbf{antes} de que exista cualquier página de venta. & Gerencia + vendedores & Semana 6 & Carta y
+reunión realizadas \\
+5 & Lanzar la \textbf{``Vitrina''}: catálogo digital con localizador ``Dónde comprar'' y formulario
+que reparte referidos. & Líder digital & Meses 2--3 & Vitrina publicada y primeros referidos
+entregados \\
+6 & Evaluar con datos si conviene abrir una \textbf{Línea Directa} limitada (solo si se cumple el
+semáforo de la pieza 4). & Gerencia general & Mes 6 & Decisión documentada \\
+\end{longtable}
+
+\needspace{12\baselineskip}
+
+\hypertarget{pieza-4-el-semuxe1foro-que-decide-si-se-abre-la-venta-directa}{%
+\subsubsection*{Pieza 4 · El semáforo que decide si se abre la venta
+directa}\label{pieza-4-el-semuxe1foro-que-decide-si-se-abre-la-venta-directa}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.1488}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.4464}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.4048}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Semáforo}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Condición}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Decisión}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{VERDE} & Ningún distribuidor clave ha reducido pedidos o presentado quejas de canal, y la
+Vitrina entrega referidos que se convierten en ventas para los aliados. & Se puede abrir la
+\textbf{Línea Directa} limitada (colecciones exclusivas y venta a proyectos que no atiende el
+canal). \\
+\textbf{AMARILLO} & Hay quejas puntuales o dudas de distribuidores específicos. & Se mantiene la
+Vitrina, se ajustan beneficios del programa y se vuelve a evaluar en 90 días. \\
+\textbf{ROJO} & Caída sostenida de pedidos de distribuidores clave o conflicto abierto por precios.
+& Se \textbf{congela} cualquier venta directa y se refuerza el programa de aliados. \\
+\end{longtable}
+
+\needspace{12\baselineskip}
+
+\hypertarget{cuxf3mo-medir-si-estuxe1-funcionando}{%
+\subsection*{5. Cómo medir si está funcionando}\label{cuxf3mo-medir-si-estuxe1-funcionando}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3175}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3452}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3373}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Indicador}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Cómo se mide}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Meta sugerida (a validar con la línea base)}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{Retención de distribuidores clave} & Distribuidores del top 20 que siguen comprando vs.
+periodo anterior & ≥ 95 \% de retención durante los primeros 12 meses \\
+\textbf{Quejas por conflicto de canal} & Registro de quejas formales o informales por sede & 0
+quejas críticas; resolución de las menores en \textless{} 15 días \\
+\textbf{Ventas generadas por aliados} & Pedidos originados en referidos de la Vitrina & Creciente
+cada trimestre desde el mes 3 \\
+\textbf{\% de pedidos gestionados digitalmente} & Pedidos por formulario/portal vs. total & Línea
+base en mes 1; subir progresivamente \\
+\end{longtable}
+
+\begin{cajaalerta}{Precauciones y errores que debe evitar}
+
+\begin{itemize}
+\item
+  \textbf{No abrir una tienda en línea con los mismos productos y precios} antes de hablar con los
+  distribuidores.
+\item
+  No enterarse el canal por redes sociales o por un cliente: la comunicación debe ser
+  \textbf{directa y anticipada}.
+\item
+  No usar descuentos directos agresivos para ``probar'' el B2C: es la forma más rápida de perder la
+  confianza del canal.
+\end{itemize}
+
+\end{cajaalerta}
+
+\hallazgo{2}{\textbf{Exposición a alzas en costos de importación}}{Exposición a alzas en costos de importación}{CRÍTICA}{\textbf{Inmediato (0--30 días para el diagnóstico)}}{\textbf{Compras / Importaciones + Gerencia financiera}}
+
+\needspace{6\baselineskip}
+
+\hypertarget{descripciuxf3n-detallada-del-hallazgo-1}{%
+\subsection*{1. Descripción detallada del hallazgo}\label{descripciuxf3n-detallada-del-hallazgo-1}}
+
+SICHAR importa sus productos de \textbf{cinco países} (China, India, Brasil, España y Perú), con una
+red de proveedores directa y sin intermediarios de importación, lo cual es una fortaleza. Sin
+embargo, su estructura de costos depende de las \textbf{condiciones comerciales y los precios que
+fijan esos proveedores}.
+
+Hoy la empresa enfrenta un \textbf{incremento del 30 \% en los productos provenientes de India}.
+Cada vez que sube el costo de adquisición, SICHAR debe asumir un mayor gasto para mantener la misma
+oferta, y existe el riesgo adicional de que los proveedores \textbf{no mantengan las condiciones de
+negociación originales}.
+
+Si la situación no se gestiona, el efecto es directo sobre el \textbf{margen de utilidad}: la
+empresa vende lo mismo, pero gana menos, o debe subir precios y arriesgarse a perder competitividad
+frente a quienes tengan menores costos de adquisición.
+
+\needspace{12\baselineskip}
+
+\hypertarget{impacto-que-tiene-y-que-podruxeda-tener-1}{%
+\subsection*{2. Impacto que tiene y que podría
+tener}\label{impacto-que-tiene-y-que-podruxeda-tener-1}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Impacto actual (lo que ya está pasando)}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Impacto potencial (si no se actúa)}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\bottomrule\noalign{}
+\endlastfoot
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Presión inmediata sobre los márgenes en las referencias que vienen de India.
+\item
+  Incertidumbre sobre precios futuros y sobre la continuidad de las condiciones pactadas con
+  proveedores.
+\end{itemize}
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  \textbf{Reducción sostenida del margen} y menor capacidad de reinvertir en crecimiento (digital,
+  asesoría, nuevos segmentos).
+\item
+  \textbf{Pérdida de competitividad} frente a competidores con menor costo de adquisición, como
+  Cerámica Italia.
+\item
+  Riesgo financiero si el inventario se compra a costo alto y el mercado no acepta el ajuste de
+  precio.
+\end{itemize}
+\end{minipage} \\
+\end{longtable}
+
+\begin{cajaaviso}{Por qué ocupa el puesto 2 de prioridad}
+
+Es un problema \textbf{ya en marcha y con efecto directo en caja}. Además, financia todo lo demás:
+sin margen sano no hay presupuesto para digitalizar, asesorar ni invertir en marca. No bloquea la
+decisión del canal (hallazgo 1), pero compite con ella en urgencia.
+
+\end{cajaaviso}
+
+\needspace{6\baselineskip}
+
+\hypertarget{modelos-inspiracionales-quiuxe9n-ya-lo-resolviuxf3-1}{%
+\subsection*{3. Modelos inspiracionales: quién ya lo
+resolvió}\label{modelos-inspiracionales-quiuxe9n-ya-lo-resolviuxf3-1}}
+
+Cinco referentes muestran la misma lección: \textbf{no depender de un solo origen y conocer el costo
+total real por referencia}.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.1984}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.4008}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.4008}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Empresa / país}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Qué hace diferente}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Qué puede adaptar SICHAR}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{SAMISA Group}
+
+\textbf{Internacional}
+
+\emph{\textbf{samisa.co}} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Conecta empresas colombianas con proveedores internacionales, principalmente en Asia.
+\item
+  Acompaña compra internacional y coordinación logística: optimización de costos y calidad.
+\end{itemize}
+\end{minipage} & \textbf{Comparar periódicamente} el costo total de importar desde China, India,
+Brasil, España y Perú; negociar compras consolidadas y evaluar cada origen por costo, calidad y
+tiempo. \\
+\textbf{IKEA}
+
+\textbf{Internacional}
+
+\emph{\textbf{ikea.com}} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Red internacional de proveedores con relaciones de largo plazo.
+\item
+  Presenta el abastecimiento como colaboración para lograr calidad, volumen y costo adecuados.
+\end{itemize}
+\end{minipage} & Calcular el \textbf{costo total puesto en Colombia por referencia}, identificar
+productos que dependen de India y evaluar alternativos. Negociar \textbf{escalas de volumen,
+calendarios de compra y revisión de precios}. \\
+\textbf{Adidas}
+
+\textbf{Internacional}
+
+\emph{\textbf{adidas-group.com}} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Diversifica su manufactura entre varios países de Asia en lugar de depender de uno solo.
+\item
+  Reparte así el riesgo de aranceles, tasa de cambio y costos laborales.
+\end{itemize}
+\end{minipage} & \textbf{Distribuir las compras de cada línea entre varios países de origen} para no
+depender de uno (como India). \\
+\textbf{Floor \& Decor}
+
+\textbf{Estados Unidos}
+
+\emph{\textbf{flooranddecor.com}} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Compra a más de 240 proveedores en 26 países.
+\item
+  Redujo su dependencia de China de cerca del 50 \% (2018) a cerca del 18 \% (2024).
+\item
+  Mitiga aranceles negociando costos, ajustando precios y cambiando el país de origen.
+\end{itemize}
+\end{minipage} & \textbf{Diversificar países de origen} y mantener \textbf{más de un proveedor por
+línea} de producto. \\
+\textbf{Gano Excel}
+
+\textbf{Internacional (América)}
+
+\emph{\textbf{fuente no registrada}} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Vende productos más costosos que el promedio mediante network marketing.
+\item
+  Sus distribuidores identifican el perfil de cliente y aprovechan la confianza de sus contactos.
+\end{itemize}
+\end{minipage} & Aprovechar la relación con los \textbf{distribuidores actuales} y acompañarlos en
+su proceso comercial para sostener el \textbf{valor percibido} de los productos aunque suban los
+costos. \\
+\end{longtable}
+
+\emph{Nota: los precios y cifras de terceros son referenciales, provienen de fuentes públicas de
+cada empresa y deben verificarse antes de usarse en decisiones comerciales.}
+
+\needspace{6\baselineskip}
+
+\hypertarget{soluciuxf3n-tangible-para-sichar-1}{%
+\subsection*{4. Solución tangible para SICHAR}\label{soluciuxf3n-tangible-para-sichar-1}}
+
+La solución combina \textbf{tres palancas} que, juntas, protegen el margen: conocer el costo real,
+reducir la dependencia de India y ajustar precios con método.
+
+\needspace{6\baselineskip}
+
+\hypertarget{ejemplo-ilustrativo-quuxe9-hace-un-30-en-el-origen-sobre-el-margen}{%
+\subsubsection*{Ejemplo ilustrativo: qué hace un +30 \% en el origen sobre el
+margen}\label{ejemplo-ilustrativo-quuxe9-hace-un-30-en-el-origen-sobre-el-margen}}
+
+\emph{Cifras hipotéticas para entender la mecánica; SICHAR debe reemplazarlas por sus datos reales
+en el paso 1.}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.3671}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.1488}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2659}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2183}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Concepto}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Antes}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Después del +30 \% en India}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Efecto}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\bottomrule\noalign{}
+\endlastfoot
+Costo de la mercancía en origen & \$70 & \$91 (+30 \%) & +\$21 \\
+Flete, seguro, aranceles y nacionalización & \$30 & \$30 & --- \\
+\textbf{Costo total puesto en bodega} & \textbf{\$100} & \textbf{\$121} & \textbf{+21 \%} \\
+Precio de venta al distribuidor & \$150 & \$150 & --- \\
+\textbf{Margen bruto} & \textbf{33 \%} & \textbf{19 \%} & \textbf{−14 puntos} \\
+Precio necesario para volver a 33 \% de margen & --- & \$181 (+21 \%) & Ajuste de precio que habría
+que evaluar \\
+\end{longtable}
+
+\begin{cajaaviso}{Lectura clave}
+
+Un alza del 30 \% en origen \textbf{no} es un alza del 30 \% en el costo total (los fletes y
+aranceles no suben igual), pero \textbf{sí} puede borrar cerca de la mitad del margen. Por eso el
+primer paso es medir con datos reales, referencia por referencia.
+
+\end{cajaaviso}
+
+\needspace{12\baselineskip}
+
+\hypertarget{plan-de-acciuxf3n}{%
+\subsubsection*{Plan de acción}\label{plan-de-acciuxf3n}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.0437}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.4405}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.1637}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.1042}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2480}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{\#}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Acción concreta}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Responsable}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Plazo}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Entregable}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\bottomrule\noalign{}
+\endlastfoot
+1 & Construir la \textbf{hoja de costo puesto en bodega} por referencia: valor en origen, flete,
+seguro, aranceles, gastos de nacionalización, almacenamiento y tasa de cambio. Empezar por las 20
+referencias de mayor venta. & Compras + Finanzas & Semanas 1--3 & Hoja de costos con margen por
+referencia \\
+2 & Medir la \textbf{concentración por país}: qué \% de las compras y del margen depende de India
+por línea de producto. Marcar en rojo las referencias donde India sea el único origen. & Compras &
+Semana 3 & Mapa de dependencia por origen \\
+3 & Pedir \textbf{cotizaciones y muestras} a proveedores alternativos en los países donde SICHAR ya
+tiene contacto (China, Brasil, España, Perú) para las referencias en rojo; mínimo 2 opciones por
+referencia. & Compras & Semanas 3--8 & ≥ 2 proveedores validados para las referencias críticas \\
+4 & Renegociar con los proveedores de India: \textbf{compras consolidadas por volumen, calendario de
+pedidos, pago por fases y cláusula de revisión de precios} con tope de variación. & Gerencia +
+Compras & Semanas 4--10 & Acuerdo escrito o plan B documentado \\
+5 & Definir la \textbf{política de precios por línea}: qué parte del alza se traslada, qué parte se
+absorbe y qué referencias se reposicionan hacia productos de mayor margen (por ejemplo, el
+porcelanato brillante 60x130, producto insignia). & Dirección comercial + Finanzas & Semanas 6--10 &
+Lista de precios nueva por escalones \\
+6 & Comunicar los ajustes a los distribuidores \textbf{con anticipación}, con argumentos claros
+(costos de origen) y acompañados de beneficios (descuentos por volumen, entregas programadas). &
+Dirección comercial & Semana 10--12 & Comunicado y reuniones por sede \\
+7 & Consultar con la banca opciones de \textbf{cobertura cambiaria} y de compra anticipada para las
+líneas más sensibles a la tasa de cambio. & Finanzas & Mes 3 & Política de cobertura aprobada \\
+\end{longtable}
+
+\needspace{12\baselineskip}
+
+\hypertarget{cuxf3mo-medir-si-estuxe1-funcionando-1}{%
+\subsection*{5. Cómo medir si está funcionando}\label{cuxf3mo-medir-si-estuxe1-funcionando-1}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3175}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3452}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3373}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Indicador}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Cómo se mide}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Meta sugerida (a validar con la línea base)}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{Costo total de importación por referencia} & Hoja de costo puesto en bodega, actualizada
+cada trimestre & 100 \% de las 20 referencias top con costo calculado en el mes 1 \\
+\textbf{Margen bruto por línea} & Ventas menos costo puesto, por línea de producto & Recuperar al
+menos la mitad del margen perdido en 6 meses \\
+\textbf{\% de compras concentrado en India} & Compras India / compras totales por línea & Reducirlo
+gradualmente; ninguna línea crítica con un solo origen \\
+\textbf{Referencias con proveedor alternativo validado} & N.° de referencias críticas con ≥ 2
+proveedores & 100 \% de las referencias en rojo en 12 meses \\
+\end{longtable}
+
+\begin{cajaalerta}{Precauciones y errores que debe evitar}
+
+\begin{itemize}
+\item
+  Diversificar \textbf{no es solo buscar el precio más bajo}: se debe evaluar calidad, tiempos de
+  entrega y costo total. Un proveedor barato con mala calidad sale más caro.
+\item
+  No trasladar el alza completa de golpe a los distribuidores: hágalo por escalones y con
+  anticipación.
+\item
+  IKEA y Floor \& Decor operan a una escala mucho mayor; se toman como inspiración de método, no de
+  tamaño.
+\end{itemize}
+
+\end{cajaalerta}
+
+\hallazgo{3}{\textbf{Buyer persona no definido}}{Buyer persona no definido}{ALTA}{\textbf{Primeros 60 días (es la base de las demás soluciones)}}{\textbf{Dirección comercial + coordinadores de sede}}
+
+\needspace{6\baselineskip}
+
+\hypertarget{descripciuxf3n-detallada-del-hallazgo-2}{%
+\subsection*{1. Descripción detallada del hallazgo}\label{descripciuxf3n-detallada-del-hallazgo-2}}
+
+SICHAR \textbf{no tiene un registro confiable de los perfiles de sus clientes}: no se sabe con
+precisión qué compran, con qué frecuencia, qué valoran, qué los frena ni cómo toman la decisión. La
+relación comercial se apoya en la experiencia y la memoria de los vendedores de correría (tres por
+sede).
+
+Esto dificulta orientar el trabajo comercial y de marketing, tanto para \textbf{aprovechar mejor a
+los clientes actuales} (ferreterías y distribuidores) como para \textbf{abrir segmentos nuevos} con
+alto potencial: \textbf{firmas de arquitectos, constructoras y empresas de proyectos}.
+
+Un buyer persona no es un dato demográfico: es una \textbf{radiografía de quién decide la compra,
+qué problema tiene en su obra o negocio y qué lo convence}. Sin él, cualquier campaña, catálogo o
+servicio se diseña a ciegas.
+
+\needspace{12\baselineskip}
+
+\hypertarget{impacto-que-tiene-y-que-podruxeda-tener-2}{%
+\subsection*{2. Impacto que tiene y que podría
+tener}\label{impacto-que-tiene-y-que-podruxeda-tener-2}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Impacto actual (lo que ya está pasando)}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Impacto potencial (si no se actúa)}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\bottomrule\noalign{}
+\endlastfoot
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Mensajes comerciales y catálogo iguales para clientes con necesidades muy distintas.
+\item
+  Los vendedores guardan el conocimiento del cliente en su cabeza: si se van, se va la información.
+\end{itemize}
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  \textbf{Esfuerzo desperdiciado} en marketing y visitas mal dirigidas.
+\item
+  \textbf{Imposibilidad de entrar con éxito} a constructoras y arquitectos, que compran con
+  criterios técnicos y de cumplimiento distintos a los de una ferretería.
+\item
+  Decisiones de inversión digital sin saber a quién se quiere llegar.
+\end{itemize}
+\end{minipage} \\
+\end{longtable}
+
+\begin{cajaaviso}{Por qué ocupa el puesto 3 de prioridad}
+
+Es el \textbf{cimiento} de los hallazgos 4, 5 y 6: la asesoría especializada, el catálogo digital y
+el contenido en redes solo funcionan si se sabe a quién se le habla. Es barato, rápido y no requiere
+tecnología: solo conversaciones ordenadas con clientes.
+
+\end{cajaaviso}
+
+\needspace{6\baselineskip}
+
+\hypertarget{modelos-inspiracionales-quiuxe9n-ya-lo-resolviuxf3-2}{%
+\subsection*{3. Modelos inspiracionales: quién ya lo
+resolvió}\label{modelos-inspiracionales-quiuxe9n-ya-lo-resolviuxf3-2}}
+
+Seis referentes definen a sus clientes \textbf{por el problema que resuelven} y no solo por datos
+demográficos.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.1984}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.4008}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.4008}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Empresa / país}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Qué hace diferente}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Qué puede adaptar SICHAR}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{Houzz}
+
+\textbf{Estados Unidos}
+
+\emph{\textbf{houzz.com}} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Organiza su oferta según las necesidades de quienes diseñan, construyen o remodelan.
+\item
+  Permite encontrar profesionales por especialidad y usa proyectos e ideas para que el usuario
+  descubra sus gustos.
+\end{itemize}
+\end{minipage} & Definir perfiles distintos (\textbf{distribuidores, constructoras, arquitectos y
+consumidores finales}) e investigar presupuestos, necesidades, criterios de compra y canales
+preferidos \textbf{antes de diseñar campañas}. \\
+\textbf{HubSpot}
+
+\textbf{Internacional}
+
+\emph{\textbf{blog.hubspot.com}} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Recomienda construir buyer personas con \textbf{investigación, entrevistas y patrones reales} de
+  comportamiento.
+\item
+  Incluye objetivos, problemas, motivaciones y forma de decidir, no solo edad o cargo.
+\end{itemize}
+\end{minipage} & Empezar con \textbf{tres perfiles por validar} (arquitecto/diseñador, comprador de
+constructora y consumidor que remodela) y entrevistar clientes y prospectos. \\
+\textbf{The Home Depot}
+
+\textbf{Estados Unidos}
+
+\emph{\textbf{homedepot.com}} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Define tres segmentos con ofertas distintas: DIY (hágalo usted mismo), DIFM (hágalo por mí) y Pros
+  (contratistas).
+\item
+  Programa Pro Xtra: descuentos, crédito y seguimiento de compras para profesionales.
+\end{itemize}
+\end{minipage} & Definir perfiles de \textbf{distribuidor, constructora, arquitecto y consumidor
+final}, con \textbf{una oferta propia} para cada uno. \\
+\textbf{Procore}
+
+\textbf{Internacional}
+
+\emph{\textbf{procore.com}} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Segmenta comunicación y funcionalidades por tipo de usuario: contratistas, subcontratistas,
+  propietarios, arquitectos.
+\item
+  Construye perfiles a partir de los \textbf{problemas de cada rol en una obra}.
+\end{itemize}
+\end{minipage} & Construir los perfiles desde \textbf{los problemas que enfrenta cada rol en una
+obra} (constructora, arquitecto, contratista, propietario). \\
+\textbf{Corona}
+
+\textbf{Colombia}
+
+\emph{\textbf{corona.co}} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Oferta amplia para remodelación y clientes institucionales.
+\item
+  Tienda virtual, red de distribución y asesoría para distintas necesidades de compra.
+\end{itemize}
+\end{minipage} & Distinguir entre arquitectos, diseñadores, constructoras, distribuidores,
+propietarios y compradores institucionales: \textbf{cada uno requiere productos, condiciones y
+mensajes distintos}. \\
+\textbf{Easy Line}
+
+\textbf{Internacional}
+
+\emph{\textbf{easyline.com.co}} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Cliente muy bien definido: atiende solo a restaurantes.
+\item
+  Modelo enfocado en tecnología para gestionar las filas en establecimientos físicos.
+\end{itemize}
+\end{minipage} & Invertir en \textbf{soluciones tecnológicas que ayuden a los clientes actuales}
+(ferreterías y distribuidores) a sistematizar sus procesos comerciales: fideliza y puede generar
+nuevos ingresos. \\
+\end{longtable}
+
+\emph{Nota: los precios y cifras de terceros son referenciales, provienen de fuentes públicas de
+cada empresa y deben verificarse antes de usarse en decisiones comerciales.}
+
+\needspace{6\baselineskip}
+
+\hypertarget{soluciuxf3n-tangible-para-sichar-2}{%
+\subsection*{4. Solución tangible para SICHAR}\label{soluciuxf3n-tangible-para-sichar-2}}
+
+Proponemos un \textbf{proyecto de 6 semanas} con tres entregables: entrevistas, fichas de buyer
+persona y una base de clientes viva.
+
+\needspace{12\baselineskip}
+
+\hypertarget{perfiles-iniciales-a-validar-hipuxf3tesis-de-partida}{%
+\subsubsection*{Perfiles iniciales a validar (hipótesis de
+partida)}\label{perfiles-iniciales-a-validar-hipuxf3tesis-de-partida}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.1687}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2778}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2778}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2758}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Campo}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{A. Distribuidor / ferretería}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{B. Constructora}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{C. Arquitecto / diseñador}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{Quién decide} & Propietario o gerente de compras & Jefe de compras + residente de obra & El
+profesional que especifica; el cliente aprueba \\
+\textbf{Qué necesita} & Rotación, buen margen, entrega rápida, respaldo del proveedor & Cumplimiento
+de fechas, volumen disponible, precio por proyecto & Variedad de diseños, muestras físicas, fichas
+técnicas, tendencias \\
+\textbf{Qué lo frena} & Que el proveedor le compita; quiebres de inventario & Faltantes y retrasos;
+lotes con diferencias de tono & No poder ver ni tocar el material; falta de asesoría \\
+\textbf{Dónde se informa} & Visita del vendedor, voz a voz & Referencias de otras obras,
+cotizaciones & Instagram, Pinterest, showrooms, otros colegas \\
+\textbf{Qué le ofreceríamos} & Programa Distribuidor Aliado & Condiciones de proyecto +
+disponibilidad garantizada & Asesoría de diseño + kit de muestras \\
+\end{longtable}
+
+\emph{Son hipótesis construidas con el diagnóstico; las entrevistas deben confirmarlas, corregirlas
+o descartarlas. Un cuarto perfil ---el consumidor que remodela su vivienda--- se aborda como
+``público de la Vitrina digital''.}
+
+\needspace{12\baselineskip}
+
+\hypertarget{plan-de-acciuxf3n-1}{%
+\subsubsection*{Plan de acción}\label{plan-de-acciuxf3n-1}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.0437}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.4405}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.1637}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.1042}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2480}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{\#}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Acción concreta}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Responsable}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Plazo}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Entregable}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\bottomrule\noalign{}
+\endlastfoot
+1 & Elegir \textbf{15--20 clientes y prospectos} (5--6 por perfil) y agendar entrevistas de 20--30
+minutos, presenciales o por videollamada. & Coordinadores de sede & Semanas 1--2 & Lista de
+entrevistados \\
+2 & Aplicar una \textbf{guía única de preguntas} (ver recuadro) y grabar o transcribir las
+respuestas en una plantilla compartida. & Vendedores + dirección comercial & Semanas 2--4 & 15--20
+entrevistas documentadas \\
+3 & Crear un \textbf{formulario único de visita} (en Excel compartido o formulario en línea): tipo
+de cliente, productos que compra, frecuencia, tamaño del pedido, competencia que usa, motivo de
+pérdida de una venta. & Dirección comercial & Semanas 2--3 & Formulario en uso por los 15
+vendedores \\
+4 & Analizar patrones y redactar \textbf{3 a 4 fichas de buyer persona} validadas, con mensajes y
+ofertas recomendadas por perfil. & Dirección comercial & Semanas 5--6 & Fichas de buyer persona \\
+5 & Capacitar a los vendedores en las fichas y en el uso del formulario; revisar los datos
+\textbf{cada mes} en comité comercial. & Dirección comercial & Semana 6 en adelante & Reunión
+mensual de análisis \\
+\end{longtable}
+
+\begin{cajainfo}{Guía de preguntas para las entrevistas (ejemplo)}
+
+\begin{itemize}
+\item
+  ¿Cómo decide hoy qué acabados comprar y a quién? ¿Quién más participa en la decisión?
+\item
+  ¿Qué fue lo último que dejó de comprar a un proveedor y por qué?
+\item
+  ¿Qué información necesita antes de decidir (fichas técnicas, muestras, tiempos de entrega)?
+\item
+  ¿Dónde busca ideas o proveedores: redes, ferias, recomendaciones, catálogos?
+\item
+  ¿Qué haría que cambiara de proveedor? ¿Qué haría que se quedara aunque suba el precio?
+\end{itemize}
+
+\end{cajainfo}
+
+\needspace{12\baselineskip}
+
+\hypertarget{cuxf3mo-medir-si-estuxe1-funcionando-2}{%
+\subsection*{5. Cómo medir si está funcionando}\label{cuxf3mo-medir-si-estuxe1-funcionando-2}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3175}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3452}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3373}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Indicador}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Cómo se mide}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Meta sugerida (a validar con la línea base)}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{Entrevistas realizadas por segmento} & Conteo en la plantilla compartida & ≥ 5 por perfil en
+las primeras 4 semanas \\
+\textbf{Conversión de prospectos por perfil} & Cotizaciones convertidas en pedidos / cotizaciones
+enviadas & Medición desde el mes 2; mejorar trimestre a trimestre \\
+\textbf{Motivos de pérdida de ventas} & Registro en el formulario de visita & 100 \% de ventas
+perdidas con motivo registrado \\
+\textbf{Referencias más consultadas por segmento} & Consultas/cotizaciones por referencia y tipo de
+cliente & Top 10 por segmento identificado en el mes 3 \\
+\end{longtable}
+
+\begin{cajaalerta}{Precauciones y errores que debe evitar}
+
+\begin{itemize}
+\item
+  No dar por confirmados los perfiles iniciales: son \textbf{hipótesis} hasta que las entrevistas
+  las validen.
+\item
+  No delegar todo en una encuesta: en este sector la información valiosa sale de
+  \textbf{conversaciones con clientes}.
+\end{itemize}
+
+\end{cajaalerta}
+
+\hallazgo{4}{\textbf{Baja madurez tecnológica y digital}}{Baja madurez tecnológica y digital}{ALTA}{\textbf{Iniciar en el mes 1; ejecutar por etapas durante 12 meses}}{\textbf{Gerencia general + líder digital (a designar)}}
+
+\needspace{6\baselineskip}
+
+\hypertarget{descripciuxf3n-detallada-del-hallazgo-3}{%
+\subsection*{1. Descripción detallada del hallazgo}\label{descripciuxf3n-detallada-del-hallazgo-3}}
+
+SICHAR lleva \textbf{más de 20 años operando sin una estrategia digital consolidada}. El crecimiento
+se ha sostenido casi exclusivamente en el voz a voz y en una fuerza comercial de correrías. Esto
+funcionó, pero hoy es un techo: la información de clientes, inventarios y cotizaciones no se
+gestiona con herramientas que permitan escalar.
+
+La falta de herramientas digitales limita la \textbf{eficiencia operativa}, dificulta
+\textbf{identificar oportunidades de crecimiento} y obstaculiza la entrada a segmentos como
+arquitectos y constructoras, que esperan catálogos digitales, cotizaciones rápidas y trazabilidad de
+pedidos.
+
+La buena noticia: \textbf{no se necesita una plataforma compleja ni una gran inversión inicial}. Los
+referentes del sector digitalizaron por etapas, empezando por lo interno y midiendo antes de
+invertir más.
+
+\needspace{12\baselineskip}
+
+\hypertarget{impacto-que-tiene-y-que-podruxeda-tener-3}{%
+\subsection*{2. Impacto que tiene y que podría
+tener}\label{impacto-que-tiene-y-que-podruxeda-tener-3}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Impacto actual (lo que ya está pasando)}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Impacto potencial (si no se actúa)}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\bottomrule\noalign{}
+\endlastfoot
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Cotizaciones, pedidos e inventarios que dependen de procesos manuales o de la memoria de personas.
+\item
+  Imposibilidad de ver datos consolidados de las cinco sedes para tomar decisiones.
+\end{itemize}
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  \textbf{Pérdida de eficiencia} y errores de pedido a medida que crece la operación.
+\item
+  \textbf{Dificultad para expandirse} a nuevos segmentos que exigen respuesta rápida y catálogo
+  digital.
+\item
+  Pérdida de terreno frente a competidores que usan la tecnología para mejorar procesos y relación
+  con clientes.
+\end{itemize}
+\end{minipage} \\
+\end{longtable}
+
+\begin{cajaaviso}{Por qué ocupa el puesto 4 de prioridad}
+
+Es la \textbf{infraestructura} que hace posibles los hallazgos 1, 5 y 6: la Vitrina, el localizador
+``Dónde comprar'', el catálogo y las redes dependen de tener información ordenada. Su impacto se ve
+en el mediano plazo, por eso va después de los riesgos que afectan caja y canal.
+
+\end{cajaaviso}
+
+\needspace{6\baselineskip}
+
+\hypertarget{modelos-inspiracionales-quiuxe9n-ya-lo-resolviuxf3-3}{%
+\subsection*{3. Modelos inspiracionales: quién ya lo
+resolvió}\label{modelos-inspiracionales-quiuxe9n-ya-lo-resolviuxf3-3}}
+
+Cinco referentes ---desde distribuidores industriales hasta una startup agrícola--- muestran que se
+puede \textbf{empezar simple y crecer por etapas}.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.1984}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.4008}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.4008}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Empresa / país}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Qué hace diferente}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Qué puede adaptar SICHAR}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{Grainger}
+
+\textbf{Internacional}
+
+\emph{\textbf{grainger.com}} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Herramientas digitales para que clientes empresariales busquen productos, consulten información y
+  gestionen compras.
+\item
+  Un distribuidor tradicional que facilita la compra con catálogo y servicios digitales.
+\end{itemize}
+\end{minipage} & \textbf{Catálogo digital ordenado por líneas} con fotos, medidas, fichas técnicas y
+disponibilidad. Luego, solicitudes de cotización e historial de pedidos. Empezar con herramientas
+sencillas y medir uso. \\
+\textbf{Grupo Decor}
+
+\textbf{Colombia}
+
+\emph{\textbf{grupodecor.com}} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Portafolio de acabados para distribuidores, constructoras y proyectos.
+\item
+  Diferencia la atención a distribuidores de la atención especializada a constructoras y grandes
+  proyectos.
+\end{itemize}
+\end{minipage} & Estrategia digital con \textbf{catálogo actualizado, fotos de proyectos reales y
+contenido sobre combinaciones}, que facilite contactar a SICHAR o a sus distribuidores
+autorizados. \\
+\textbf{Sodimac Colombia}
+
+\textbf{Colombia}
+
+\emph{\textbf{homecenter.com.co}} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Opera con Corona la Aceleradora Sodimac Corona, programa de innovación abierta con startups.
+\end{itemize}
+\end{minipage} & Hacer \textbf{pilotos digitales con aliados tecnológicos} (startups o proveedores)
+antes de grandes inversiones. \\
+\textbf{Cemex}
+
+\textbf{México / Internacional}
+
+\emph{\textbf{cemex.com}} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Desarrolló «CEMEX Go», plataforma B2B donde distribuidores y constructoras hacen pedidos.
+\item
+  Digitalizó \textbf{por etapas}: primero procesos internos, luego autoservicio y después
+  comunicación.
+\end{itemize}
+\end{minipage} & Digitalizar por etapas: \textbf{(1) inventario y cotizaciones, (2) autoservicio
+para distribuidores y constructoras, (3) comunicación y redes}. \\
+\textbf{ComproAgro}
+
+\textbf{Colombia}
+
+\emph{\textbf{comproagro.com}} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Plataforma que conecta directamente a campesinos con compradores, eliminando intermediarios.
+\item
+  Permite fijar el precio antes de transportar los productos.
+\end{itemize}
+\end{minipage} & Usar \textbf{bases de datos y herramientas de análisis de mercado} para anticipar y
+fijar con tiempo los precios de los insumos que se importan. \\
+\end{longtable}
+
+\emph{Nota: los precios y cifras de terceros son referenciales, provienen de fuentes públicas de
+cada empresa y deben verificarse antes de usarse en decisiones comerciales.}
+
+\needspace{6\baselineskip}
+
+\hypertarget{soluciuxf3n-tangible-para-sichar-3}{%
+\subsection*{4. Solución tangible para SICHAR}\label{soluciuxf3n-tangible-para-sichar-3}}
+
+Proponemos la \textbf{``Ruta Digital SICHAR''} en tres etapas, donde cada una solo se activa si la
+anterior se está usando de verdad.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.1786}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.3869}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2381}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.1964}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Etapa}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Qué se hace}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Herramientas sugeridas (bajo costo)}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Resultado visible}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{Etapa 1} · Ordenar la casa
+
+(Meses 1--3) & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Un solo archivo maestro de productos (referencia, medidas, foto, precio, existencias).
+\item
+  Plantilla de cotización estándar y registro de cotizaciones.
+\item
+  Formulario de visita para los vendedores (ligado al hallazgo 3).
+\item
+  Catálogo digital en PDF por línea.
+\end{itemize}
+\end{minipage} & Hojas de cálculo compartidas en la nube, WhatsApp Business con catálogo, CRM
+gratuito & Cotizar en menos de 24--48 horas con datos consistentes en las 5 sedes \\
+\textbf{Etapa 2} · Abrir la puerta
+
+(Meses 4--6) & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Sitio web sencillo con catálogo por línea y proyectos reales.
+\item
+  Formulario de cotización y \textbf{localizador ``Dónde comprar''}.
+\item
+  Pedidos de distribuidores por formulario o portal básico.
+\end{itemize}
+\end{minipage} & Constructor de sitios web, formularios con respuesta automática, CRM & Primeros
+contactos digitales y pedidos gestionados en línea \\
+\textbf{Etapa 3} · Autoservicio
+
+(Meses 7--12) & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Portal para distribuidores y constructoras: consulta de inventario, historial y seguimiento de
+  pedidos.
+\item
+  Tablero de indicadores por sede.
+\item
+  Integración con inventarios y facturación, si el piloto lo justifica.
+\end{itemize}
+\end{minipage} & Piloto con aliado tecnológico (modelo Sodimac/Corona) antes de comprar nada grande
+& Menos llamadas operativas; datos para decidir \\
+\end{longtable}
+
+\needspace{12\baselineskip}
+
+\hypertarget{plan-de-acciuxf3n-de-los-primeros-90-duxedas}{%
+\subsubsection*{Plan de acción de los primeros 90
+días}\label{plan-de-acciuxf3n-de-los-primeros-90-duxedas}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.0437}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.4405}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.1637}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.1042}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2480}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{\#}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Acción concreta}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Responsable}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Plazo}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Entregable}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\bottomrule\noalign{}
+\endlastfoot
+1 & Designar un \textbf{líder digital} interno (puede ser medio tiempo) con autoridad para coordinar
+a las 5 sedes. & Gerencia general & Semana 1 & Líder nombrado \\
+2 & Hacer el \textbf{inventario de procesos}: cómo se cotiza, se pide y se factura hoy en cada sede;
+detectar los 3 cuellos de botella. & Líder digital & Semanas 1--3 & Diagnóstico de procesos \\
+3 & Crear el \textbf{archivo maestro de productos} y el catálogo digital de las 4 líneas (accesorios
+de baño, cerámicas y acabados, elementos decorativos, remodelación). & Líder digital + comercial &
+Semanas 3--8 & Catálogo digital v1 \\
+4 & Implementar una herramienta de \textbf{gestión de clientes (CRM) básica} y migrar los datos del
+formulario de visita. & Líder digital & Semanas 6--10 & CRM en uso en 5 sedes \\
+5 & Capacitar a los 15 vendedores en el uso de las herramientas y fijar la regla: \textbf{lo que no
+está registrado, no existió}. & Dirección comercial & Semanas 8--12 & Capacitación realizada \\
+6 & Revisar en el mes 3 el uso real y decidir si se activa la Etapa 2. & Gerencia general & Mes 3 &
+Decisión documentada \\
+\end{longtable}
+
+\needspace{12\baselineskip}
+
+\hypertarget{cuxf3mo-medir-si-estuxe1-funcionando-3}{%
+\subsection*{5. Cómo medir si está funcionando}\label{cuxf3mo-medir-si-estuxe1-funcionando-3}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3175}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3452}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3373}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Indicador}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Cómo se mide}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Meta sugerida (a validar con la línea base)}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{\% del catálogo actualizado} & Referencias con foto, medidas, ficha y precio / total & ≥ 90
+\% en el mes 3 \\
+\textbf{Tiempo de respuesta a cotizaciones} & Horas entre solicitud y envío & \textless{} 48 horas,
+y \textless{} 24 horas para referencias top \\
+\textbf{Oportunidades registradas digitalmente} & Registros en CRM / visitas realizadas & ≥ 80 \% de
+visitas registradas en el mes 4 \\
+\textbf{Pedidos iniciados por canales digitales} & Pedidos por formulario/portal / total & Línea
+base en la Etapa 2; crecimiento trimestral \\
+\textbf{Errores de pedido} & Pedidos con error / total & Reducción trimestral frente a la línea
+base \\
+\end{longtable}
+
+\begin{cajaalerta}{Precauciones y errores que debe evitar}
+
+\begin{itemize}
+\item
+  \textbf{No comprar una plataforma grande primero.} Primero se ordenan datos y procesos; luego se
+  automatiza.
+\item
+  Grainger y Cemex tienen una escala muy superior: se toman como \textbf{modelo de método}, no de
+  tamaño.
+\item
+  La tecnología sin capacitación no se usa: reserve tiempo para entrenar a los vendedores.
+\end{itemize}
+
+\end{cajaalerta}
+
+\hallazgo{5}{\textbf{Falta de atención especializada}}{Falta de atención especializada}{MEDIA-ALTA}{\textbf{Piloto en los meses 3--6, una vez definidos los perfiles}}{\textbf{Dirección comercial + asesor de diseño}}
+
+\needspace{6\baselineskip}
+
+\hypertarget{descripciuxf3n-detallada-del-hallazgo-4}{%
+\subsection*{1. Descripción detallada del hallazgo}\label{descripciuxf3n-detallada-del-hallazgo-4}}
+
+SICHAR \textbf{no cuenta con un servicio de asesoría especializada} que ayude a sus clientes a
+seleccionar productos y acabados según las necesidades de cada proyecto. La venta se limita a
+ofrecer producto, sin acompañamiento técnico ni de diseño.
+
+Esta ausencia pesa especialmente con \textbf{arquitectos, diseñadores y constructoras}, que no
+buscan solo un porcelanato: buscan orientación técnica, recomendaciones según presupuesto y estilo,
+y respaldo para especificar con tranquilidad. Es, además, una de las \textbf{oportunidades
+identificadas} en el diagnóstico: ofrecer asesoría como diferenciador frente a la competencia.
+
+Hoy el acompañamiento personalizado lo ofrecen otros competidores, lo que deja a SICHAR compitiendo
+casi solo por producto y precio, justo donde el hallazgo 2 le resta margen.
+
+\needspace{12\baselineskip}
+
+\hypertarget{impacto-que-tiene-y-que-podruxeda-tener-4}{%
+\subsection*{2. Impacto que tiene y que podría
+tener}\label{impacto-que-tiene-y-que-podruxeda-tener-4}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Impacto actual (lo que ya está pasando)}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Impacto potencial (si no se actúa)}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\bottomrule\noalign{}
+\endlastfoot
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Los profesionales del diseño y la construcción no encuentran en SICHAR un socio técnico.
+\item
+  La venta depende solo del producto y del precio, sin un elemento diferenciador.
+\end{itemize}
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  \textbf{Pérdida de oportunidades comerciales} frente a competidores que sí acompañan.
+\item
+  Dificultad para \textbf{fidelizar} y construir relaciones duraderas con arquitectos y
+  constructoras.
+\item
+  Menor capacidad de defender el precio ante alzas de costos.
+\end{itemize}
+\end{minipage} \\
+\end{longtable}
+
+\begin{cajaaviso}{Por qué ocupa el puesto 5 de prioridad}
+
+Es el \textbf{diferenciador} que permite entrar a nuevos segmentos con un argumento distinto al
+precio. Va en quinto lugar porque necesita primero conocer a esos clientes (hallazgo 3) y tener
+catálogo y herramientas básicas (hallazgo 4).
+
+\end{cajaaviso}
+
+\needspace{6\baselineskip}
+
+\hypertarget{modelos-inspiracionales-quiuxe9n-ya-lo-resolviuxf3-4}{%
+\subsection*{3. Modelos inspiracionales: quién ya lo
+resolvió}\label{modelos-inspiracionales-quiuxe9n-ya-lo-resolviuxf3-4}}
+
+Cinco referentes compiten \textbf{con el acompañamiento y no solo con el producto}.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2203}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3900}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3897}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Empresa / país}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Qué hace diferente}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Qué puede adaptar SICHAR}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{Corona}
+
+\textbf{Colombia}
+
+\emph{\textbf{corona.co}} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Centros especializados donde los clientes conocen y comparan acabados.
+\item
+  Asesoría personalizada y herramientas de diseño para proyectos de remodelación.
+\end{itemize}
+\end{minipage} & Servicio de asesoría para \textbf{arquitectos, diseñadores y constructoras} con
+recomendaciones según presupuesto, estilo y necesidades del proyecto. \\
+\textbf{The Home Depot}
+
+\textbf{Estados Unidos}
+
+\emph{\textbf{corporate.homedepot.com}} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Consultas con especialistas, presenciales y virtuales; la consulta inicial es gratuita.
+\item
+  Proceso: revisión del espacio, selección de productos, diseño, presupuesto e instalación.
+\end{itemize}
+\end{minipage} & \textbf{Consultas de diseño} (presenciales o virtuales) con revisión del espacio,
+selección de productos y presupuesto, con conexión a \textbf{instaladores aliados}. \\
+\textbf{The Tile Shop}
+
+\textbf{Estados Unidos}
+
+\emph{\textbf{tileshop.com}} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Destaca sus capacidades de diseño, fabricación y distribución para propietarios y profesionales.
+\end{itemize}
+\end{minipage} & Ofrecer un \textbf{servicio de diseño incluido con la compra}. \\
+\textbf{Porcelanosa}
+
+\textbf{España / Internacional}
+
+\emph{\textbf{porcelanosa.com}} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Showrooms con asesores que recomiendan acabados según estilo, presupuesto y tipo de proyecto.
+\item
+  Trabaja con arquitectos y diseñadores: muestras físicas y asesoría técnica para especificar.
+\end{itemize}
+\end{minipage} & Formar asesores y crear un \textbf{programa de muestras físicas y asesoría técnica}
+para arquitectos y diseñadores. \\
+\textbf{Grupo Bios}
+
+\textbf{Colombia}
+
+\emph{\textbf{fuente no registrada}} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Líneas de negocio por tipo de cliente: canal tradicional atendido por vendedores y canal moderno
+  por Key Account Managers.
+\end{itemize}
+\end{minipage} & \textbf{Organizar a los clientes por tamaño de pedido}: a mayor tamaño, mayor
+especialización y nivel de atención del equipo comercial. \\
+\end{longtable}
+
+\emph{Nota: los precios y cifras de terceros son referenciales, provienen de fuentes públicas de
+cada empresa y deben verificarse antes de usarse en decisiones comerciales.}
+
+\needspace{6\baselineskip}
+
+\hypertarget{soluciuxf3n-tangible-para-sichar-4}{%
+\subsection*{4. Solución tangible para SICHAR}\label{soluciuxf3n-tangible-para-sichar-4}}
+
+Proponemos crear la \textbf{``Mesa de Asesoría SICHAR''}: un servicio pequeño, medible y escalable
+que empieza como piloto en la sede de \textbf{Cali} (origen de la empresa) y se replica si funciona.
+
+\needspace{12\baselineskip}
+
+\hypertarget{quuxe9-incluye-el-servicio}{%
+\subsubsection*{Qué incluye el servicio}\label{quuxe9-incluye-el-servicio}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2679}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.4960}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2361}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Servicio}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{En qué consiste}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Para quién}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{1. Kit de muestras por proyecto} & Caja con muestras físicas de las referencias recomendadas
+para cada espacio (baño, cocina, fachada, zona social). & Arquitectos y diseñadores \\
+\textbf{2. Cotización de proyecto en 48 horas} & Lista de referencias, cantidades por m², costo
+estimado y tiempos de entrega, a partir de planos o medidas. & Constructoras y arquitectos \\
+\textbf{3. Asesoría de 30 minutos} & Videollamada o visita con un asesor para elegir acabados según
+estilo, presupuesto y tipo de proyecto. & Todos los perfiles \\
+\textbf{4. Tablero de inspiración (moodboard)} & Documento visual con la combinación de pisos,
+revestimientos, grifería y decorativos propuesta. & Diseñadores y propietarios \\
+\textbf{5. Programa ``Arquitecto Aliado''} & Muestras gratuitas, condiciones preferenciales de
+proyecto, ficha técnica a la mano y acceso prioritario a lanzamientos. & Firmas de arquitectos y
+diseño \\
+\end{longtable}
+
+\begin{cajainfo}{Cómo se conecta con el hallazgo 1}
+
+La asesoría \textbf{no vende por fuera del canal}: cuando el cliente es consumidor final o un
+proyecto pequeño, el asesor entrega la cotización y \textbf{remite la compra al distribuidor aliado
+de la zona}. Así el servicio refuerza la red en lugar de competir con ella.
+
+\end{cajainfo}
+
+\needspace{12\baselineskip}
+
+\hypertarget{plan-de-acciuxf3n-2}{%
+\subsubsection*{Plan de acción}\label{plan-de-acciuxf3n-2}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.0437}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.4405}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.1637}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.1042}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2480}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{\#}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Acción concreta}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Responsable}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Plazo}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Entregable}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\bottomrule\noalign{}
+\endlastfoot
+1 & Definir el \textbf{perfil del asesor}: conocimiento de acabados y trato con arquitectos.
+Opciones de bajo riesgo: una diseñadora o arquitecta aliada pagada por proyecto, o un asesor interno
+en la sede Cali. & Gerencia + comercial & Mes 3 & Asesor o aliado seleccionado \\
+2 & Armar la \textbf{guía de selección de acabados}: qué producto recomendar por tipo de espacio,
+estilo y presupuesto, con las 4 líneas del portafolio (accesorios de baño, cerámicas y acabados,
+elementos decorativos, remodelación). & Asesor + compras & Mes 3--4 & Guía de selección v1 \\
+3 & Producir \textbf{10 kits de muestras} y las plantillas de cotización de proyecto y moodboard. &
+Asesor + líder digital & Mes 4 & Kits y plantillas listos \\
+4 & Lanzar el piloto invitando a \textbf{10--15 arquitectos, diseñadores y constructoras} de Cali
+identificados en las entrevistas del hallazgo 3. & Dirección comercial & Mes 4 & Primeros proyectos
+asesorados \\
+5 & Capacitar a los \textbf{15 vendedores} en producto técnico (sesión mensual de 2 horas) para que
+deriven consultas al asesor. & Asesor & Mes 4 en adelante & Calendario de capacitaciones \\
+6 & Evaluar el piloto a los 90 días y decidir si se \textbf{replica en las otras 4 sedes}. &
+Gerencia general & Mes 7 & Informe de resultados \\
+\end{longtable}
+
+\needspace{12\baselineskip}
+
+\hypertarget{cuxf3mo-medir-si-estuxe1-funcionando-4}{%
+\subsection*{5. Cómo medir si está funcionando}\label{cuxf3mo-medir-si-estuxe1-funcionando-4}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3175}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3452}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3373}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Indicador}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Cómo se mide}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Meta sugerida (a validar con la línea base)}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{Proyectos asesorados} & N.° de proyectos con asesoría & ≥ 10--15 en los primeros 90 días del
+piloto \\
+\textbf{Cotizaciones convertidas en pedidos} & Pedidos / cotizaciones de proyecto & Mejorar frente
+al promedio sin asesoría \\
+\textbf{Valor promedio por proyecto} & Ventas por proyecto asesorado & Superior al ticket promedio
+actual \\
+\textbf{Satisfacción del cliente} & Encuesta corta posterior al proyecto & ≥ 4,5 sobre 5 \\
+\textbf{Tiempo invertido por asesoría} & Horas del asesor por proyecto & Controlar para que el
+servicio sea rentable \\
+\end{longtable}
+
+\begin{cajaalerta}{Precauciones y errores que debe evitar}
+
+\begin{itemize}
+\item
+  El modelo de The Home Depot está pensado para su escala: SICHAR debe \textbf{ajustar el alcance a
+  sus recursos} y empezar pequeño.
+\item
+  No ofrecer diseño ``gratis'' sin condiciones: vincúlelo a compra o a membresía del programa para
+  que sea sostenible.
+\end{itemize}
+
+\end{cajaalerta}
+
+\hallazgo{6}{\textbf{Baja presencia en redes sociales}}{Baja presencia en redes sociales}{MEDIA}{\textbf{Iniciar en el mes 3 y mantener de forma continua}}{\textbf{Líder digital + apoyo creativo}}
+
+\needspace{6\baselineskip}
+
+\hypertarget{descripciuxf3n-detallada-del-hallazgo-5}{%
+\subsection*{1. Descripción detallada del hallazgo}\label{descripciuxf3n-detallada-del-hallazgo-5}}
+
+SICHAR tiene una \textbf{presencia limitada en redes sociales}, lo que reduce la visibilidad de su
+marca y sus productos frente a clientes potenciales. Aunque la empresa tiene reconocimiento sólido
+por voz a voz, ese reconocimiento \textbf{no es visible} para quien descubre proveedores hoy, y
+mucho menos para los nuevos segmentos.
+
+Competidores como \textbf{Cerámica Italia} ya aprovechan los canales digitales para exhibir
+producto, comunicar su propuesta de valor y construir reconocimiento. Los arquitectos, diseñadores y
+constructoras usan las redes para \textbf{descubrir proveedores e identificar tendencias} del
+sector.
+
+Para un negocio cuyo producto es visual ---porcelanatos, revestimientos, grifería, decorativos--- no
+estar presente en redes es dejar de mostrar su mejor argumento de venta.
+
+\needspace{12\baselineskip}
+
+\hypertarget{impacto-que-tiene-y-que-podruxeda-tener-5}{%
+\subsection*{2. Impacto que tiene y que podría
+tener}\label{impacto-que-tiene-y-que-podruxeda-tener-5}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Impacto actual (lo que ya está pasando)}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Impacto potencial (si no se actúa)}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\bottomrule\noalign{}
+\endlastfoot
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Baja visibilidad de marca y de producto insignia fuera del círculo de clientes actuales.
+\item
+  Sin canal para mostrar proyectos reales ni tendencias.
+\end{itemize}
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  \textbf{Dificultad para atraer nuevos clientes} y posicionar la marca.
+\item
+  \textbf{Pérdida de oportunidades comerciales} con arquitectos, diseñadores y constructoras que
+  buscan proveedores en redes.
+\item
+  Ventaja creciente de competidores más visibles.
+\end{itemize}
+\end{minipage} \\
+\end{longtable}
+
+\begin{cajaaviso}{Por qué ocupa el puesto 6 de prioridad}
+
+Es el hallazgo \textbf{menos urgente} porque depende de los anteriores: sin política de canal, buyer
+persona y catálogo, publicar produce ruido y no ventas. Pero es de bajo costo y alta visibilidad,
+por lo que conviene empezar en el mes 3 y sostenerlo.
+
+\end{cajaaviso}
+
+\needspace{6\baselineskip}
+
+\hypertarget{modelos-inspiracionales-quiuxe9n-ya-lo-resolviuxf3-5}{%
+\subsection*{3. Modelos inspiracionales: quién ya lo
+resolvió}\label{modelos-inspiracionales-quiuxe9n-ya-lo-resolviuxf3-5}}
+
+Los referentes del sector usan lo digital para \textbf{captar interesados y llevarlos a un punto de
+contacto}, no solo para publicar.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.1984}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.4008}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.4008}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Empresa / país}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Qué hace diferente}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Qué puede adaptar SICHAR}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{Grupo Decor}
+
+\textbf{Colombia}
+
+\emph{\textbf{grupodecor.com}} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Portafolio de acabados con red comercial que conecta a clientes de varias ciudades.
+\item
+  Atención diferenciada para distribuidores y para constructoras/proyectos.
+\end{itemize}
+\end{minipage} & Catálogo actualizado, \textbf{fotografías de proyectos reales, contenido sobre
+combinaciones de acabados y campañas segmentadas} en redes, que generen oportunidades y faciliten
+contactar a SICHAR o a sus distribuidores. \\
+\textbf{Grainger}
+
+\textbf{Internacional}
+
+\emph{\textbf{grainger.com}} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Facilita la compra B2B con catálogo y servicios digitales, sin depender solo de la atención
+  presencial.
+\end{itemize}
+\end{minipage} & Contenido útil y de consulta (medidas, fichas técnicas, disponibilidad) que se
+pueda \textbf{compartir y buscar}, además de publicaciones de inspiración. \\
+\textbf{Cemex}
+
+\textbf{México / Internacional}
+
+\emph{\textbf{cemex.com}} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Digitalizó por etapas: primero procesos internos, luego autoservicio y al final comunicación y
+  redes.
+\end{itemize}
+\end{minipage} & Activar las redes \textbf{cuando ya haya procesos ordenados} detrás, para que cada
+contacto reciba respuesta rápida. \\
+\textbf{Corona / Houzz (referentes del hallazgo 3)}
+
+\textbf{Colombia / EE. UU.} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Usan proyectos reales e inspiración visual para que los usuarios descubran estilos y encuentren
+  profesionales.
+\end{itemize}
+\end{minipage} & Mostrar \textbf{proyectos terminados} con productos SICHAR y dar crédito al
+arquitecto o al distribuidor aliado. \\
+\end{longtable}
+
+\emph{Las empresas anteriores se toman como referentes de método digital. Antes de definir el
+calendario final, se recomienda auditar la cuenta de Cerámica Italia (frecuencia, formatos, tipo de
+contenido) como referente directo de competencia.}
+
+\needspace{6\baselineskip}
+
+\hypertarget{soluciuxf3n-tangible-para-sichar-5}{%
+\subsection*{4. Solución tangible para SICHAR}\label{soluciuxf3n-tangible-para-sichar-5}}
+
+Proponemos un \textbf{plan de contenido de 90 días} simple, sostenible con un equipo pequeño y
+alineado con los perfiles del hallazgo 3.
+
+\needspace{12\baselineskip}
+
+\hypertarget{duxf3nde-estar-y-para-quiuxe9n}{%
+\subsubsection*{Dónde estar y para quién}\label{duxf3nde-estar-y-para-quiuxe9n}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2183}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3373}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.4444}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Plataforma}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Para quién}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Qué se publica}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{Instagram} (principal) & Arquitectos, diseñadores, consumidor que remodela & Fotos y reels
+de proyectos, combinaciones, producto insignia \\
+\textbf{Pinterest} & Diseñadores y propietarios & Tableros por espacio y estilo (baños, cocinas,
+fachadas) \\
+\textbf{LinkedIn} & Constructoras y empresas de proyectos & Casos de obra, cumplimiento,
+disponibilidad y alianzas \\
+\textbf{WhatsApp Business} & Todos & Catálogo, atención rápida y derivación al distribuidor \\
+\end{longtable}
+
+\needspace{12\baselineskip}
+
+\hypertarget{cuatro-pilares-de-contenido-y-calendario-semanal}{%
+\subsubsection*{Cuatro pilares de contenido y calendario
+semanal}\label{cuatro-pilares-de-contenido-y-calendario-semanal}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.1290}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2183}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.4345}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2183}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Día}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Pilar}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Ejemplo de publicación}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Llamado a la acción}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{Lunes} & \textbf{Proyectos reales} & Antes/después de un baño o fachada con producto SICHAR
+y crédito al distribuidor o arquitecto & ``Cotiza tu proyecto'' \\
+\textbf{Miércoles} & \textbf{Guía de acabados} & Cómo combinar porcelanato brillante 60x130 con
+grifería en tonos cálidos o negros & ``Descarga el catálogo'' \\
+\textbf{Viernes} & \textbf{Producto insignia y novedades} & Video corto del porcelanato brillante
+60x130 en distintos espacios & ``Dónde comprar'' \\
+\textbf{Quincenal} & \textbf{Confianza y distribuidores} & Detrás de cámaras: llegada de
+contenedores, control de calidad, presentación de un distribuidor aliado & ``Conoce a nuestros
+aliados'' \\
+\end{longtable}
+
+\needspace{12\baselineskip}
+
+\hypertarget{plan-de-acciuxf3n-3}{%
+\subsubsection*{Plan de acción}\label{plan-de-acciuxf3n-3}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.0437}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.4405}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.1637}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.1042}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2480}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{\#}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Acción concreta}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Responsable}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Plazo}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Entregable}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\bottomrule\noalign{}
+\endlastfoot
+1 & Auditar la cuenta actual de SICHAR y la de \textbf{Cerámica Italia}: frecuencia, formatos,
+mensajes, interacción. & Líder digital & Semanas 1--2 & Informe comparativo \\
+2 & Definir \textbf{identidad visual y tono de voz} (profesional, cercano, inspirador) y optimizar
+el perfil: logo, biografía con propuesta de valor, enlace al catálogo y al localizador. & Líder
+digital + diseño & Semanas 2--4 & Perfil optimizado y guía de estilo \\
+3 & Armar un \textbf{banco de 30 fotografías y 10 videos cortos} de proyectos y productos (con
+permiso de los clientes). & Comercial + apoyo creativo & Semanas 3--8 & Banco de contenido \\
+4 & Publicar \textbf{3 veces por semana} según el calendario y responder mensajes en menos de 24
+horas. & Líder digital & Desde el mes 3 & Calendario cumplido \\
+5 & Probar una \textbf{pauta pequeña y segmentada} (arquitectos y constructoras en las ciudades de
+las 5 sedes), con un presupuesto limitado a definir por la gerencia. & Líder digital + gerencia &
+Meses 4--6 & Resultados de la pauta \\
+6 & Revisar métricas cada mes y ajustar contenido; \textbf{eliminar lo que no funcione}. & Líder
+digital & Mensual & Informe mensual \\
+\end{longtable}
+
+\needspace{12\baselineskip}
+
+\hypertarget{cuxf3mo-medir-si-estuxe1-funcionando-5}{%
+\subsection*{5. Cómo medir si está funcionando}\label{cuxf3mo-medir-si-estuxe1-funcionando-5}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3175}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3452}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3373}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Indicador}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Cómo se mide}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Meta sugerida (a validar con la línea base)}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{Alcance y seguidores calificados} & Estadísticas de la plataforma; foco en arquitectos y
+constructoras & Crecimiento sostenido mensual desde el mes 3 \\
+\textbf{Mensajes y cotizaciones por redes} & Mensajes recibidos que piden precio o cotización &
+Línea base en el mes 3; aumento trimestral \\
+\textbf{Visitas a ``Dónde comprar'' / catálogo} & Clics desde redes hacia el sitio o WhatsApp &
+Creciente desde el lanzamiento de la Vitrina \\
+\textbf{Leads por segmento} & Contactos nuevos clasificados por perfil (hallazgo 3) & Primeros leads
+de arquitectos y constructoras en 90 días \\
+\end{longtable}
+
+\begin{cajaalerta}{Precauciones y errores que debe evitar}
+
+\begin{itemize}
+\item
+  \textbf{No publicar sin un destino claro}: toda pieza debe llevar a cotizar, descargar o ubicar un
+  distribuidor.
+\item
+  Evitar mostrar precios finales al público que puedan entrar en conflicto con los distribuidores
+  (ver hallazgo 1).
+\item
+  Pedir autorización a clientes y distribuidores antes de mostrar sus proyectos.
+\end{itemize}
+
+\end{cajaalerta}
+
+\hypertarget{hoja-de-ruta-integrada}{%
+\section{7. Hoja de ruta integrada}\label{hoja-de-ruta-integrada}}
+
+Las seis soluciones se ejecutan \textbf{en secuencia lógica y en paralelo cuando es posible}. Esta
+tabla resume qué se hace en cada horizonte para que la gerencia pueda dar seguimiento en una sola
+página.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2183}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.6429}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.1389}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Horizonte}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Qué se hace}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Hallazgos}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{Primeros 30 días}
+
+Diagnosticar y alinear & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Mapear el canal y entrevistar a 8--10 distribuidores clave.
+\item
+  Construir la hoja de costo puesto en bodega por referencia.
+\item
+  Designar al líder digital.
+\item
+  Agendar 15--20 entrevistas de buyer persona.
+\end{itemize}
+\end{minipage} & 1, 2, 3, 4 \\
+\textbf{Días 31 a 90}
+
+Decidir y construir bases & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Firmar y comunicar la política de canal y el programa Distribuidor Aliado.
+\item
+  Cotizar proveedores alternativos y renegociar con India.
+\item
+  Definir y aplicar la política de precios por escalones.
+\item
+  Redactar las fichas de buyer persona.
+\item
+  Crear el archivo maestro de productos, el catálogo digital y el CRM básico.
+\item
+  Iniciar el plan de contenido en redes (desde el mes 3).
+\end{itemize}
+\end{minipage} & 1, 2, 3, 4, 6 \\
+\textbf{Meses 4 a 6}
+
+Abrir la puerta & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Lanzar la Vitrina SICHAR (sitio, catálogo, formulario y localizador ``Dónde comprar'').
+\item
+  Lanzar el piloto de la Mesa de Asesoría en Cali.
+\item
+  Probar pauta pequeña y segmentada en redes.
+\item
+  Evaluar con el semáforo si se abre una Línea Directa limitada.
+\end{itemize}
+\end{minipage} & 1, 4, 5, 6 \\
+\textbf{Meses 7 a 12}
+
+Escalar lo que funciona & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{itemize}
+\item
+  Replicar la asesoría en las otras 4 sedes si el piloto lo justifica.
+\item
+  Activar el autoservicio para distribuidores y constructoras (Etapa 3).
+\item
+  Consolidar el tablero de indicadores por sede.
+\item
+  Revisar y actualizar la política de precios y de proveedores.
+\end{itemize}
+\end{minipage} & 2, 4, 5 \\
+\end{longtable}
+
+\needspace{6\baselineskip}
+
+\hypertarget{gobierno-del-plan-quiuxe9n-da-seguimiento}{%
+\subsubsection{Gobierno del plan: quién da
+seguimiento}\label{gobierno-del-plan-quiuxe9n-da-seguimiento}}
+
+\begin{itemize}
+\item
+  \textbf{Comité de seguimiento mensual} (gerencia general, dirección comercial, compras/finanzas y
+  líder digital): revisa indicadores, desbloquea decisiones y ajusta metas.
+\item
+  \textbf{Tablero único de indicadores} con los KPI de las seis secciones, actualizado cada mes.
+\item
+  \textbf{Revisión trimestral} del semáforo de canal para decidir si se abre o se amplía la venta
+  directa.
+\end{itemize}
+
+\hypertarget{pruxf3ximos-pasos-y-decisiones-que-necesitamos-de-usted}{%
+\section{8. Próximos pasos y decisiones que necesitamos de
+usted}\label{pruxf3ximos-pasos-y-decisiones-que-necesitamos-de-usted}}
+
+Para arrancar en los próximos \textbf{30 días} necesitamos cinco decisiones de la gerencia:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \textbf{Congelar el lanzamiento del B2C} hasta tener la política de canal firmada y comunicada a
+  los distribuidores.
+\item
+  \textbf{Nombrar al líder digital} (puede ser de medio tiempo) y a un responsable de importaciones
+  para la hoja de costos.
+\item
+  \textbf{Autorizar las entrevistas} a 8--10 distribuidores y 15--20 clientes y prospectos, con los
+  coordinadores de sede.
+\item
+  \textbf{Definir un presupuesto inicial} para catálogo, sitio web sencillo, CRM y piloto de
+  asesoría (a cotizar en las primeras semanas).
+\item
+  \textbf{Aprobar el comité de seguimiento mensual} y su calendario.
+\end{enumerate}
+
+\begin{cajamarca}{Mensaje final}
+
+SICHAR no necesita dejar de ser quien es para crecer. Su mayor activo es la \textbf{confianza} que
+ha construido durante más de 20 años con distribuidores y ferreterías. La estrategia propuesta crece
+\textbf{con} ellos y no \textbf{contra} ellos: más visibilidad, más margen protegido, más servicio y
+nuevos clientes, sin romper la promesa de \textbf{``Somos su proveedor, no su competidor''}.
+
+\end{cajamarca}
+
+\hypertarget{anexo-nota-metodoluxf3gica-y-fuentes}{%
+\section{Anexo · Nota metodológica y fuentes}\label{anexo-nota-metodoluxf3gica-y-fuentes}}
+
+\textbf{Origen de la información.} El diagnóstico se basa en el trabajo del equipo del Proyecto EA
+con la empresa SICHAR (hallazgos positivos y negativos, análisis FODA) y en el documento de
+\textbf{modelos inspiracionales} elaborado para cada hallazgo. La estructura del informe sigue la
+metodología del reporte de análisis de Berry Healthy (2024) usado como ejemplo.
+
+\textbf{Cifras de terceros.} Los precios y cifras de empresas de referencia son
+\textbf{referenciales}, tomados de fuentes públicas de cada compañía, y deben verificarse antes de
+usarse en decisiones comerciales. El ejemplo numérico del hallazgo 2 es \textbf{hipotético} y sirve
+solo para explicar la mecánica del margen.
+
+\textbf{Metas e indicadores.} Las metas son sugeridas y deben calibrarse con la línea base de SICHAR
+durante el primer mes.
+
+\needspace{12\baselineskip}
+
+\hypertarget{sitios-consultados-para-los-modelos-inspiracionales}{%
+\subsubsection{Sitios consultados para los modelos
+inspiracionales}\label{sitios-consultados-para-los-modelos-inspiracionales}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.2778}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.7222}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Hallazgo}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Empresas y fuentes}
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{1. Conflicto de canal} & coartesas.com · listo.co · rocagroup.com · cat.com ·
+porcelanosa.com · aqualisa.co.uk \\
+\textbf{2. Costos de importación} & samisa.co · ikea.com · adidas-group.com · flooranddecor.com ·
+Gano Excel (fuente no registrada) \\
+\textbf{3. Buyer persona} & houzz.com · blog.hubspot.com · homedepot.com · procore.com · corona.co ·
+easyline.com.co \\
+\textbf{4. Atención especializada} & corona.co · corporate.homedepot.com · tileshop.com ·
+porcelanosa.com · Grupo Bios (fuente no registrada) \\
+\textbf{5 y 6. Digital y redes} & grainger.com · grupodecor.com · homecenter.com.co · cemex.com ·
+comproagro.com \\
+\end{longtable}
+\end{document}

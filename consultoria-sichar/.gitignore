@@ -1,0 +1,5 @@
+build/avisos.txt
+*.aux
+*.log
+*.out
+*.toc
