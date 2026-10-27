@@ -2,12 +2,14 @@
 
 | Archivo | Qué es |
 |---|---|
-| `SICHAR-OS-demo.html` | La plataforma completa en un solo archivo. Doble clic para abrir en Chrome; funciona sin internet. |
-| `GUION_DEMO.md` | Guion de 15 minutos para la presentación a los dueños, paso a paso. |
-| `propuesta/Propuesta_Pragmos_SICHAR_OS.pdf` | Propuesta comercial de Pragmos (precios por definir). Fuente en `PROPUESTA_PRAGMOS.md`. |
-| `CORREO_GERENCIA.md` | Invitación a la entrega y correo/mensaje para enviar la propuesta. |
-| `../consultoria-sichar/` | Informe de consultoría en LaTeX y PDF. |
-| `../sichar-os/` | Código fuente de la plataforma (React + TypeScript). |
+| `demo/index.html` | **Centro de mando.** Doble clic para abrir en Chrome; desde ahí se abre cada pieza. Funciona sin internet (con internet, el mapa muestra calles). |
+| `demo/web/index.html` | Sitio web de SICHAR. |
+| `demo/crm/index.html` | SICHAR OS: CRM, cotizador, costos, canal y automatizaciones. |
+| `demo/portal/index.html` | Portal del distribuidor aliado. |
+| `GUION_DEMO.md` | Guion de la presentación a los dueños. |
+| `propuesta/Propuesta_Pragmos_SICHAR_OS.pdf` | Propuesta comercial de Pragmos (precios por definir). |
+| `CORREO_GERENCIA.md` | Invitación a la entrega y correo para enviar la propuesta. |
 
-Para regenerar la demo: `cd sichar-os && npm install && npm run build:offline`, y copiar
-`dist-offline/index.html` aquí como `SICHAR-OS-demo.html`.
+Descarga la carpeta `demo/` completa: las cuatro apps se enlazan entre sí y comparten los datos.
+
+Para regenerarla: `cd sichar-os && npm install && npm run build:offline` y copia `dist-offline/` como `demo/`.

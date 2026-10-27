@@ -21,34 +21,41 @@ export function DefsTextura({ p, id, escala = 1 }: { p: Prod; id: string; escala
 
   switch (p.textura) {
     case 'marmol': {
-      const venas = Array.from({ length: 5 }, (_, i) => {
+      // Vetas principales + secundarias deformadas con ruido, y nubes suaves de fondo.
+      const vena = (i: number, grosor: number, opacidad: number) => {
         const y0 = r() * T
-        const y1 = r() * T
-        return (
-          <path
-            key={i}
-            d={`M -10 ${y0} C ${T * 0.3} ${y0 + (r() - 0.5) * 60}, ${T * 0.6} ${y1 + (r() - 0.5) * 60}, ${T + 10} ${y1}`}
-            stroke={p.color2}
-            strokeWidth={0.4 + r() * (i === 0 ? 2.4 : 1.2)}
-            strokeOpacity={0.35 + r() * 0.45}
-            fill="none"
-            filter={`url(#${id}-blur)`}
-          />
-        )
-      })
+        const y1 = y0 + (r() - 0.5) * T * 0.9
+        const c1 = y0 + (r() - 0.5) * T * 0.8
+        const c2 = y1 + (r() - 0.5) * T * 0.8
+        return <path key={i} d={`M ${-T * 0.1} ${y0} C ${T * 0.35} ${c1}, ${T * 0.65} ${c2}, ${T * 1.1} ${y1}`} stroke={p.color2} strokeWidth={grosor} strokeOpacity={opacidad} fill="none" strokeLinecap="round" />
+      }
+      const principales = Array.from({ length: 3 }, (_, i) => vena(i, (0.6 + r() * 1.6) * escala, 0.55 + r() * 0.35))
+      const finas = Array.from({ length: 9 }, (_, i) => vena(10 + i, (0.15 + r() * 0.35) * escala, 0.25 + r() * 0.35))
+      const semilla = hash(p.id) % 997
       return (
         <>
-          <filter id={`${id}-blur`}>
-            <feGaussianBlur stdDeviation={0.35} />
+          <filter id={`${id}-veta`} x="-10%" y="-10%" width="120%" height="120%">
+            <feTurbulence type="fractalNoise" baseFrequency={0.035 / escala} numOctaves={4} seed={semilla} result="ruido" />
+            <feDisplacementMap in="SourceGraphic" in2="ruido" scale={9 * escala} xChannelSelector="R" yChannelSelector="G" />
+            <feGaussianBlur stdDeviation={0.18 * escala} />
+          </filter>
+          <filter id={`${id}-nube`} x="0" y="0" width="100%" height="100%">
+            <feTurbulence type="fractalNoise" baseFrequency={0.012 / escala} numOctaves={5} seed={semilla + 7} />
+            <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .22 0" />
+            <feComposite in2="SourceGraphic" operator="in" />
           </filter>
           <pattern id={id} width={T} height={T} patternUnits="userSpaceOnUse">
             <rect width={T} height={T} fill={p.color} />
-            {venas}
+            <rect width={T} height={T} fill={p.color2} filter={`url(#${id}-nube)`} />
+            <g filter={`url(#${id}-veta)`}>
+              {finas}
+              {principales}
+            </g>
             <rect width={T} height={T} fill={`url(#${id}-brillo)`} />
             {junta}
           </pattern>
           <linearGradient id={`${id}-brillo`} x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stopColor="#fff" stopOpacity={0.35} />
+            <stop offset="0" stopColor="#fff" stopOpacity={0.25} />
             <stop offset=".45" stopColor="#fff" stopOpacity={0} />
           </linearGradient>
         </>

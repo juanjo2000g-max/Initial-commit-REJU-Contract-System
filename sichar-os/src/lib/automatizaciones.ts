@@ -72,7 +72,7 @@ export function alCrearLead(c: Contexto, lead: Lead): ResultadoLead {
         'Confirmación enviada al cliente',
         'Referido visible en el portal del distribuidor',
       ])
-      notificar(c, `Nuevo referido para ${d.nombre}: ${lead.nombre}`, 'exito', `/app/crm/${lead.id}`)
+      notificar(c, `Nuevo referido para ${d.nombre}: ${lead.nombre}`, 'exito', `/pipeline/${lead.id}`)
       return { mensajeCliente: `${d.nombre} (${d.barrio}, ${d.ciudad}), distribuidor aliado SICHAR, te contactará por WhatsApp.`, responsable: d.nombre }
     }
   }
@@ -93,7 +93,7 @@ export function alCrearLead(c: Contexto, lead: Lead): ResultadoLead {
         'SICHAR no cotiza directo a este cliente',
         'Distribuidor notificado con el contacto',
       ])
-      notificar(c, `Proyecto protegido: ${reg.obra} va para ${d.nombre}`, 'alerta', `/app/crm/${lead.id}`)
+      notificar(c, `Proyecto protegido: ${reg.obra} va para ${d.nombre}`, 'alerta', `/pipeline/${lead.id}`)
       return { mensajeCliente: `Tu proyecto lo atiende ${d.nombre}, nuestro aliado en ${d.ciudad}. Te contactarán hoy.`, responsable: d.nombre }
     }
     const v = s.vendedores.find((x) => x.sede === lead.ciudad && x.rol.startsWith('Coordinador'))!
@@ -121,7 +121,7 @@ export function alCrearLead(c: Contexto, lead: Lead): ResultadoLead {
       'Solicitud de asesoría de 30 min creada',
       'Kit de muestras ofrecido por WhatsApp',
     ])
-    notificar(c, `Nueva asesoría solicitada: ${lead.empresa ?? lead.nombre}`, 'info', '/app/asesoria')
+    notificar(c, `Nueva asesoría solicitada: ${lead.empresa ?? lead.nombre}`, 'info', '/asesoria')
     return { mensajeCliente: `${a.nombre}, asesora de diseño SICHAR, te escribirá para agendar tu asesoría y enviarte muestras.`, responsable: a.nombre }
   }
 
@@ -157,7 +157,7 @@ export function revisarPolitica(cot: Cotizacion, s: Estado) {
 
 export function registrarBloqueoPolitica(c: Contexto, cot: Cotizacion, problemas: string[]) {
   registrar(c, 'r7', `Cotización ${cot.numero} bloqueada`, problemas[0], ['Envío bloqueado', 'Solicitud de aprobación enviada a gerencia'])
-  notificar(c, `Política de canal: ${cot.numero} requiere aprobación`, 'alerta', '/app/cotizaciones')
+  notificar(c, `Política de canal: ${cot.numero} requiere aprobación`, 'alerta', '/cotizaciones')
 }
 
 /** Regla 8. */
@@ -180,7 +180,7 @@ export function alAceptarCotizacion(c: Contexto, cot: Cotizacion) {
   }
   tarea(c, { titulo: `Encuesta de satisfacción · ${lead.nombre}`, detalle: 'Enviar encuesta corta por WhatsApp (1 a 5).', vence: c.ahora + 15 * DIA, responsable: cot.vendedorId, origen: 'Cotización aceptada', leadId: lead.id, prioridad: 'baja' })
   registrar(c, 'r8', `${cot.numero} aceptada`, `${lead.nombre} · ${fmtCOP(total)}`, ['Lead movido a Ganado', 'Pedido creado', 'Encuesta programada a 15 días'])
-  notificar(c, `¡Venta ganada! ${lead.nombre} · ${fmtCOP(total)}`, 'exito', `/app/crm/${lead.id}`)
+  notificar(c, `¡Venta ganada! ${lead.nombre} · ${fmtCOP(total)}`, 'exito', `/pipeline/${lead.id}`)
 }
 
 /** Reglas por tiempo (4, 5 y 6). Se ejecutan al abrir la app y al simular días. */
@@ -216,7 +216,7 @@ export function revisionPeriodica(c: Contexto) {
         const v = s.vendedores.find((x) => x.sede === d.ciudad)!
         tarea(c, { titulo: `Visita de recuperación: ${d.nombre}`, detalle: h.motivos.join(' · '), vence: c.ahora + 2 * DIA, responsable: v.id, origen: 'Semáforo de canal', prioridad: 'alta' })
         registrar(c, 'r5', `${clave} en rojo`, h.motivos.join(' · '), ['Visita de recuperación creada', `Asignada a ${v.nombre}`, 'Alerta a gerencia'])
-        notificar(c, `Distribuidor en rojo: ${d.nombre} (${h.motivos[0]})`, 'alerta', '/app/canal')
+        notificar(c, `Distribuidor en rojo: ${d.nombre} (${h.motivos[0]})`, 'alerta', '/canal')
       }
     }
   }
