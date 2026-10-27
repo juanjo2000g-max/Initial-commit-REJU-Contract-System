@@ -27,7 +27,7 @@ export default function Asesoria() {
     <div className="grid gap-5 animate-entrar">
       <div>
         <h1 className="titulo-app">Mesa de Asesoría SICHAR</h1>
-        <p className="text-sm text-white/50">Piloto en Cali: competir con acompañamiento, no solo con producto (hallazgo 5). La asesoría no vende por fuera del canal.</p>
+        <p className="text-sm text-tinta/55">Piloto en Cali: competir con acompañamiento, no solo con producto (hallazgo 5). La asesoría no vende por fuera del canal.</p>
       </div>
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <Kpi titulo="Proyectos asesorados" valor={s.asesorias.length} detalle="Meta piloto: 10–15 en 90 días" />
@@ -38,17 +38,17 @@ export default function Asesoria() {
 
       <div className="grid gap-4 lg:grid-cols-4">
         {COLUMNAS.map((col) => (
-          <div key={col} className="rounded-2xl bg-white/[.035] p-2">
-            <div className="px-2 py-2 text-xs font-semibold uppercase tracking-wide text-white/50">{col} · {s.asesorias.filter((a) => a.estado === col).length}</div>
+          <div key={col} className="rounded-2xl bg-black/[.03] p-2">
+            <div className="px-2 py-2 text-xs font-semibold uppercase tracking-wide text-tinta/55">{col} · {s.asesorias.filter((a) => a.estado === col).length}</div>
             <div className="grid gap-2">
               {s.asesorias.filter((a) => a.estado === col).map((a) => {
                 const T = TIPOS[a.tipo]
                 return (
-                  <div key={a.id} className="rounded-xl bg-[#181818] p-3 shadow-sm ring-1 ring-white/5">
-                    <div className="flex items-center gap-2 text-xs font-semibold text-naranja-200"><T.icono size={14} /> {T.nombre}</div>
+                  <div key={a.id} className="rounded-xl bg-white p-3 shadow-sm ring-1 ring-black/[.08]">
+                    <div className="flex items-center gap-2 text-xs font-semibold text-naranja-700"><T.icono size={14} /> {T.nombre}</div>
                     <div className="mt-1 font-semibold">{a.nombre}</div>
-                    <div className="text-xs text-white/50">{a.notas}</div>
-                    <div className="mt-1 text-[11px] text-white/40">{a.ciudad} · {fmtFecha(a.fecha, true)}</div>
+                    <div className="text-xs text-tinta/55">{a.notas}</div>
+                    <div className="mt-1 text-[11px] text-tinta/45">{a.ciudad} · {fmtFecha(a.fecha, true)}</div>
                     {a.ambiente && (
                       <div className="mt-2 flex gap-1">
                         {[a.ambiente.piso, a.ambiente.pared, a.ambiente.acento].map((pid) => <Muestra key={pid} p={P(pid)} className="h-7 w-7 rounded" escala={0.5} />)}
@@ -56,7 +56,7 @@ export default function Asesoria() {
                     )}
                     <div className="mt-2 flex flex-wrap gap-1">
                       {COLUMNAS.filter((x) => x !== col).map((x) => (
-                        <button key={x} onClick={() => mover(a.id, x)} className="rounded-md bg-white/5 px-2 py-0.5 text-[11px] font-medium capitalize hover:bg-white/10">→ {x}</button>
+                        <button key={x} onClick={() => mover(a.id, x)} className="rounded-md bg-black/[.04] px-2 py-0.5 text-[11px] font-medium capitalize hover:bg-black/[.06]">→ {x}</button>
                       ))}
                       {a.leadId && <Link to={`/pipeline/${a.leadId}`} className="rounded-md px-2 py-0.5 text-[11px] font-semibold text-naranja">CRM</Link>}
                     </div>
@@ -72,7 +72,7 @@ export default function Asesoria() {
         <Ambiente piso={P(amb.piso)} pared={P(amb.pared)} acento={P(amb.acento)} griferia={amb.griferia} />
         <div>
           <h2 className="font-display text-xl font-bold">Generador de tableros de inspiración</h2>
-          <p className="mt-1 text-sm text-white/55">La asesora arma la propuesta con el cliente en vivo y la guarda como asesoría.</p>
+          <p className="mt-1 text-sm text-tinta/60">La asesora arma la propuesta con el cliente en vivo y la guarda como asesoría.</p>
           {(['piso', 'pared', 'acento'] as const).map((k) => (
             <label key={k} className="mt-4 block">
               <span className="etiqueta">{k}</span>

@@ -6,12 +6,13 @@ import { semaforoCanal } from '../../lib/semaforo'
 import { useStore } from '../../lib/store'
 import { DIA, HORA, SEDES, fmtCOP, fmtFecha, fmtM, fmtPct, haceCuanto, sum } from '../../lib/util'
 import { urlApp } from '../../lib/apps'
+import { Muestra } from '../../components/Textura'
 import { Actividad, MapaSedes, NumeroVivo } from '../Vivo'
 
 const fmtMVivo = (n: number) => fmtM(n)
 const fmtEntero = (n: number) => Math.round(n).toLocaleString('es-CO')
 
-const COLORES_SEDE = ['#F47920', '#E8E2D8', '#2E5E8C', '#2E8B57', '#D68910']
+const COLORES_SEDE = ['#F47920', '#1E1E1E', '#2E5E8C', '#2E8B57', '#D68910']
 const MESES = ['May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct']
 
 export default function Tablero() {
@@ -27,6 +28,7 @@ export default function Tablero() {
   const refGanados = referidos.filter((l) => l.etapa === 'ganado')
   const quejasCriticas = s.quejas.filter((q) => q.critica && !q.resuelta).length
   const visitasMes = s.visitas.filter((v) => ahora - v.fecha < 30 * DIA).length
+  const calacatta = s.productos.find((p) => p.id === 'p1')!
   const hoy = s.leads.filter((l) => ahora - l.creado < DIA)
   const hoyAliados = hoy.filter((l) => l.asignadoTipo === 'distribuidor').length
   const hora = new Date(ahora).getHours()
@@ -49,50 +51,58 @@ export default function Tablero() {
 
   return (
     <div className="grid gap-6 animate-entrar">
-      <section className="grid gap-6 xl:grid-cols-[1.5fr_1fr]">
-        <div className="relative min-w-0 overflow-hidden rounded-3xl bg-gradient-to-br from-[#1c1611] via-[#121212] to-[#0e0e0e] p-6 ring-1 ring-white/[.07] md:p-8">
-          <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-naranja/20 blur-3xl" />
-          <div className="relative flex flex-wrap items-start justify-between gap-4">
-            <div>
-              <p className="text-sm text-white/45">{fmtFecha(ahora)} · Vista de gerencia</p>
-              <h1 className="mt-1 font-display text-4xl font-extrabold tracking-tight md:text-5xl">{saludo}, gerencia.</h1>
-              <p className="mt-2 max-w-xl text-white/55">
-                {hoy.length > 0 ? <>Hoy entraron <b className="text-white">{hoy.length} clientes</b>; {hoyAliados} se enviaron a distribuidores aliados.</> : <>Así va la operación de las cinco sedes.</>}
-              </p>
-            </div>
-            <div className="flex gap-2">
-              <a href={urlApp('hub', '/presentacion')} className="btn-claro">Modo presentación</a>
-              <Link to="/pipeline" className="btn-primario">Pipeline <ArrowRight size={16} /></Link>
-            </div>
+      <section className="grid gap-6 xl:grid-cols-[1.55fr_1fr]">
+        <div className="relative min-w-0 overflow-hidden rounded-[28px] bg-white ring-1 ring-black/[.06] shadow-[0_20px_60px_-30px_rgba(20,20,20,.18)]">
+          {/* Sello de marca: la losa insignia Calacatta 60x130 */}
+          <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-[38%] md:block [mask-image:linear-gradient(to_left,black_35%,transparent)]">
+            <Muestra p={calacatta} className="h-full w-full" escala={2.4} />
           </div>
-          <div className="relative mt-8 grid grid-cols-2 gap-3 md:grid-cols-4">
-            {[
-              ['Pipeline abierto', sum(abiertos, (l) => l.valor), fmtMVivo, `${abiertos.length} oportunidades`],
-              ['Ventas ganadas', sum(ganados, (l) => l.valor), fmtMVivo, `${ganados.length} cierres`],
-              ['Clientes hoy', hoy.length, fmtEntero, 'web, WhatsApp, redes y visitas'],
-              ['Referidos a aliados', referidos.length, fmtEntero, `${refGanados.length} ya compraron`],
-            ].map(([t, v, f, d]) => (
-              <div key={t as string} className="rounded-2xl bg-white/[.04] p-4 ring-1 ring-white/[.06]">
-                <div className="text-[11px] font-semibold uppercase tracking-wider text-white/40">{t as string}</div>
-                <NumeroVivo valor={v as number} formato={f as (n: number) => string} className="mt-2 block whitespace-nowrap font-display text-2xl font-bold tracking-tight 2xl:text-3xl" />
-                <div className="mt-1 text-xs text-white/40">{d as string}</div>
-              </div>
-            ))}
-          </div>
-          <div className="relative mt-6">
-            <div className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-white/40"><span className="h-1.5 w-1.5 animate-pulse rounded-full bg-naranja" /> Actividad en tiempo real</div>
-            <Actividad s={s} ahora={ahora} />
+          <div className="relative p-7 md:p-10">
+            <div className="flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[.22em] text-tinta/45"><span className="h-px w-8 bg-naranja" />{fmtFecha(ahora)} · Gerencia</div>
+            <h1 className="mt-5 font-display text-5xl font-semibold leading-[.95] tracking-[-0.035em] md:text-7xl">{saludo}.</h1>
+            <p className="mt-4 max-w-md text-lg leading-relaxed text-tinta/55">
+              {hoy.length > 0 ? <>Hoy entraron <b className="font-semibold text-tinta">{hoy.length} clientes</b>. {hoyAliados} se enviaron a distribuidores aliados.</> : <>Así va la operación de las cinco sedes.</>}
+            </p>
+            <div className="mt-7 flex flex-wrap gap-2">
+              <Link to="/pipeline" className="btn-oscuro !rounded-full !px-5">Ver pipeline <ArrowRight size={16} /></Link>
+              <a href={urlApp('hub', '/presentacion')} className="btn-claro !rounded-full !px-5">Modo presentación</a>
+            </div>
+            <dl className="mt-12 grid max-w-[64%] grid-cols-2 max-md:max-w-none">
+              {[
+                ['Pipeline abierto', sum(abiertos, (l) => l.valor), fmtMVivo, `${abiertos.length} oportunidades`],
+                ['Ventas ganadas', sum(ganados, (l) => l.valor), fmtMVivo, `${ganados.length} cierres`],
+                ['Clientes hoy', hoy.length, fmtEntero, 'web, WhatsApp y redes'],
+                ['Referidos a aliados', referidos.length, fmtEntero, `${refGanados.length} ya compraron`],
+              ].map(([t, v, f, d], k) => (
+                <div key={t as string} className={`border-t border-black/[.07] py-6 ${k % 2 ? 'pl-6' : 'border-r pr-6'}`}>
+                  <dt className="text-[11px] font-semibold uppercase tracking-[.16em] text-tinta/40">{t as string}</dt>
+                  <dd><NumeroVivo valor={v as number} formato={f as (n: number) => string} className="mt-3 block whitespace-nowrap font-display text-[2rem] font-medium leading-none tracking-[-0.035em] tabular-nums 2xl:text-[2.4rem]" /></dd>
+                  <dd className="mt-2 text-xs text-tinta/45">{d as string}</dd>
+                </div>
+              ))}
+            </dl>
           </div>
         </div>
-        <div className="relative overflow-hidden rounded-3xl bg-[#101010] p-6 ring-1 ring-white/[.07]">
-          <div className="flex items-center justify-between">
-            <h2 className="font-semibold">Ventas del canal por sede</h2>
-            <span className="text-xs text-white/40">mes en curso</span>
+        <div className="relative overflow-hidden rounded-[28px] bg-white p-7 ring-1 ring-black/[.06] shadow-[0_20px_60px_-30px_rgba(20,20,20,.18)]">
+          <div className="flex items-baseline justify-between">
+            <div>
+              <div className="text-[11px] font-semibold uppercase tracking-[.22em] text-tinta/40">Ventas del canal</div>
+              <h2 className="mt-1 font-display text-2xl font-semibold tracking-tight">Cinco sedes, un país</h2>
+            </div>
+            <span className="text-xs text-tinta/40">mes en curso</span>
           </div>
-          <div className="mx-auto mt-2 aspect-[42/48] max-h-[560px]">
+          <div className="mx-auto mt-2 aspect-[42/48] max-h-[520px]">
             <MapaSedes s={s} ahora={ahora} />
           </div>
         </div>
+      </section>
+
+      <section className="rounded-[28px] bg-white p-7 ring-1 ring-black/[.06]">
+        <div className="mb-2 flex items-center justify-between">
+          <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[.22em] text-tinta/45"><span className="h-1.5 w-1.5 animate-pulse rounded-full bg-naranja" /> Actividad en tiempo real</div>
+          <Link to="/automatizaciones" className="text-xs font-semibold text-naranja">Ver automatizaciones →</Link>
+        </div>
+        <Actividad s={s} ahora={ahora} />
       </section>
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 xl:grid-cols-6">
@@ -108,15 +118,15 @@ export default function Tablero() {
         <div className="tarjeta p-5 xl:col-span-2">
           <div className="flex items-center justify-between">
             <h2 className="font-semibold">Ventas del canal por sede (millones COP)</h2>
-            <span className="text-xs text-white/40">Últimos 6 meses</span>
+            <span className="text-xs text-tinta/45">Últimos 6 meses</span>
           </div>
           <div className="mt-4 h-72">
             <ResponsiveContainer>
               <AreaChart data={ventasSede}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#ffffff12" vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#0000000a" vertical={false} />
                 <XAxis dataKey="mes" tickLine={false} axisLine={false} fontSize={12} />
                 <YAxis tickLine={false} axisLine={false} fontSize={12} width={40} />
-                <Tooltip contentStyle={{ borderRadius: 12, border: '1px solid rgba(255,255,255,.08)', background: '#1b1b1b', color: '#fff' }} formatter={(v) => `$ ${v} M`} />
+                <Tooltip contentStyle={{ borderRadius: 12, border: '1px solid rgba(0,0,0,.08)', background: '#fff', boxShadow: '0 12px 30px -12px rgba(0,0,0,.2)' }} formatter={(v) => `$ ${v} M`} />
                 {SEDES.map((sd, i) => (
                   <Area key={sd} type="monotone" dataKey={sd} stackId="1" stroke={COLORES_SEDE[i]} fill={COLORES_SEDE[i]} fillOpacity={0.75} />
                 ))}
@@ -136,19 +146,19 @@ export default function Tablero() {
             <Link to="/canal" className="text-xs font-semibold text-naranja">Ver detalle</Link>
           </div>
           <div className="mt-4 flex items-center gap-4">
-            <div className="flex flex-col gap-1.5 rounded-2xl bg-black p-2.5 ring-1 ring-white/10">
+            <div className="flex flex-col gap-1.5 rounded-2xl bg-black p-2.5 ring-1 ring-black/[.08]">
               {(['rojo', 'amarillo', 'verde'] as const).map((l) => (
-                <span key={l} className={`h-6 w-6 rounded-full ${canal.luz === l ? (l === 'rojo' ? 'bg-red-500 shadow-[0_0_16px_4px_rgba(239,68,68,.6)]' : l === 'amarillo' ? 'bg-amber-400 shadow-[0_0_16px_4px_rgba(251,191,36,.6)]' : 'bg-emerald-400 shadow-[0_0_16px_4px_rgba(52,211,153,.6)]') : 'bg-white/10'}`} />
+                <span key={l} className={`h-6 w-6 rounded-full ${canal.luz === l ? (l === 'rojo' ? 'bg-red-500 shadow-[0_0_16px_4px_rgba(239,68,68,.6)]' : l === 'amarillo' ? 'bg-amber-400 shadow-[0_0_16px_4px_rgba(251,191,36,.6)]' : 'bg-emerald-400 shadow-[0_0_16px_4px_rgba(52,211,153,.6)]') : 'bg-black/[.06]'}`} />
               ))}
             </div>
-            <p className="text-sm text-white/65">{canal.decision}</p>
+            <p className="text-sm text-tinta/65">{canal.decision}</p>
           </div>
           <div className="mt-4 grid gap-2">
             {[...canal.rojos, ...canal.amarillos].slice(0, 4).map((x) => (
-              <div key={x.d.id} className="flex items-center gap-2 rounded-xl bg-white/[.04] px-3 py-2 text-sm">
+              <div key={x.d.id} className="flex items-center gap-2 rounded-xl bg-black/[.03] px-3 py-2 text-sm">
                 <PuntoLuz luz={x.luz} />
                 <span className="font-medium">{x.d.nombre}</span>
-                <span className="ml-auto truncate text-xs text-white/45">{x.motivos[0]}</span>
+                <span className="ml-auto truncate text-xs text-tinta/50">{x.motivos[0]}</span>
               </div>
             ))}
           </div>
@@ -163,7 +173,7 @@ export default function Tablero() {
               <BarChart data={embudo} layout="vertical" margin={{ left: 10 }}>
                 <XAxis type="number" hide />
                 <YAxis type="category" dataKey="etapa" tickLine={false} axisLine={false} fontSize={12} width={85} />
-                <Tooltip cursor={{ fill: '#ffffff0a' }} contentStyle={{ borderRadius: 12, border: '1px solid rgba(255,255,255,.08)', background: '#1b1b1b', color: '#fff' }} formatter={(v, _n, p) => [`${v} leads · ${fmtCOP(p.payload.valor)}`, '']} />
+                <Tooltip cursor={{ fill: '#00000008' }} contentStyle={{ borderRadius: 12, border: '1px solid rgba(0,0,0,.08)', background: '#fff', boxShadow: '0 12px 30px -12px rgba(0,0,0,.2)' }} formatter={(v, _n, p) => [`${v} leads · ${fmtCOP(p.payload.valor)}`, '']} />
                 <Bar dataKey="n" radius={[0, 8, 8, 0]}>
                   {embudo.map((_, i) => <Cell key={i} fill={i === embudo.length - 1 ? '#2E8B57' : `rgba(244,121,32,${1 - i * 0.15})`} />)}
                 </Bar>
@@ -178,7 +188,7 @@ export default function Tablero() {
               <ResponsiveContainer>
                 <PieChart>
                   <Pie data={porFuente} dataKey="v" nameKey="nombre" innerRadius={50} outerRadius={85} paddingAngle={3}>
-                    {porFuente.map((_, i) => <Cell key={i} fill={['#F47920', '#E8E2D8', '#2E5E8C', '#2E8B57', '#D68910', '#8E44AD'][i % 6]} />)}
+                    {porFuente.map((_, i) => <Cell key={i} fill={['#F47920', '#1E1E1E', '#2E5E8C', '#2E8B57', '#D68910', '#8E44AD'][i % 6]} />)}
                   </Pie>
                   <Tooltip />
                 </PieChart>
@@ -186,7 +196,7 @@ export default function Tablero() {
             </div>
             <ul className="grid flex-1 gap-1.5 text-sm">
               {porFuente.map((f, i) => (
-                <li key={f.nombre} className="flex items-center gap-2 capitalize"><span className="h-2.5 w-2.5 rounded-sm" style={{ background: ['#F47920', '#E8E2D8', '#2E5E8C', '#2E8B57', '#D68910', '#8E44AD'][i % 6] }} />{f.nombre}<span className="ml-auto font-semibold">{f.v}</span></li>
+                <li key={f.nombre} className="flex items-center gap-2 capitalize"><span className="h-2.5 w-2.5 rounded-sm" style={{ background: ['#F47920', '#1E1E1E', '#2E5E8C', '#2E8B57', '#D68910', '#8E44AD'][i % 6] }} />{f.nombre}<span className="ml-auto font-semibold">{f.v}</span></li>
               ))}
             </ul>
           </div>
@@ -198,12 +208,12 @@ export default function Tablero() {
         </div>
         <div className="tarjeta p-5">
           <h2 className="font-semibold">Metas a 12 meses</h2>
-          <p className="text-xs text-white/45">Del informe de consultoría · a validar con la línea base</p>
+          <p className="text-xs text-tinta/50">Del informe de consultoría · a validar con la línea base</p>
           <div className="mt-4 grid gap-4">
             {metas.map((m) => (
               <div key={m.t}>
                 <div className="flex justify-between text-sm"><span>{m.t}</span><span className="font-semibold">{m.txt || fmtPct(m.actual)}</span></div>
-                <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-white/5">
+                <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-black/[.04]">
                   <div className={`h-full rounded-full ${m.actual >= m.meta ? 'bg-emerald-500' : 'bg-naranja'}`} style={{ width: `${Math.min(100, (m.actual / m.meta) * 100)}%` }} />
                 </div>
               </div>
@@ -216,31 +226,31 @@ export default function Tablero() {
         <div className="tarjeta p-5">
           <div className="flex items-center justify-between">
             <h2 className="font-semibold">Tareas pendientes</h2>
-            <span className="text-xs text-white/40">Creadas por el equipo y las automatizaciones</span>
+            <span className="text-xs text-tinta/45">Creadas por el equipo y las automatizaciones</span>
           </div>
-          <ul className="mt-3 divide-y divide-white/5">
+          <ul className="mt-3 divide-y divide-black/[.06]">
             {tareas.map((t) => {
               const vencida = t.vence < ahora
               const resp = s.vendedores.find((v) => v.id === t.responsable)?.nombre ?? s.distribuidores.find((d) => d.id === t.responsable)?.nombre ?? t.responsable
               return (
                 <li key={t.id} className="flex items-start gap-3 py-3">
-                  <button onClick={() => cambiar((c) => { const x = c.s.tareas.find((y) => y.id === t.id); if (x) x.hecha = true })} className="mt-0.5 text-white/30 hover:text-emerald-400" aria-label="Completar">
+                  <button onClick={() => cambiar((c) => { const x = c.s.tareas.find((y) => y.id === t.id); if (x) x.hecha = true })} className="mt-0.5 text-tinta/35 hover:text-emerald-400" aria-label="Completar">
                     <Circle size={18} />
                   </button>
                   <div className="min-w-0 flex-1">
                     <div className="text-sm font-medium">{t.titulo}</div>
-                    <div className="truncate text-xs text-white/50">{t.detalle}</div>
+                    <div className="truncate text-xs text-tinta/55">{t.detalle}</div>
                     <div className="mt-1 flex flex-wrap gap-2 text-[11px]">
-                      <span className={`chip ${t.prioridad === 'alta' ? 'bg-red-500/15 text-red-300' : t.prioridad === 'media' ? 'bg-amber-500/15 text-amber-300' : 'bg-zinc-500/15 text-zinc-400'}`}>{t.prioridad}</span>
-                      <span className="text-white/45">{resp} · {vencida ? <b className="text-red-400">vencida</b> : `vence ${fmtFecha(t.vence, true)}`}</span>
-                      <span className="text-white/35">· {t.origen}</span>
+                      <span className={`chip ${t.prioridad === 'alta' ? 'bg-red-500/15 text-red-700' : t.prioridad === 'media' ? 'bg-amber-500/15 text-amber-700' : 'bg-zinc-500/15 text-zinc-400'}`}>{t.prioridad}</span>
+                      <span className="text-tinta/50">{resp} · {vencida ? <b className="text-red-400">vencida</b> : `vence ${fmtFecha(t.vence, true)}`}</span>
+                      <span className="text-tinta/40">· {t.origen}</span>
                     </div>
                   </div>
                   {t.leadId && <Link to={`/pipeline/${t.leadId}`} className="text-xs font-semibold text-naranja">Abrir</Link>}
                 </li>
               )
             })}
-            {tareas.length === 0 && <li className="flex items-center gap-2 py-6 text-sm text-white/45"><CheckCircle2 size={18} className="text-emerald-400" /> Todo al día.</li>}
+            {tareas.length === 0 && <li className="flex items-center gap-2 py-6 text-sm text-tinta/50"><CheckCircle2 size={18} className="text-emerald-400" /> Todo al día.</li>}
           </ul>
         </div>
         <div className="tarjeta p-5">
@@ -250,16 +260,16 @@ export default function Tablero() {
           </div>
           <ul className="mt-3 grid gap-2">
             {s.eventos.slice(0, 7).map((e) => (
-              <li key={e.id} className="flex gap-3 rounded-xl bg-white/[.04] p-3">
+              <li key={e.id} className="flex gap-3 rounded-xl bg-black/[.03] p-3">
                 <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-naranja text-white"><Zap size={15} /></span>
                 <div className="min-w-0">
                   <div className="text-sm font-medium">{e.titulo}</div>
-                  <div className="truncate text-xs text-white/50">{e.detalle}</div>
+                  <div className="truncate text-xs text-tinta/55">{e.detalle}</div>
                 </div>
-                <span className="ml-auto shrink-0 text-[11px] text-white/40">{haceCuanto(e.fecha, ahora)}</span>
+                <span className="ml-auto shrink-0 text-[11px] text-tinta/45">{haceCuanto(e.fecha, ahora)}</span>
               </li>
             ))}
-            {s.eventos.length === 0 && <li className="rounded-xl border border-dashed border-white/15 p-6 text-center text-sm text-white/45">Aún no hay ejecuciones. Envía una solicitud desde la Vitrina o adelanta el tiempo con “+7 días”.</li>}
+            {s.eventos.length === 0 && <li className="rounded-xl border border-dashed border-black/[.08] p-6 text-center text-sm text-tinta/50">Aún no hay ejecuciones. Envía una solicitud desde la Vitrina o adelanta el tiempo con “+7 días”.</li>}
           </ul>
         </div>
       </div>

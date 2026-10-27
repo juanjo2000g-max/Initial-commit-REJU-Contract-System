@@ -6,7 +6,7 @@ import { useStore } from '../../lib/store'
 import { DIA, fmtFecha, sum, uid } from '../../lib/util'
 
 const PILARES: Publicacion['pilar'][] = ['Proyectos reales', 'Guía de acabados', 'Producto insignia', 'Confianza y aliados']
-const COLOR_PILAR: Record<Publicacion['pilar'], string> = { 'Proyectos reales': 'bg-naranja text-white', 'Guía de acabados': 'bg-teal-600 text-white', 'Producto insignia': 'bg-white text-tinta', 'Confianza y aliados': 'bg-blue-600 text-white' }
+const COLOR_PILAR: Record<Publicacion['pilar'], string> = { 'Proyectos reales': 'bg-naranja text-white', 'Guía de acabados': 'bg-teal-600 text-white', 'Producto insignia': 'bg-tinta text-white', 'Confianza y aliados': 'bg-blue-600 text-white' }
 const ICONO = { Instagram: Camera, Pinterest: Pin, LinkedIn: Briefcase, WhatsApp: MessageCircle }
 const ESTADOS: Publicacion['estado'][] = ['idea', 'en diseño', 'programada', 'publicada']
 
@@ -40,7 +40,7 @@ export default function Contenido() {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="titulo-app">Contenido y redes</h1>
-          <p className="text-sm text-white/50">Plan de 90 días · 3 publicaciones por semana · 4 pilares (hallazgo 6).</p>
+          <p className="text-sm text-tinta/55">Plan de 90 días · 3 publicaciones por semana · 4 pilares (hallazgo 6).</p>
         </div>
         <button className="btn-primario" onClick={() => setGen(true)}><Sparkles size={16} /> Generar publicación</button>
       </div>
@@ -53,13 +53,13 @@ export default function Contenido() {
 
       <div className="tarjeta overflow-x-auto p-4">
         <div className="grid min-w-[760px] grid-cols-7 gap-2">
-          {['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].map((d) => <div key={d} className="px-2 text-xs font-semibold uppercase text-white/40">{d}</div>)}
+          {['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].map((d) => <div key={d} className="px-2 text-xs font-semibold uppercase text-tinta/45">{d}</div>)}
           {dias.map((d) => {
             const hoy = Math.floor(d / DIA) === Math.floor(ahora / DIA)
             const items = s.publicaciones.filter((p) => Math.floor(p.fecha / DIA) === Math.floor(d / DIA))
             return (
-              <div key={d} className={`min-h-28 rounded-xl p-2 ${hoy ? 'bg-naranja/10 ring-2 ring-naranja/40' : 'bg-white/[.04]'}`}>
-                <div className="text-xs font-semibold text-white/45">{new Date(d).getDate()}</div>
+              <div key={d} className={`min-h-28 rounded-xl p-2 ${hoy ? 'bg-naranja/10 ring-2 ring-naranja/40' : 'bg-black/[.03]'}`}>
+                <div className="text-xs font-semibold text-tinta/50">{new Date(d).getDate()}</div>
                 {items.map((p) => {
                   const I = ICONO[p.plataforma]
                   return (
@@ -77,21 +77,21 @@ export default function Contenido() {
 
       <div className="grid gap-4 lg:grid-cols-4">
         {ESTADOS.map((e) => (
-          <div key={e} className="rounded-2xl bg-white/[.035] p-2">
-            <div className="px-2 py-2 text-xs font-semibold uppercase tracking-wide text-white/50">{e}</div>
+          <div key={e} className="rounded-2xl bg-black/[.03] p-2">
+            <div className="px-2 py-2 text-xs font-semibold uppercase tracking-wide text-tinta/55">{e}</div>
             <div className="grid gap-2">
               {s.publicaciones.filter((p) => p.estado === e).map((p) => {
                 const I = ICONO[p.plataforma]
                 return (
-                  <div key={p.id} className="rounded-xl bg-[#181818] p-3 shadow-sm ring-1 ring-white/5">
-                    <div className="flex items-center justify-between"><span className={`chip ${COLOR_PILAR[p.pilar]}`}>{p.pilar}</span><I size={15} className="text-white/40" /></div>
+                  <div key={p.id} className="rounded-xl bg-white p-3 shadow-sm ring-1 ring-black/[.08]">
+                    <div className="flex items-center justify-between"><span className={`chip ${COLOR_PILAR[p.pilar]}`}>{p.pilar}</span><I size={15} className="text-tinta/45" /></div>
                     <div className="mt-2 text-sm font-semibold">{p.titulo}</div>
-                    <p className="mt-1 text-xs text-white/55">{p.copy}</p>
-                    <div className="mt-2 text-[11px] text-white/40">{fmtFecha(p.fecha)} · CTA: {p.cta}</div>
-                    {p.alcance && <div className="mt-1 text-[11px] font-semibold text-emerald-300">{p.alcance.toLocaleString('es-CO')} alcance · {p.interacciones} interacciones</div>}
+                    <p className="mt-1 text-xs text-tinta/60">{p.copy}</p>
+                    <div className="mt-2 text-[11px] text-tinta/45">{fmtFecha(p.fecha)} · CTA: {p.cta}</div>
+                    {p.alcance && <div className="mt-1 text-[11px] font-semibold text-emerald-700">{p.alcance.toLocaleString('es-CO')} alcance · {p.interacciones} interacciones</div>}
                     <div className="mt-2 flex gap-1">
-                      <button className="rounded-md bg-white/5 px-2 py-0.5 text-[11px] hover:bg-white/10" onClick={() => { void navigator.clipboard?.writeText(`${p.copy}\n\n👉 ${p.cta}`); aviso({ titulo: 'Copy copiado', tipo: 'info' }) }}><Copy size={11} className="inline" /> Copiar</button>
-                      {e !== 'publicada' && <button className="rounded-md bg-white/5 px-2 py-0.5 text-[11px] hover:bg-white/10" onClick={() => cambiar((c) => { const x = c.s.publicaciones.find((y) => y.id === p.id)!; x.estado = ESTADOS[ESTADOS.indexOf(e) + 1]; if (x.estado === 'publicada') { x.alcance = 3000 + Math.round(Math.random() * 6000); x.interacciones = Math.round(x.alcance * 0.07) } })}>Avanzar →</button>}
+                      <button className="rounded-md bg-black/[.04] px-2 py-0.5 text-[11px] hover:bg-black/[.06]" onClick={() => { void navigator.clipboard?.writeText(`${p.copy}\n\n👉 ${p.cta}`); aviso({ titulo: 'Copy copiado', tipo: 'info' }) }}><Copy size={11} className="inline" /> Copiar</button>
+                      {e !== 'publicada' && <button className="rounded-md bg-black/[.04] px-2 py-0.5 text-[11px] hover:bg-black/[.06]" onClick={() => cambiar((c) => { const x = c.s.publicaciones.find((y) => y.id === p.id)!; x.estado = ESTADOS[ESTADOS.indexOf(e) + 1]; if (x.estado === 'publicada') { x.alcance = 3000 + Math.round(Math.random() * 6000); x.interacciones = Math.round(x.alcance * 0.07) } })}>Avanzar →</button>}
                     </div>
                   </div>
                 )
@@ -125,10 +125,10 @@ function Generador({ abierto, cerrar }: { abierto: boolean; cerrar: () => void }
           <label><span className="etiqueta">Producto</span><select className="campo" value={producto} onChange={(e) => setProducto(e.target.value)}>{s.productos.map((x) => <option key={x.id} value={x.id}>{x.nombre}</option>)}</select></label>
           <label><span className="etiqueta">Aliado a mencionar</span><select className="campo" value={aliado} onChange={(e) => setAliado(e.target.value)}>{s.distribuidores.filter((x) => x.aliado).map((x) => <option key={x.id} value={x.id}>{x.nombre}</option>)}</select></label>
         </div>
-        <div className="rounded-2xl bg-white/[.04] p-4">
+        <div className="rounded-2xl bg-black/[.03] p-4">
           <div className="font-semibold">{llenar(pl.titulo)}</div>
-          <p className="mt-1 text-sm text-white/65">{llenar(pl.copy)}</p>
-          <div className="mt-2 text-xs font-semibold text-naranja-200">👉 {pl.cta}</div>
+          <p className="mt-1 text-sm text-tinta/65">{llenar(pl.copy)}</p>
+          <div className="mt-2 text-xs font-semibold text-naranja-700">👉 {pl.cta}</div>
         </div>
         <div className="flex justify-between gap-2">
           <button className="btn-claro" onClick={() => setI(i + 1)}><Sparkles size={15} /> Otra versión</button>

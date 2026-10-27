@@ -76,7 +76,7 @@ export default function Costos() {
     <div className="grid gap-5 animate-entrar">
       <div>
         <h1 className="titulo-app">Costos de importación y márgenes</h1>
-        <p className="text-sm text-white/50">Costo total puesto en bodega por referencia (hallazgo 2). Mueve los controles y mira el efecto en el margen.</p>
+        <p className="text-sm text-tinta/55">Costo total puesto en bodega por referencia (hallazgo 2). Mueve los controles y mira el efecto en el margen.</p>
       </div>
 
       <div className="tarjeta grid gap-5 p-5 md:grid-cols-4">
@@ -122,26 +122,26 @@ export default function Costos() {
                   <XAxis dataKey="n" fontSize={11} tickLine={false} axisLine={false} />
                   <YAxis hide />
                   <Tooltip formatter={(v) => fmtCOP(Number(v))} />
-                  <Bar dataKey="v" radius={[8, 8, 0, 0]}>{desglose.map((_, i) => <Cell key={i} fill={i === 0 ? '#F47920' : '#E8E2D8'} fillOpacity={1 - i * 0.12} />)}</Bar>
+                  <Bar dataKey="v" radius={[8, 8, 0, 0]}>{desglose.map((_, i) => <Cell key={i} fill={i === 0 ? '#F47920' : '#1E1E1E'} fillOpacity={1 - i * 0.12} />)}</Bar>
                 </BarChart>
               </ResponsiveContainer>
             </div>
             <dl className="grid content-center gap-1.5 text-sm">
-              <div className="flex justify-between"><dt className="text-white/55">Costo en bodega</dt><dd className="font-semibold">{fmtCOP(f.ahora.total)}</dd></div>
-              <div className="flex justify-between"><dt className="text-white/55">Precio distribuidor</dt><dd>{fmtCOP(f.p.precioDistribuidor)}</dd></div>
-              <div className="flex justify-between"><dt className="text-white/55">Margen</dt><dd className={f.ahora.margen < c.margenObjetivo ? 'font-semibold text-red-400' : 'font-semibold text-emerald-400'}>{fmtPct(f.ahora.margen, 1)}</dd></div>
-              <div className="flex justify-between"><dt className="text-white/55">Precio para {fmtPct(c.margenObjetivo)}</dt><dd>{fmtCOP(f.ahora.precioParaObjetivo)}</dd></div>
-              {f.mejor && <div className="mt-2 rounded-xl bg-emerald-500/10 p-2 text-xs text-emerald-300">Con {f.mejor.pais}: costo {fmtCOP(f.mejor.costo.total)} → margen {fmtPct(f.mejor.costo.margen, 1)}</div>}
+              <div className="flex justify-between"><dt className="text-tinta/60">Costo en bodega</dt><dd className="font-semibold">{fmtCOP(f.ahora.total)}</dd></div>
+              <div className="flex justify-between"><dt className="text-tinta/60">Precio distribuidor</dt><dd>{fmtCOP(f.p.precioDistribuidor)}</dd></div>
+              <div className="flex justify-between"><dt className="text-tinta/60">Margen</dt><dd className={f.ahora.margen < c.margenObjetivo ? 'font-semibold text-red-400' : 'font-semibold text-emerald-400'}>{fmtPct(f.ahora.margen, 1)}</dd></div>
+              <div className="flex justify-between"><dt className="text-tinta/60">Precio para {fmtPct(c.margenObjetivo)}</dt><dd>{fmtCOP(f.ahora.precioParaObjetivo)}</dd></div>
+              {f.mejor && <div className="mt-2 rounded-xl bg-emerald-500/10 p-2 text-xs text-emerald-700">Con {f.mejor.pais}: costo {fmtCOP(f.mejor.costo.total)} → margen {fmtPct(f.mejor.costo.margen, 1)}</div>}
             </dl>
           </div>
         </div>
       </div>
 
       <div className="tarjeta overflow-hidden">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/5 p-5">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-black/[.08] p-5">
           <div>
             <h2 className="font-semibold">Hoja de costos por referencia y lista de precios por escalones</h2>
-            <p className="text-xs text-white/45">En rojo: referencias con India como único origen.</p>
+            <p className="text-xs text-tinta/50">En rojo: referencias con India como único origen.</p>
           </div>
           <div className="flex gap-2">
             <button className="btn-claro" onClick={descargar}><Download size={16} /> Descargar CSV</button>
@@ -150,18 +150,18 @@ export default function Costos() {
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-white/[.04] text-left text-xs uppercase tracking-wide text-white/45">
+            <thead className="bg-black/[.03] text-left text-xs uppercase tracking-wide text-tinta/50">
               <tr><th className="px-5 py-3">Referencia</th><th className="px-3 py-3">Origen</th><th className="px-3 py-3 text-right">Costo bodega</th><th className="px-3 py-3 text-right">Margen hoy</th><th className="px-3 py-3">Mejor alternativa</th><th className="px-3 py-3 text-right">Precio nuevo</th><th className="px-5 py-3 text-right">Margen nuevo</th></tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-black/[.06]">
               {filas.map((x) => (
                 <tr key={x.p.id} className={x.dependencia ? 'bg-red-500/10/60' : ''}>
                   <td className="px-5 py-2.5"><Ref p={x.p} alerta={x.dependencia} /></td>
-                  <td className="px-3 py-2.5"><span className="chip text-white" style={{ background: COL_PAIS[x.p.origen] }}>{x.p.origen}</span></td>
+                  <td className="px-3 py-2.5"><span className="chip text-tinta" style={{ background: COL_PAIS[x.p.origen] }}>{x.p.origen}</span></td>
                   <td className="px-3 py-2.5 text-right">{fmtCOP(x.ahora.total)}</td>
-                  <td className={`px-3 py-2.5 text-right font-semibold ${x.ahora.margen < c.margenObjetivo ? 'text-red-400' : 'text-emerald-300'}`}>{fmtPct(x.ahora.margen, 1)}</td>
-                  <td className="px-3 py-2.5 text-xs">{x.mejor ? <span className="text-emerald-300">{x.mejor.pais}: ahorra {fmtCOP(x.ahora.total - x.mejor.costo.total)}</span> : x.p.alternativos.some((a) => !a.validado) ? <span className="text-amber-300">Muestra en validación</span> : <span className="text-white/35">—</span>}</td>
-                  <td className="px-3 py-2.5 text-right">{fmtCOP(x.nuevoPrecio)}{x.nuevoPrecio > x.p.precioDistribuidor && <span className="ml-1 text-xs text-white/40">(+{fmtPct(x.nuevoPrecio / x.p.precioDistribuidor - 1, 1)})</span>}</td>
+                  <td className={`px-3 py-2.5 text-right font-semibold ${x.ahora.margen < c.margenObjetivo ? 'text-red-400' : 'text-emerald-700'}`}>{fmtPct(x.ahora.margen, 1)}</td>
+                  <td className="px-3 py-2.5 text-xs">{x.mejor ? <span className="text-emerald-700">{x.mejor.pais}: ahorra {fmtCOP(x.ahora.total - x.mejor.costo.total)}</span> : x.p.alternativos.some((a) => !a.validado) ? <span className="text-amber-700">Muestra en validación</span> : <span className="text-tinta/40">—</span>}</td>
+                  <td className="px-3 py-2.5 text-right">{fmtCOP(x.nuevoPrecio)}{x.nuevoPrecio > x.p.precioDistribuidor && <span className="ml-1 text-xs text-tinta/45">(+{fmtPct(x.nuevoPrecio / x.p.precioDistribuidor - 1, 1)})</span>}</td>
                   <td className="px-5 py-2.5 text-right font-semibold">{fmtPct(x.margenNuevo, 1)}</td>
                 </tr>
               ))}
@@ -179,7 +179,7 @@ function Ref({ p, alerta }: { p: Producto; alerta: boolean }) {
       <Muestra p={p} className="h-8 w-8 shrink-0 rounded-md" escala={0.6} />
       <div>
         <div className="flex items-center gap-1 font-medium">{alerta && <AlertTriangle size={13} className="text-red-400" />}{p.nombre}</div>
-        <div className="text-xs text-white/45">{p.ref} · {p.ventasMes.toLocaleString('es-CO')} {p.unidad}/mes</div>
+        <div className="text-xs text-tinta/50">{p.ref} · {p.ventasMes.toLocaleString('es-CO')} {p.unidad}/mes</div>
       </div>
     </div>
   )
@@ -188,7 +188,7 @@ function Ref({ p, alerta }: { p: Producto; alerta: boolean }) {
 function Control({ etiqueta, valor, min, max, paso, v, set }: { etiqueta: string; valor: string; min: number; max: number; paso: number; v: number; set: (v: number) => void }) {
   return (
     <label>
-      <div className="flex justify-between text-xs font-semibold uppercase tracking-wide text-white/50"><span>{etiqueta}</span><span className="text-white">{valor}</span></div>
+      <div className="flex justify-between text-xs font-semibold uppercase tracking-wide text-tinta/55"><span>{etiqueta}</span><span className="text-tinta">{valor}</span></div>
       <input type="range" min={min} max={max} step={paso} value={v} onChange={(e) => set(Number(e.target.value))} className="mt-3 w-full accent-[#F47920]" />
     </label>
   )

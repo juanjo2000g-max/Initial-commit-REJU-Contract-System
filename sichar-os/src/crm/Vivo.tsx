@@ -54,12 +54,12 @@ export function MapaSedes({ s, ahora }: { s: Estado; ahora: number }) {
     <svg viewBox={`0 0 ${W} ${H}`} className="h-full w-full">
       <defs>
         <radialGradient id="brillo-sede">
-          <stop offset="0" stopColor="#F47920" stopOpacity=".55" />
+          <stop offset="0" stopColor="#F47920" stopOpacity=".28" />
           <stop offset="1" stopColor="#F47920" stopOpacity="0" />
         </radialGradient>
       </defs>
       {PAISES.features.map((f, i) => (
-        <path key={i} d={path(f) ?? ''} fill={f.properties.name === 'Colombia' ? '#1a1612' : '#121212'} stroke={f.properties.name === 'Colombia' ? '#F47920' : '#222'} strokeOpacity={f.properties.name === 'Colombia' ? 0.6 : 1} strokeWidth={f.properties.name === 'Colombia' ? 1.2 : 0.6} />
+        <path key={i} d={path(f) ?? ''} fill={f.properties.name === 'Colombia' ? '#FFF6EE' : '#F1EDE6'} stroke={f.properties.name === 'Colombia' ? '#F47920' : '#E0D9CE'} strokeOpacity={f.properties.name === 'Colombia' ? 0.7 : 1} strokeWidth={f.properties.name === 'Colombia' ? 1.2 : 0.6} />
       ))}
       {/* rutas entre sedes */}
       {SEDES.slice(1).map((c) => {
@@ -83,8 +83,8 @@ export function MapaSedes({ s, ahora }: { s: Estado; ahora: number }) {
             </AnimatePresence>
             <circle cx={x} cy={y} r={r} fill="#F47920" fillOpacity={0.9} />
             <circle cx={x} cy={y} r={3} fill="#fff" />
-            <text x={x + r + 6} y={y - 2} fill="#fff" fontSize={13} fontWeight={700} fontFamily="Inter">{c}</text>
-            <text x={x + r + 6} y={y + 13} fill="rgba(255,255,255,.45)" fontSize={11} fontFamily="Inter">$ {(ventas[c] / 1e6).toFixed(0)} M este mes</text>
+            <text x={x + r + 6} y={y - 2} fill="#141414" fontSize={13} fontWeight={600} fontFamily="Inter">{c}</text>
+            <text x={x + r + 6} y={y + 13} fill="rgba(20,20,20,.45)" fontSize={11} fontFamily="Inter">$ {(ventas[c] / 1e6).toFixed(0)} M este mes</text>
           </g>
         )
       })}
@@ -102,20 +102,20 @@ export function Actividad({ s, ahora }: { s: Estado; ahora: number }) {
     .filter((x, i, a) => a.findIndex((y) => y.texto === x.texto) === i)
     .slice(0, 7)
   return (
-    <ul className="grid gap-2">
+    <ul>
       <AnimatePresence initial={false}>
         {items.map((x) => (
-          <motion.li key={x.id} layout initial={{ opacity: 0, x: -20, height: 0 }} animate={{ opacity: 1, x: 0, height: 'auto' }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }} className="flex items-start gap-3 rounded-xl bg-white/[.03] p-3 ring-1 ring-white/[.05]">
-            <span className={`mt-1 h-2 w-2 shrink-0 rounded-full ${x.tipo === 'auto' ? 'bg-naranja' : x.tipo === 'alerta' ? 'bg-red-500' : x.tipo === 'exito' ? 'bg-emerald-400' : 'bg-sky-400'}`} />
-            <div className="min-w-0 flex-1">
-              <div className="truncate text-sm font-medium">{x.texto}</div>
-              {x.detalle && <div className="truncate text-xs text-white/40">{x.detalle}</div>}
+          <motion.li key={x.id} layout initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }} className="grid grid-cols-[auto_1fr_auto] items-baseline gap-4 border-b border-black/[.06] py-3.5 last:border-0">
+            <span className={`h-2 w-2 translate-y-[-1px] rounded-full ${x.tipo === 'auto' ? 'bg-naranja' : x.tipo === 'alerta' ? 'bg-red-500' : x.tipo === 'exito' ? 'bg-emerald-500' : 'bg-sky-500'}`} />
+            <div className="min-w-0">
+              <span className="text-[15px] font-medium">{x.texto}</span>
+              {x.detalle && <span className="ml-2 text-sm text-tinta/45">{x.detalle}</span>}
             </div>
-            <span className="shrink-0 text-[11px] text-white/30">{haceCuanto(x.fecha, ahora)}</span>
+            <span className="shrink-0 text-xs tabular-nums text-tinta/35">{haceCuanto(x.fecha, ahora)}</span>
           </motion.li>
         ))}
       </AnimatePresence>
-      {items.length === 0 && <li className="rounded-xl border border-dashed border-white/10 p-6 text-center text-sm text-white/40">Activa el modo en vivo o envía una solicitud desde el sitio web.</li>}
+      {items.length === 0 && <li className="rounded-xl border border-dashed border-black/[.08] p-6 text-center text-sm text-tinta/45">Activa el modo en vivo o envía una solicitud desde el sitio web.</li>}
     </ul>
   )
 }

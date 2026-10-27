@@ -84,34 +84,34 @@ export function Comandos({ abierto, cerrar, acciones }: { abierto: boolean; cerr
   return (
     <AnimatePresence>
       {abierto && (
-        <motion.div className="fixed inset-0 z-[80] flex items-start justify-center bg-black/60 p-4 pt-[12vh] backdrop-blur-sm" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onMouseDown={cerrar}>
-          <motion.div initial={{ opacity: 0, y: -12, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.18 }} className="w-full max-w-xl overflow-hidden rounded-2xl bg-[#161616] shadow-[0_40px_120px_-20px_rgba(0,0,0,.9)] ring-1 ring-white/10" onMouseDown={(e) => e.stopPropagation()}>
-            <div className="flex items-center gap-3 border-b border-white/[.07] px-4">
-              <Search size={18} className="text-white/40" />
-              <input ref={entrada} value={q} onChange={(e) => setQ(e.target.value)} onKeyDown={tecla} placeholder="Busca un cliente, una pantalla o escribe una acción…" className="h-14 flex-1 bg-transparent text-[15px] outline-none placeholder:text-white/30" />
-              <kbd className="rounded-md bg-white/5 px-2 py-0.5 text-[11px] text-white/40">Esc</kbd>
+        <motion.div className="fixed inset-0 z-[80] flex items-start justify-center bg-black/25 p-4 pt-[12vh] backdrop-blur-sm" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onMouseDown={cerrar}>
+          <motion.div initial={{ opacity: 0, y: -12, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.18 }} className="w-full max-w-xl overflow-hidden rounded-2xl bg-white shadow-[0_40px_120px_-20px_rgba(0,0,0,.9)] ring-1 ring-black/[.08]" onMouseDown={(e) => e.stopPropagation()}>
+            <div className="flex items-center gap-3 border-b border-black/[.08] px-4">
+              <Search size={18} className="text-tinta/45" />
+              <input ref={entrada} value={q} onChange={(e) => setQ(e.target.value)} onKeyDown={tecla} placeholder="Busca un cliente, una pantalla o escribe una acción…" className="h-14 flex-1 bg-transparent text-[15px] outline-none placeholder:text-tinta/35" />
+              <kbd className="rounded-md bg-black/[.04] px-2 py-0.5 text-[11px] text-tinta/45">Esc</kbd>
             </div>
             <div className="max-h-[52vh] overflow-y-auto p-2 scroll-fino">
-              {items.length === 0 && <div className="px-3 py-8 text-center text-sm text-white/40">Sin resultados para «{q}».</div>}
+              {items.length === 0 && <div className="px-3 py-8 text-center text-sm text-tinta/45">Sin resultados para «{q}».</div>}
               {items.map((it, k) => {
                 const cabecera = it.grupo !== grupoAnterior
                 grupoAnterior = it.grupo
                 return (
                   <div key={it.id}>
-                    {cabecera && <div className="px-3 pb-1 pt-3 text-[11px] font-semibold uppercase tracking-wider text-white/30">{it.grupo}</div>}
-                    <button onMouseEnter={() => setI(k)} onClick={it.hacer} className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition ${i === k ? 'bg-white/[.07]' : ''}`}>
-                      <span className={`grid h-8 w-8 shrink-0 place-items-center rounded-lg ${i === k ? 'bg-naranja text-white' : 'bg-white/5 text-white/60'}`}>{it.icono}</span>
+                    {cabecera && <div className="px-3 pb-1 pt-3 text-[11px] font-semibold uppercase tracking-wider text-tinta/35">{it.grupo}</div>}
+                    <button onMouseEnter={() => setI(k)} onClick={it.hacer} className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition ${i === k ? 'bg-black/[.03]' : ''}`}>
+                      <span className={`grid h-8 w-8 shrink-0 place-items-center rounded-lg ${i === k ? 'bg-naranja text-white' : 'bg-black/[.04] text-tinta/65'}`}>{it.icono}</span>
                       <span className="min-w-0 flex-1">
                         <span className="block truncate font-medium">{it.titulo}</span>
-                        {it.detalle && <span className="block truncate text-xs text-white/40 first-letter:uppercase">{it.detalle}</span>}
+                        {it.detalle && <span className="block truncate text-xs text-tinta/45 first-letter:uppercase">{it.detalle}</span>}
                       </span>
-                      {i === k ? <CornerDownLeft size={15} className="text-white/40" /> : <ArrowRight size={14} className="text-white/15" />}
+                      {i === k ? <CornerDownLeft size={15} className="text-tinta/45" /> : <ArrowRight size={14} className="text-tinta/15" />}
                     </button>
                   </div>
                 )
               })}
             </div>
-            <div className="flex items-center gap-4 border-t border-white/[.07] px-4 py-2.5 text-[11px] text-white/35">
+            <div className="flex items-center gap-4 border-t border-black/[.08] px-4 py-2.5 text-[11px] text-tinta/40">
               <span>↑↓ navegar</span><span>↵ abrir</span><span className="ml-auto flex items-center gap-1"><Package size={12} /> SICHAR OS</span>
             </div>
           </motion.div>

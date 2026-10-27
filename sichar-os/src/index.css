@@ -4,29 +4,28 @@
 
 @layer base {
   html { -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
-  body { @apply bg-[#0d0d0d] text-white font-sans; color-scheme: dark; }
-  option { background: #1b1b1b; color: #fff; }
+  body { @apply bg-hueso text-tinta font-sans; }
   ::selection { @apply bg-naranja text-white; }
 }
 
 @layer components {
   .btn { @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition active:scale-[.98] disabled:opacity-50 disabled:pointer-events-none; }
   .btn-primario { @apply btn bg-naranja text-white hover:bg-naranja-600 shadow-[0_8px_24px_-8px_rgba(244,121,32,.7)]; }
-  .btn-oscuro { @apply btn bg-white text-tinta hover:bg-white/90; }
-  .btn-claro { @apply btn bg-white/[.06] text-white ring-1 ring-white/10 hover:bg-white/[.1]; }
-  .btn-fantasma { @apply btn text-white/70 hover:bg-white/5 hover:text-white; }
-  .tarjeta { @apply min-w-0 rounded-2xl bg-[#141414] ring-1 ring-white/[.07] shadow-[0_1px_0_rgba(255,255,255,.03)_inset]; }
-  .campo { @apply w-full rounded-xl border border-white/10 bg-white/[.04] px-3.5 py-2.5 text-sm text-white outline-none transition placeholder:text-white/30 focus:border-naranja focus:ring-4 focus:ring-naranja/15; }
-  .etiqueta { @apply mb-1.5 block text-xs font-semibold uppercase tracking-wide text-white/45; }
+  .btn-oscuro { @apply btn bg-tinta text-white hover:bg-black; }
+  .btn-claro { @apply btn bg-white text-tinta ring-1 ring-black/[.08] hover:ring-black/20; }
+  .btn-fantasma { @apply btn text-tinta/60 hover:bg-black/[.04] hover:text-tinta; }
+  .tarjeta { @apply min-w-0 rounded-[20px] bg-white ring-1 ring-black/[.06] shadow-[0_1px_2px_rgba(20,20,20,.03),0_8px_24px_-12px_rgba(20,20,20,.08)]; }
+  .campo { @apply w-full rounded-xl border border-black/[.09] bg-white px-3.5 py-2.5 text-sm text-tinta outline-none transition placeholder:text-tinta/35 focus:border-naranja focus:ring-4 focus:ring-naranja/15; }
+  .etiqueta { @apply mb-1.5 block text-[11px] font-semibold uppercase tracking-[.16em] text-tinta/45; }
   .chip { @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold; }
-  .titulo-app { @apply font-display text-2xl font-bold tracking-tight md:text-3xl; }
+  .titulo-app { @apply font-display text-3xl font-semibold tracking-tight md:text-[2.6rem] md:leading-[1.05]; }
 }
 
 .scroll-fino::-webkit-scrollbar { width: 8px; height: 8px; }
-.scroll-fino::-webkit-scrollbar-thumb { background: rgba(255,255,255,.14); border-radius: 8px; }
+.scroll-fino::-webkit-scrollbar-thumb { background: rgba(0,0,0,.12); border-radius: 8px; }
 
-.recharts-default-tooltip { background: #1b1b1b !important; border: 1px solid rgba(255,255,255,.08) !important; border-radius: 12px; color: #fff; }
-.recharts-text { fill: rgba(255,255,255,.5); }
+.recharts-default-tooltip { background: #fff !important; border: 1px solid rgba(0,0,0,.08) !important; border-radius: 12px; box-shadow: 0 12px 30px -12px rgba(0,0,0,.2); }
+.recharts-text { fill: rgba(20,20,20,.45); font-size: 11px; }
 
 @media print {
   .no-imprimir { display: none !important; }
