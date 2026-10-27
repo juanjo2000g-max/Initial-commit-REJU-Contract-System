@@ -1,6 +1,6 @@
 import { Plus, Search, Store, Zap } from 'lucide-react'
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { ChipSegmento, ETAPAS, Modal, SEGMENTOS, useAviso } from '../../components/ui'
 import type { Etapa, Fuente, Lead, Sede, Segmento } from '../../data/types'
 import { useResponsable, useStore } from '../../lib/store'
@@ -14,7 +14,11 @@ export default function Crm() {
   const [sede, setSede] = useState<Sede | ''>('')
   const [arrastrando, setArrastrando] = useState<string | null>(null)
   const [sobre, setSobre] = useState<Etapa | null>(null)
-  const [nuevo, setNuevo] = useState(false)
+  const [params, setParams] = useSearchParams()
+  const [nuevo, setNuevo] = useState(params.get('nuevo') === '1')
+  useEffect(() => {
+    if (params.get('nuevo') === '1') setNuevo(true)
+  }, [params])
 
   const filtrados = s.leads.filter(
     (l) =>
@@ -39,14 +43,14 @@ export default function Crm() {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="titulo-app">Pipeline comercial</h1>
-          <p className="text-sm text-black/50">Arrastra las tarjetas entre etapas. Los referidos de la web llegan solos y se asignan a los aliados.</p>
+          <p className="text-sm text-white/50">Arrastra las tarjetas entre etapas. Los referidos de la web llegan solos y se asignan a los aliados.</p>
         </div>
         <button className="btn-primario" onClick={() => setNuevo(true)}><Plus size={16} /> Nuevo lead</button>
       </div>
 
       <div className="flex flex-wrap gap-2">
         <div className="relative min-w-60 flex-1">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-black/35" />
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/35" />
           <input className="campo !pl-9" placeholder="Buscar nombre, empresa u obra…" value={q} onChange={(e) => setQ(e.target.value)} />
         </div>
         <select className="campo !w-auto" value={seg} onChange={(e) => setSeg(e.target.value as Segmento | '')}>
@@ -69,27 +73,27 @@ export default function Crm() {
                 onDragOver={(ev) => { ev.preventDefault(); setSobre(e.id) }}
                 onDragLeave={() => setSobre(null)}
                 onDrop={() => { if (arrastrando) mover(arrastrando, e.id); setArrastrando(null); setSobre(null) }}
-                className={`flex w-72 flex-col rounded-2xl p-2 transition ${sobre === e.id ? 'bg-naranja-50 ring-2 ring-naranja/40' : 'bg-black/[.035]'}`}
+                className={`flex w-72 flex-col rounded-2xl p-2 transition ${sobre === e.id ? 'bg-naranja/10 ring-2 ring-naranja/40' : 'bg-white/[.035]'}`}
               >
                 <div className="flex items-center justify-between px-2 py-2">
                   <div className="flex items-center gap-2">
                     <span className={`chip ${e.color}`}>{e.nombre}</span>
-                    <span className="text-xs font-semibold text-black/40">{col.length}</span>
+                    <span className="text-xs font-semibold text-white/40">{col.length}</span>
                   </div>
-                  <span className="text-xs font-semibold text-black/50">{fmtM(sum(col, (l) => l.valor))}</span>
+                  <span className="text-xs font-semibold text-white/50">{fmtM(sum(col, (l) => l.valor))}</span>
                 </div>
                 <div className="grid max-h-[calc(100vh-290px)] gap-2 overflow-y-auto p-0.5 scroll-fino">
                   {col.map((l) => (
                     <Tarjeta key={l.id} l={l} ahora={ahora} resp={responsable(l)} onDrag={() => setArrastrando(l.id)} />
                   ))}
-                  {col.length === 0 && <div className="rounded-xl border border-dashed border-black/10 p-4 text-center text-xs text-black/35">Suelta aquí</div>}
+                  {col.length === 0 && <div className="rounded-xl border border-dashed border-white/10 p-4 text-center text-xs text-white/35">Suelta aquí</div>}
                 </div>
               </div>
             )
           })}
         </div>
       </div>
-      <NuevoLead abierto={nuevo} cerrar={() => setNuevo(false)} />
+      <NuevoLead abierto={nuevo} cerrar={() => { setNuevo(false); if (params.get('nuevo')) setParams({}, { replace: true }) }} />
     </div>
   )
 }
@@ -101,26 +105,26 @@ function Tarjeta({ l, ahora, resp, onDrag }: { l: Lead; ahora: number; resp: str
       to={`/pipeline/${l.id}`}
       draggable
       onDragStart={onDrag}
-      className={`group block cursor-grab rounded-xl bg-white p-3 shadow-sm ring-1 transition hover:shadow-md active:cursor-grabbing ${sinResp ? 'ring-red-300' : 'ring-black/5'}`}
+      className={`group block cursor-grab rounded-xl bg-[#181818] p-3 shadow-sm ring-1 transition hover:shadow-md active:cursor-grabbing ${sinResp ? 'ring-red-300' : 'ring-white/5'}`}
     >
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
           <div className="truncate text-sm font-semibold">{l.empresa ?? l.nombre}</div>
-          {l.empresa && <div className="truncate text-xs text-black/50">{l.nombre}</div>}
+          {l.empresa && <div className="truncate text-xs text-white/50">{l.nombre}</div>}
         </div>
         <div className="shrink-0 text-sm font-bold">{fmtM(l.valor)}</div>
       </div>
-      <div className="mt-1.5 line-clamp-2 text-xs text-black/55">{l.interes}</div>
+      <div className="mt-1.5 line-clamp-2 text-xs text-white/55">{l.interes}</div>
       <div className="mt-2 flex flex-wrap items-center gap-1">
         <ChipSegmento segmento={l.segmento} />
-        <span className="chip bg-black/5 text-black/60">{l.ciudad}</span>
+        <span className="chip bg-white/5 text-white/60">{l.ciudad}</span>
         {l.etiquetas.map((t) => (
-          <span key={t} className={`chip ${t.includes('Sin respuesta') ? 'bg-red-100 text-red-700' : t.includes('Referido') ? 'bg-naranja-100 text-naranja-700' : 'bg-violet-100 text-violet-700'}`}>
+          <span key={t} className={`chip ${t.includes('Sin respuesta') ? 'bg-red-500/15 text-red-300' : t.includes('Referido') ? 'bg-naranja/15 text-naranja-200' : 'bg-violet-500/15 text-violet-300'}`}>
             {t.includes('Referido') && <Zap size={10} />} {t}
           </span>
         ))}
       </div>
-      <div className="mt-2 flex items-center justify-between border-t border-black/5 pt-2 text-[11px] text-black/45">
+      <div className="mt-2 flex items-center justify-between border-t border-white/5 pt-2 text-[11px] text-white/45">
         <span className="flex items-center gap-1 truncate">{l.asignadoTipo === 'distribuidor' && <Store size={11} />} {resp}</span>
         <span className="shrink-0">{haceCuanto(l.actualizado, ahora)}</span>
       </div>
@@ -161,7 +165,7 @@ export function NuevoLead({ abierto, cerrar }: { abierto: boolean; cerrar: () =>
           <label><span className="etiqueta">m² aprox.</span><input className="campo" value={f.m2} onChange={set('m2')} inputMode="numeric" /></label>
         </div>
         <label><span className="etiqueta">Interés / obra</span><textarea className="campo" value={f.interes} onChange={set('interes')} /></label>
-        <p className="text-xs text-black/45">Al guardar, las automatizaciones asignan el responsable según la política de canal.</p>
+        <p className="text-xs text-white/45">Al guardar, las automatizaciones asignan el responsable según la política de canal.</p>
         <button className="btn-primario">Crear lead</button>
       </form>
     </Modal>

@@ -59,8 +59,8 @@ export default function Hub() {
               </div>
             }
           />
-          <Pieza n="02" icono={<LayoutDashboard />} titulo="SICHAR OS · CRM y gerencia" texto="Pipeline, cotizador con política de canal, costos de importación, semáforo de aliados y 8 automatizaciones." href={urlApp('crm')} vista={<Vista src={urlApp('crm')} />} />
-          <Pieza n="03" icono={<Store />} titulo="Portal Distribuidor Aliado" texto="Los aliados reciben referidos de la web, hacen pedidos 24/7 y registran sus obras." href={urlApp('portal')} vista={<Vista src={urlApp('portal')} />} />
+          <Pieza n="02" icono={<LayoutDashboard />} titulo="SICHAR OS · CRM y gerencia" texto="Tablero en vivo con mapa de sedes, pipeline, cotizador con política de canal, costos, buscador Ctrl+K y 8 automatizaciones en diagrama." href={urlApp('crm')} vista={<Vista src={urlApp('crm')} />} />
+          <Pieza n="03" icono={<Store />} titulo="Portal Distribuidor Aliado" texto="App para el celular del ferretero: referidos con tiempo de respuesta, niveles, pedidos con seguimiento y obras protegidas." href={urlApp('portal')} vista={<Vista src={urlApp('portal')} />} />
           <Pieza n="04" icono={<Presentation />} titulo="Presentación" texto="Diapositivas de la entrega final que abren cada pieza en vivo." to="/presentacion" naranja grande vista={<div className="absolute inset-0 grid place-items-center bg-naranja"><div className="font-display text-5xl font-extrabold leading-[.9] tracking-tighter text-tinta md:text-7xl">De voz a voz<br />a digital.</div></div>} />
         </section>
 

@@ -94,7 +94,7 @@ export default function Cotizador() {
   return (
     <div className="grid gap-5 animate-entrar">
       <div className="no-imprimir flex flex-wrap items-center justify-between gap-3">
-        <Link to="/cotizaciones" className="flex items-center gap-1 text-sm text-black/50 hover:text-black"><ArrowLeft size={16} /> Cotizaciones</Link>
+        <Link to="/cotizaciones" className="flex items-center gap-1 text-sm text-white/50 hover:text-white"><ArrowLeft size={16} /> Cotizaciones</Link>
         <div className="flex flex-wrap gap-2">
           <button className="btn-claro" onClick={() => window.print()}><Printer size={16} /> PDF</button>
           <a className="btn bg-[#25D366] text-white hover:brightness-95" href={waLink(lead.telefono, resumenWa)} target="_blank" rel="noreferrer"><MessageCircle size={16} /> WhatsApp</a>
@@ -111,7 +111,7 @@ export default function Cotizador() {
 
       <div className="grid gap-5 xl:grid-cols-[1fr_340px]">
         {/* Documento */}
-        <div className="tarjeta overflow-hidden print:shadow-none print:ring-0">
+        <div className="papel tarjeta overflow-hidden print:shadow-none print:ring-0">
           <div className="flex flex-wrap items-start justify-between gap-4 bg-tinta p-6 text-white">
             <div>
               <Logo claro />
@@ -123,7 +123,7 @@ export default function Cotizador() {
               <span className={`chip mt-2 capitalize ${cot.estado === 'aceptada' ? 'bg-emerald-500 text-white' : cot.estado === 'enviada' ? 'bg-naranja text-white' : cot.estado === 'rechazada' ? 'bg-zinc-500 text-white' : 'bg-white/15 text-white'}`}>{cot.estado}</span>
             </div>
           </div>
-          <div className="grid gap-4 border-b border-black/5 p-6 sm:grid-cols-2">
+          <div className="grid gap-4 border-b border-white/5 p-6 sm:grid-cols-2">
             <div>
               <div className="etiqueta">Cliente</div>
               {editable ? (
@@ -132,13 +132,13 @@ export default function Cotizador() {
                 </select>
               ) : null}
               <div className="mt-1 font-semibold">{lead.empresa ?? lead.nombre}</div>
-              <div className="text-sm text-black/55">{lead.nombre} · {lead.telefono} · {lead.ciudad}</div>
+              <div className="text-sm text-white/55">{lead.nombre} · {lead.telefono} · {lead.ciudad}</div>
             </div>
             <div>
               <div className="etiqueta">Canal de venta</div>
               <div className="no-imprimir flex gap-1">
                 {(['distribuidor', 'directa'] as const).map((c) => (
-                  <button key={c} disabled={!editable} onClick={() => setCot({ ...cot, canal: c })} className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold ${cot.canal === c ? 'bg-tinta text-white' : 'bg-black/5'}`}>{c === 'distribuidor' ? 'Vía distribuidor aliado' : 'Venta directa'}</button>
+                  <button key={c} disabled={!editable} onClick={() => setCot({ ...cot, canal: c })} className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold ${cot.canal === c ? 'bg-white text-tinta' : 'bg-white/5'}`}>{c === 'distribuidor' ? 'Vía distribuidor aliado' : 'Venta directa'}</button>
                 ))}
               </div>
               <div className="mt-1 hidden text-sm print:block">{cot.canal === 'distribuidor' ? 'Atención vía distribuidor aliado' : 'Venta directa SICHAR'}</div>
@@ -147,10 +147,10 @@ export default function Cotizador() {
 
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-hueso text-left text-xs uppercase tracking-wide text-black/45">
+              <thead className="bg-white/[.04] text-left text-xs uppercase tracking-wide text-white/45">
                 <tr><th className="px-6 py-3">Producto</th><th className="px-2 py-3 text-right">Cant.</th><th className="px-2 py-3 text-right">Precio</th><th className="px-2 py-3 text-right">Desc.</th><th className="px-6 py-3 text-right">Subtotal</th><th className="no-imprimir w-8" /></tr>
               </thead>
-              <tbody className="divide-y divide-black/5">
+              <tbody className="divide-y divide-white/5">
                 {cot.items.map((i) => {
                   const p = P(i.productoId)
                   return (
@@ -160,29 +160,29 @@ export default function Cotizador() {
                           <Muestra p={p} className="h-10 w-10 shrink-0 rounded-lg" escala={0.8} />
                           <div>
                             <div className="font-medium">{p.nombre}</div>
-                            <div className="text-xs text-black/45">{p.ref} · {p.formato}{p.lineaDirecta && ' · Colección proyecto'}</div>
+                            <div className="text-xs text-white/45">{p.ref} · {p.formato}{p.lineaDirecta && ' · Colección proyecto'}</div>
                           </div>
                         </div>
                       </td>
-                      <td className="px-2 py-3 text-right">{editable ? <input type="number" min={1} className="campo !w-20 !px-2 !py-1 text-right" value={i.cantidad} onChange={(e) => editar(p.id, { cantidad: Math.max(1, Number(e.target.value)) })} /> : i.cantidad} <span className="text-xs text-black/40">{p.unidad}</span></td>
+                      <td className="px-2 py-3 text-right">{editable ? <input type="number" min={1} className="campo !w-20 !px-2 !py-1 text-right" value={i.cantidad} onChange={(e) => editar(p.id, { cantidad: Math.max(1, Number(e.target.value)) })} /> : i.cantidad} <span className="text-xs text-white/40">{p.unidad}</span></td>
                       <td className="px-2 py-3 text-right">{editable ? <input type="number" className="campo !w-28 !px-2 !py-1 text-right" value={i.precio} onChange={(e) => editar(p.id, { precio: Number(e.target.value) })} /> : fmtCOP(i.precio)}</td>
                       <td className="px-2 py-3 text-right">{editable ? <input type="number" min={0} max={30} className="campo !w-16 !px-2 !py-1 text-right" value={Math.round(i.descuento * 100)} onChange={(e) => editar(p.id, { descuento: Number(e.target.value) / 100 })} /> : fmtPct(i.descuento)}</td>
                       <td className="px-6 py-3 text-right font-semibold">{fmtCOP(i.cantidad * i.precio * (1 - i.descuento))}</td>
-                      <td className="no-imprimir pr-3">{editable && <button className="text-black/30 hover:text-red-600" onClick={() => setCot({ ...cot, items: cot.items.filter((x) => x.productoId !== p.id) })}><Trash2 size={15} /></button>}</td>
+                      <td className="no-imprimir pr-3">{editable && <button className="text-white/30 hover:text-red-400" onClick={() => setCot({ ...cot, items: cot.items.filter((x) => x.productoId !== p.id) })}><Trash2 size={15} /></button>}</td>
                     </tr>
                   )
                 })}
-                {cot.items.length === 0 && <tr><td colSpan={6} className="px-6 py-10 text-center text-black/45">Agrega productos desde el panel de la derecha o usa la calculadora de materiales.</td></tr>}
+                {cot.items.length === 0 && <tr><td colSpan={6} className="px-6 py-10 text-center text-white/45">Agrega productos desde el panel de la derecha o usa la calculadora de materiales.</td></tr>}
               </tbody>
             </table>
           </div>
-          <div className="flex flex-wrap justify-between gap-6 border-t border-black/5 p-6">
+          <div className="flex flex-wrap justify-between gap-6 border-t border-white/5 p-6">
             <textarea className="campo min-h-20 max-w-md print:border-0 print:p-0" disabled={!editable} value={cot.notas} onChange={(e) => setCot({ ...cot, notas: e.target.value })} />
             <dl className="ml-auto grid min-w-64 gap-1.5 text-sm">
-              <div className="flex justify-between"><dt className="text-black/55">Subtotal</dt><dd>{fmtCOP(t.bruto)}</dd></div>
-              {t.desc > 0 && <div className="flex justify-between text-emerald-700"><dt>Descuentos</dt><dd>− {fmtCOP(t.desc)}</dd></div>}
-              <div className="flex justify-between"><dt className="text-black/55">IVA 19 %</dt><dd>{fmtCOP(t.iva)}</dd></div>
-              <div className="mt-1 flex justify-between border-t border-black/10 pt-2 font-display text-xl font-bold"><dt>Total</dt><dd>{fmtCOP(t.total)}</dd></div>
+              <div className="flex justify-between"><dt className="text-white/55">Subtotal</dt><dd>{fmtCOP(t.bruto)}</dd></div>
+              {t.desc > 0 && <div className="flex justify-between text-emerald-300"><dt>Descuentos</dt><dd>− {fmtCOP(t.desc)}</dd></div>}
+              <div className="flex justify-between"><dt className="text-white/55">IVA 19 %</dt><dd>{fmtCOP(t.iva)}</dd></div>
+              <div className="mt-1 flex justify-between border-t border-white/10 pt-2 font-display text-xl font-bold"><dt>Total</dt><dd>{fmtCOP(t.total)}</dd></div>
             </dl>
           </div>
         </div>
@@ -190,17 +190,17 @@ export default function Cotizador() {
         {/* Panel */}
         <div className="no-imprimir grid content-start gap-4">
           {problemas.length > 0 ? (
-            <div className="rounded-2xl bg-red-50 p-4 text-sm ring-1 ring-red-200">
-              <div className="flex items-center gap-2 font-semibold text-red-700"><AlertTriangle size={16} /> Política de canal</div>
-              <ul className="mt-2 grid list-disc gap-1 pl-5 text-red-800/80">{problemas.map((p) => <li key={p}>{p}</li>)}</ul>
+            <div className="rounded-2xl bg-red-500/10 p-4 text-sm ring-1 ring-red-500/30">
+              <div className="flex items-center gap-2 font-semibold text-red-300"><AlertTriangle size={16} /> Política de canal</div>
+              <ul className="mt-2 grid list-disc gap-1 pl-5 text-red-300">{problemas.map((p) => <li key={p}>{p}</li>)}</ul>
             </div>
           ) : (
-            <div className="flex items-center gap-2 rounded-2xl bg-emerald-50 p-4 text-sm font-medium text-emerald-800 ring-1 ring-emerald-200"><ShieldCheck size={16} /> Cumple la política de canal</div>
+            <div className="flex items-center gap-2 rounded-2xl bg-emerald-500/10 p-4 text-sm font-medium text-emerald-300 ring-1 ring-emerald-500/30"><ShieldCheck size={16} /> Cumple la política de canal</div>
           )}
           <div className="tarjeta p-4">
-            <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-black/45">Margen bruto (interno) <span className={t.margen >= s.config.margenObjetivo ? 'text-emerald-600' : 'text-red-600'}>{fmtPct(t.margen, 1)}</span></div>
-            <div className="mt-2 h-2 overflow-hidden rounded-full bg-black/5"><div className={`h-full ${t.margen >= s.config.margenObjetivo ? 'bg-emerald-500' : 'bg-red-500'}`} style={{ width: `${Math.max(0, Math.min(100, t.margen * 200))}%` }} /></div>
-            <p className="mt-2 text-xs text-black/45">Calculado con el costo puesto en bodega. Objetivo: {fmtPct(s.config.margenObjetivo)}.</p>
+            <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-white/45">Margen bruto (interno) <span className={t.margen >= s.config.margenObjetivo ? 'text-emerald-400' : 'text-red-400'}>{fmtPct(t.margen, 1)}</span></div>
+            <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/5"><div className={`h-full ${t.margen >= s.config.margenObjetivo ? 'bg-emerald-500' : 'bg-red-500'}`} style={{ width: `${Math.max(0, Math.min(100, t.margen * 200))}%` }} /></div>
+            <p className="mt-2 text-xs text-white/45">Calculado con el costo puesto en bodega. Objetivo: {fmtPct(s.config.margenObjetivo)}.</p>
           </div>
           {editable && (
             <>
@@ -210,20 +210,20 @@ export default function Cotizador() {
                   <input className="campo" placeholder="m² del espacio" value={m2} onChange={(e) => setM2(e.target.value)} inputMode="numeric" />
                   <button className="btn-oscuro" onClick={calcularMateriales}>Calcular</button>
                 </div>
-                <p className="mt-2 text-xs text-black/45">Agrega porcelanato (+10 %), pegante, boquilla y niveladores.</p>
+                <p className="mt-2 text-xs text-white/45">Agrega porcelanato (+10 %), pegante, boquilla y niveladores.</p>
               </div>
               <div className="tarjeta p-4">
                 <div className="relative">
-                  <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-black/35" />
+                  <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/35" />
                   <input className="campo !pl-9" placeholder="Buscar producto o referencia" value={buscar} onChange={(e) => setBuscar(e.target.value)} />
                 </div>
                 <div className="mt-3 grid max-h-96 gap-1 overflow-auto scroll-fino">
                   {resultados.map((p) => (
-                    <button key={p.id} onClick={() => agregar(p.id, p.unidad === 'm²' ? 10 : 1)} className="flex items-center gap-3 rounded-xl p-2 text-left hover:bg-hueso">
+                    <button key={p.id} onClick={() => agregar(p.id, p.unidad === 'm²' ? 10 : 1)} className="flex items-center gap-3 rounded-xl p-2 text-left hover:bg-white/[.07]">
                       <Muestra p={p} className="h-9 w-9 shrink-0 rounded-lg" escala={0.7} />
                       <div className="min-w-0 flex-1">
                         <div className="truncate text-sm font-medium">{p.nombre}</div>
-                        <div className="text-xs text-black/45">{fmtCOP(precioBase(p.id))}/{p.unidad} · stock Cali {p.stock.Cali}</div>
+                        <div className="text-xs text-white/45">{fmtCOP(precioBase(p.id))}/{p.unidad} · stock Cali {p.stock.Cali}</div>
                       </div>
                       <span className="text-lg text-naranja">+</span>
                     </button>
@@ -236,9 +236,9 @@ export default function Cotizador() {
       </div>
 
       <Modal abierto={!!bloqueo} cerrar={() => setBloqueo(null)} titulo="Envío bloqueado por la política de canal">
-        <p className="text-sm text-black/60">La automatización «Guardia de política de precios» detuvo el envío:</p>
-        <ul className="mt-3 grid list-disc gap-1 pl-5 text-sm text-red-700">{bloqueo?.map((p) => <li key={p}>{p}</li>)}</ul>
-        <p className="mt-4 text-sm text-black/60">Puedes cambiar el canal a «Vía distribuidor aliado», ajustar precios o aprobarla como gerencia (queda registrado).</p>
+        <p className="text-sm text-white/60">La automatización «Guardia de política de precios» detuvo el envío:</p>
+        <ul className="mt-3 grid list-disc gap-1 pl-5 text-sm text-red-300">{bloqueo?.map((p) => <li key={p}>{p}</li>)}</ul>
+        <p className="mt-4 text-sm text-white/60">Puedes cambiar el canal a «Vía distribuidor aliado», ajustar precios o aprobarla como gerencia (queda registrado).</p>
         <div className="mt-5 flex flex-wrap justify-end gap-2">
           <button className="btn-claro" onClick={() => { setCot({ ...cot, canal: 'distribuidor' }); setBloqueo(null) }}>Pasar a distribuidor</button>
           <button className="btn-oscuro" onClick={() => { setBloqueo(null); guardar('enviada', true) }}>Aprobar como gerencia</button>

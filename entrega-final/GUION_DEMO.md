@@ -33,10 +33,13 @@ Volver al centro de mando: **«Son cuatro piezas. Empecemos por lo que ve su cli
 ## 3. Portal del distribuidor (1 min)
 
 Centro de mando → **Portal Aliado** → entrar como *Acabados del Valle*.
-> «Así lo ve el ferretero: le llegó el cliente que acabamos de crear. Lo contacta, marca la venta y hace su pedido aquí mismo.»
+> «Así lo ve el ferretero, desde el celular: le llegó el cliente que acabamos de crear, con el tiempo para responderle. Lo contacta, marca la venta, ve cuánto le falta para subir de nivel y hace su pedido aquí mismo.»
 
 ## 4. SICHAR OS (4 min)
 
+0. Antes de hablar, clic en **Modo en vivo** (arriba a la derecha).
+   > «Mientras les muestro esto, la operación sigue: van a ver entrar clientes, pedidos y ventas en tiempo real.»
+   En el tablero, el mapa late en la sede donde entra cada cliente.
 1. **Pipeline:** el lead está ahí, con la acción ⚡ automática en su historial.
 2. **Cotizaciones → Nueva**, cliente de hogar, **Venta directa**, calcular 14 m², **Enviar**.
    > «El sistema la bloquea: ese producto es de la línea del distribuidor. La política de canal ya no depende de la buena voluntad de nadie.»
@@ -45,6 +48,9 @@ Centro de mando → **Portal Aliado** → entrar como *Acabados del Valle*.
 5. Barra superior: **+7 días** → abrir las notificaciones.
    > «Pasó una semana. Leads sin respuesta, inventario bajo en Medellín, un aliado que dejó de comprar. Nadie tuvo que acordarse.»
 6. **Tablero:** «Esta es la página que la gerencia abre cada lunes.»
+7. Truco final: **Ctrl + K** y escribir el nombre de un cliente. «Todo SICHAR, a un atajo de distancia.»
+
+Al terminar, apagar el modo en vivo.
 
 ## 5. Cierre (3 min)
 
